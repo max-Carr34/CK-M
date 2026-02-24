@@ -1,0 +1,164 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/**
+ * Ionic Dark Mode
+ * -----------------------------------------------------
+ * For more info, please see:
+ * https://ionicframework.com/docs/theming/dark-mode
+ */
+
+/* @import "@ionic/angular/css/palettes/dark.always.css"; */
+/* @import "@ionic/angular/css/palettes/dark.class.css"; */
+@import '@ionic/angular/css/palettes/dark.system.css';
+// ════════════════════════════════════════════════════
+// ALERTAS — pegar en src/global.scss
+// ════════════════════════════════════════════════════
+
+.custom-alert {
+
+  &::part(backdrop) {
+    background: rgba(3, 30, 73, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  &::part(container) {
+    background: #ffffff;
+    border-radius: 20px;
+    overflow: hidden;
+    min-width: 295px;
+    max-width: 330px;
+    border: 1px solid #e4e8f0;
+    box-shadow:
+      0 0 0 1px rgba(27, 105, 213, 0.08),
+      0 24px 64px rgba(3, 30, 73, 0.18),
+      0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  &::part(sub-header) {
+    font-size: 1.8rem;
+    text-align: center;
+    padding: 24px 20px 4px;
+    line-height: 1;
+  }
+
+  &::part(header) {
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    text-align: center;
+    color: #0d1b2e;
+    padding: 8px 20px 0;
+    line-height: 1.25;
+  }
+
+  &::part(message) {
+    font-size: 0.82rem;
+    color: #6b7f9e;
+    text-align: center;
+    line-height: 1.6;
+    padding: 8px 24px 18px;
+  }
+
+  &::part(button-group) {
+    padding: 0 14px 14px;
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+// ─── Botón base ───────────────────────────────────────
+.alert-btn-primary {
+  width: 100% !important;
+  padding: 0.78rem 1rem !important;
+  border-radius: 12px !important;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  color: #ffffff !important;
+  border: none !important;
+  margin: 0 !important;
+  transition: transform 0.15s ease, opacity 0.15s ease !important;
+
+  &:active {
+    transform: scale(0.97) !important;
+    opacity: 0.9 !important;
+  }
+}
+
+// ─── Éxito — verde ────────────────────────────────────
+.alert-success {
+
+  &::part(container) {
+    border-top: 3px solid #16a34a;
+  }
+
+  &::part(sub-header) {
+    color: #16a34a;
+  }
+
+  .alert-btn-primary {
+    background: linear-gradient(135deg, #16a34a, #15803d) !important;
+    box-shadow: 0 4px 16px rgba(22, 163, 74, 0.35) !important;
+  }
+}
+
+// ─── Advertencia — amarillo ───────────────────────────
+.alert-warning {
+
+  &::part(container) {
+    border-top: 3px solid #d97706;
+  }
+
+  &::part(sub-header) {
+    color: #d97706;
+  }
+
+  .alert-btn-primary {
+    background: linear-gradient(135deg, #d97706, #b45309) !important;
+    box-shadow: 0 4px 16px rgba(217, 119, 6, 0.35) !important;
+  }
+}
+
+// ─── Error — rojo ─────────────────────────────────────
+.alert-error {
+
+  &::part(container) {
+    border-top: 3px solid #dc2626;
+  }
+
+  &::part(sub-header) {
+    color: #dc2626;
+  }
+
+  .alert-btn-primary {
+    background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+    box-shadow: 0 4px 16px rgba(220, 38, 38, 0.32) !important;
+  }
+}

@@ -1,0 +1,524 @@
+@use "sass:color";
+
+// ─── Variables (misma paleta que addproduct) ─────────────────
+$primary:     #1b69d5;
+$deep:        #031e49;
+$soft-blue:   rgba(27, 105, 213, 0.08);
+$border:      #e4e8f0;
+$text:        #0d1b2e;
+$muted:       #6b7f9e;
+$white:       #ffffff;
+$surface:     #f5f7fb;
+$accent-line: rgba(27, 105, 213, 0.18);
+$success:     #16a34a;
+$warning:     #d97706;
+$error:       #dc2626;
+
+$r-sm:  6px;
+$r-md:  10px;
+$r-lg:  16px;
+$r-xl:  22px;
+
+$ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+// ─── Header ──────────────────────────────────────────────────
+.app-header ion-toolbar {
+  --background: #{$white};
+  --border-color: #{$border};
+
+  .page-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: $muted;
+  }
+}
+
+.back-btn {
+  --color: #{$muted};
+  --icon-font-size: 1.1rem;
+  --padding-start: 4px;
+}
+
+.add-btn {
+  --color: #{$primary};
+  --padding-end: 8px;
+  font-size: 1.3rem;
+}
+
+// ─── Page ────────────────────────────────────────────────────
+.page {
+  --background: #{$surface};
+}
+
+.page-container {
+  padding: 0 16px 80px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+// ─── Hero strip ──────────────────────────────────────────────
+.page-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 24px 0 16px;
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: $primary;
+  }
+
+  .hero-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: $text;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin: 0;
+  }
+
+  .hero-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    .stat-number {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: $primary;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: $muted;
+    }
+  }
+}
+
+// ─── Buscador ────────────────────────────────────────────────
+.search-wrapper {
+  margin-bottom: 16px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: $white;
+  border: 1.5px solid $border;
+  border-radius: $r-lg;
+  padding: 0 12px;
+  transition: all 0.2s $ease;
+
+  &:focus-within {
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba(27, 105, 213, 0.1);
+  }
+
+  .search-icon {
+    font-size: 1rem;
+    color: $muted;
+    flex-shrink: 0;
+  }
+
+  .search-input {
+    --background: transparent;
+    --color: #{$text};
+    --placeholder-color: #b0bdd0;
+    --padding-start: 0;
+    --padding-end: 0;
+    --padding-top: 11px;
+    --padding-bottom: 11px;
+    font-size: 0.9rem;
+    flex: 1;
+  }
+
+  .search-clear {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    color: $muted;
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+    transition: color 0.15s;
+
+    &:hover { color: $text; }
+  }
+}
+
+// ─── Categorías ──────────────────────────────────────────────
+.categories-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 0 16px;
+  margin: 0 -16px;
+  padding-left: 16px;
+  padding-right: 16px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar { display: none; }
+}
+
+.cat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border-radius: 50px;
+  border: 1.5px solid $border;
+  background: $white;
+  color: $muted;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.2s $ease;
+  touch-action: manipulation;
+
+  ion-icon { font-size: 0.85rem; }
+
+  &:active { transform: scale(0.96); }
+
+  &.active {
+    background: $primary;
+    border-color: $primary;
+    color: $white;
+    box-shadow: 0 3px 10px rgba(27, 105, 213, 0.25);
+  }
+}
+
+// ─── Estado vacío ─────────────────────────────────────────────
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+
+  .empty-icon {
+    font-size: 3rem;
+    margin-bottom: 14px;
+    opacity: 0.5;
+  }
+
+  .empty-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: $text;
+    margin: 0 0 6px;
+  }
+
+  .empty-sub {
+    font-size: 0.85rem;
+    color: $muted;
+    margin: 0;
+  }
+}
+
+// ─── Grid de productos ────────────────────────────────────────
+.products-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+
+  @media (min-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 769px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+}
+
+// ─── Product Card ─────────────────────────────────────────────
+.product-card {
+  background: $white;
+  border-radius: $r-xl;
+  border: 1px solid $border;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.25s $ease;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      0 4px 20px rgba(27, 105, 213, 0.1),
+      0 1px 4px rgba(0,0,0,0.04);
+    border-color: rgba(27, 105, 213, 0.2);
+  }
+}
+
+// ─── Popular badge ────────────────────────────────────────────
+.popular-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: $deep;
+  color: #f6c94e;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 50px;
+  z-index: 2;
+
+  ion-icon { font-size: 0.7rem; }
+}
+
+// ─── Imagen ───────────────────────────────────────────────────
+.card-image {
+  width: 100%;
+  height: 150px;
+  background: $surface;
+  overflow: hidden;
+  position: relative;
+
+  .product-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.35s $ease;
+  }
+
+  .product-img-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    ion-icon {
+      font-size: 2.5rem;
+      color: $border;
+    }
+  }
+}
+
+.product-card:hover .product-img {
+  transform: scale(1.04);
+}
+
+// ─── Card body ────────────────────────────────────────────────
+.card-body {
+  padding: 14px 14px 12px;
+}
+
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.product-category {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $primary;
+  background: $soft-blue;
+  padding: 3px 8px;
+  border-radius: 50px;
+  border: 1px solid $accent-line;
+}
+
+.popular-toggle {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: $border;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s $ease;
+  border-radius: 50%;
+
+  &:hover {
+    color: #f6c94e;
+    background: rgba(246, 201, 78, 0.1);
+  }
+
+  &.on { color: #f6c94e; }
+}
+
+.product-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: $text;
+  letter-spacing: -0.01em;
+  margin: 0 0 4px;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-desc {
+  font-size: 0.78rem;
+  color: $muted;
+  line-height: 1.45;
+  margin: 0 0 12px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// ─── Card footer ─────────────────────────────────────────────
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px solid $border;
+  gap: 8px;
+  flex-wrap: nowrap;
+  min-height: 44px;
+}
+
+.price-stock {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+
+  .product-price {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: $text;
+    letter-spacing: -0.02em;
+  }
+
+  .product-stock {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: $muted;
+
+    &.low { color: $warning; }
+  }
+}
+
+// ─── Botones acción ───────────────────────────────────────────
+.card-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.action-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: $r-sm;
+  border: 1.5px solid $border;
+  background: $white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  transition: all 0.18s $ease;
+  touch-action: manipulation;
+  flex-shrink: 0;
+  -webkit-appearance: none;
+  appearance: none;
+
+  ion-icon {
+    display: block;
+    font-size: 1rem;
+    pointer-events: none;
+  }
+
+  &.edit {
+    color: $primary;
+    border-color: rgba(27, 105, 213, 0.25);
+
+    &:hover {
+      background: $soft-blue;
+      border-color: rgba(27, 105, 213, 0.4);
+    }
+  }
+
+  &.delete {
+    color: $error;
+    border-color: rgba(220, 38, 38, 0.2);
+
+    &:hover {
+      background: rgba(220, 38, 38, 0.07);
+      border-color: rgba(220, 38, 38, 0.35);
+    }
+  }
+
+  &:active { transform: scale(0.93); }
+}
+
+// ─── Skeleton loading ─────────────────────────────────────────
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+@mixin skeleton-base {
+  background: linear-gradient(
+    90deg,
+    #e8edf4 25%,
+    #f0f4fa 50%,
+    #e8edf4 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 6px;
+}
+
+.product-card.skeleton {
+  pointer-events: none;
+
+  .skeleton-img {
+    width: 100%;
+    height: 150px;
+    @include skeleton-base;
+    border-radius: 0;
+  }
+
+  .skeleton-body {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .skeleton-line {
+    height: 10px;
+    @include skeleton-base;
+
+    &.wide  { width: 80%; }
+    &.mid   { width: 55%; }
+    &.short { width: 35%; }
+  }
+}

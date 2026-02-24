@@ -1,0 +1,49 @@
+<ion-header>
+  <ion-toolbar class="header-toolbar">
+    <div class="header-content">
+      <div class="logo-section">
+        <div class="logo-circle">
+          <div class="logo-inner">
+            <div class="logo-dot"></div>
+          </div>
+        </div>
+        <span class="logo-text">Preparatoria Marista</span>
+      </div>
+      
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="change-password-content">
+  <div class="password-wrapper">
+    <div class="password-card">
+      <h2>Cambiar Contraseña</h2>
+      <p>Actualiza tu contraseña para mantener tu cuenta segura</p>
+      
+      <form (ngSubmit)="onChangePassword()">
+      
+        <!-- Nueva Contraseña -->
+        <ion-item lines="none" class="password-item">
+          <ion-icon name="lock-open-outline" slot="start"></ion-icon>
+          <ion-label position="stacked" style="color: black;">Nueva Contraseña</ion-label>
+          <ion-input type="password" [(ngModel)]="newPassword" name="newPassword" required placeholder="Ingresa tu nueva contraseña"></ion-input>
+        </ion-item>
+
+        <!-- Confirmar Contraseña -->
+        <ion-item lines="none" class="password-item">
+          <ion-icon name="checkmark-done-outline" slot="start"></ion-icon>
+          <ion-label position="stacked" style="color: black;">Confirmar Contraseña</ion-label>
+          <ion-input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" required placeholder="Confirma tu nueva contraseña"></ion-input>
+        </ion-item>
+
+        <ion-button expand="block" type="submit" class="password-btn" shape="round">
+          Cambiar Contraseña
+        </ion-button>
+        
+        <ion-button expand="block" fill="outline" shape="round" class="ion-margin-top" (click)="cancel()">
+          Cancelar
+        </ion-button>
+      </form>
+    </div>
+  </div>
+</ion-content>

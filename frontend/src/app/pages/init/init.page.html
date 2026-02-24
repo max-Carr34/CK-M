@@ -1,0 +1,175 @@
+
+<ion-content class="page-container" fullscreen>
+
+  <div class="page-container">
+    <!-- Header -->
+    <header class="header" [class.scrolled]="scrolled">
+      <div class="header-content">
+        <!-- BOTÓN MENÚ HAMBURGUESA -->
+        <button class="menu-button" (click)="toggleMenu()" [class.open]="isMenuOpen">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+
+        <!-- CONTENEDOR: Logo (sin menú, que ahora está global) -->
+        <div class="logo-section">
+          <div class="logo-icon">
+            <span class="flame-icon">🔥</span>
+          </div>
+          <div class="logo-text">
+            <h1 class="logo-title">Prepa Marista</h1>
+            <p class="logo-subtitle">Sabor que conquista</p>
+          </div>
+        </div>
+
+        <!-- Sidebar Menu: Ahora justo después del logo -->
+        <app-sidebar-menu #sidebarMenuRef [isMenuOpen]="isMenuOpen" (menuOpenChange)="isMenuOpen = $event"></app-sidebar-menu>
+
+        <!-- Header Actions -->
+        <div class="header-actions">
+          <input 
+          
+  #searchInput
+  type="text" 
+  class="search-input" 
+  placeholder="Buscar productos..."
+  [(ngModel)]="searchTerm"
+  (input)="filterProducts()"
+  (keydown.enter)="filterProducts()"
+  (click)="scrollToMenu()">
+          <button class="icon-btn search-btn" (click)="filterProducts()">
+            <span class="icon">🔍</span>
+          </button>
+          <button class="icon-btn cart-btn">
+            <span class="icon">🛒</span>
+            <span class="cart-badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
+          </button>
+          <button class="order-btn">Hacer Orden</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero-section" id="inicio">
+      <div class="hero-content">
+        <div class="hero-text">
+          <h2 class="hero-title">
+            La mejor <span class="highlight">comida</span> para ti
+          </h2>
+          <p class="hero-description">
+            Ingredientes frescos, entrega rápida y sabor incomparable. ¡Ordena ahora y disfruta!
+          </p>
+          <div class="hero-buttons">
+            <button class="btn-primary" (click)="scrollToMenu()">
+              <span>Ver Menú</span>
+              <span class="arrow-icon">→</span>
+            </button>
+            <button class="btn-secondary">Promociones</button>
+          </div>
+        </div>
+
+        <div class="hero-image">
+          <div class="floating-burger">🍔</div>
+          <div class="decoration-circle circle-1"></div>
+          <div class="decoration-circle circle-2"></div>
+          <div class="decoration-circle circle-3"></div>
+        </div>
+      </div>
+
+      <div class="wave-decoration">
+        <svg viewBox="0 0 1440 120" class="wave-svg">
+          <path fill="#ffffff"
+            d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z">
+          </path>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features-section">
+      <div class="features-container">
+        <div class="feature-card">
+          <div class="feature-icon clock-icon"><span>⚡</span></div>
+          <h3 class="feature-title">Entrega Rápida</h3>
+          <p class="feature-description">Tu pedido listo en 15 minutos o es gratis</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon star-icon"><span>⭐</span></div>
+          <h3 class="feature-title">Calidad Premium</h3>
+          <p class="feature-description">Ingredientes frescos y de la más alta calidad</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon hours-icon"><span>🕐</span></div>
+          <h3 class="feature-title">Horario Extendido</h3>
+          <p class="feature-description">Abierto todos los días hasta las 11 PM</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Products -->
+    <section class="products-section" id="menu">
+      <div class="section-header">
+        <h2 class="section-title">Nuestro <span class="highlight-orange">Menú</span></h2>
+        <p class="section-subtitle">
+          Descubre nuestra deliciosa variedad de hamburguesas, hot dogs, bebidas y más
+        </p>
+      </div>
+
+      <div class="categories-container">
+        <button *ngFor="let category of categories"
+                [class.active]="activeCategory === category.id"
+                class="category-btn"
+                (click)="setActiveCategory(category.id)">
+          <span class="category-name">{{ category.name }}</span>
+        </button>
+      </div>
+
+      <div class="products-grid">
+        <div *ngFor="let product of filteredProducts" class="product-card">
+          <div class="product-badge" *ngIf="product.isPopular">
+            <span class="badge-icon">🔥</span><span>Popular</span>
+          </div>
+                    
+          <div class="product-image">
+              <img 
+              *ngIf="product.image; else noImage"
+              [src]="product.image"
+              alt="{{ product.name }}"
+              class="product-img"
+            />
+            
+            <ng-template #noImage>
+              <span class="product-emoji">📦</span>
+            </ng-template>
+          </div>
+
+
+          <div class="product-info">
+            <div class="product-header">
+              <h3 class="product-name">{{ product.name }}</h3>
+              <div class="product-rating">
+                <span class="star">⭐</span>
+                <span class="rating-value">4.8</span>
+              </div>
+            </div>
+
+            <p class="product-description">{{ product.description }}</p>
+
+            <div class="product-footer">
+              <span class="product-price">${{ product.price }}</span>
+              <button class="add-to-cart-btn" (click)="addToCart(product)">
+                <span>Agregar</span>
+                <span class="plus-icon">+</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+        <app-footer></app-footer>
+      </div>
+</ion-content>

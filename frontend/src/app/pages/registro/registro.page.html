@@ -1,0 +1,103 @@
+<ion-header>
+  <ion-toolbar class="header-toolbar">
+    <div class="header-content">
+      <div class="logo-section">
+        <div class="logo-circle">
+          <div class="logo-inner">
+            <div class="logo-dot"></div>
+          </div>
+        </div>
+        <span class="logo-text">Preparatoria Marista</span>
+      </div>
+      
+      <div class="header-actions">
+        <ion-button class="login-button" (click)="volverLogin()">Iniciar Sesión</ion-button>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="register-content">
+  <div class="register-wrapper">
+    <div class="register-card">
+      <h2 class="register-title">Crea una Cuenta</h2>
+      <p class="register-subtitle">¡Bienvenido! Completa tus datos para registrarte</p>
+      
+      <form #form="ngForm" (ngSubmit)="registrarUsuario()" novalidate>
+        <!-- Nombre -->
+        <ion-item class="register-item" lines="none">
+          <ion-icon slot="start" name="person-outline"></ion-icon>
+          <ion-label position="stacked">Nombre Completo</ion-label>
+          <ion-input
+            type="text"
+            [(ngModel)]="usuario.nombre"
+            name="nombre"
+            required
+            #nombre="ngModel">
+          </ion-input>
+        </ion-item>
+        <ion-text color="danger" *ngIf="nombre.invalid && nombre.touched">
+          <p class="error-message">Nombre requerido</p>
+        </ion-text>
+
+        <!-- Correo -->
+        <ion-item class="register-item" lines="none">
+          <ion-icon slot="start" name="mail-outline"></ion-icon>
+          <ion-label position="stacked">Correo Electrónico</ion-label>
+          <ion-input
+            type="email"
+            [(ngModel)]="usuario.correo"
+            name="correo"
+            required
+            email
+            #correo="ngModel">
+          </ion-input>
+        </ion-item>
+        <ion-text color="danger" *ngIf="correo.invalid && correo.touched">
+          <p class="error-message">
+            {{ correo.errors?.['required'] ? 'Correo requerido' : 'Correo inválido' }}
+          </p>
+        </ion-text>
+
+        <!-- Contraseña -->
+        <ion-item class="register-item" lines="none">
+          <ion-icon slot="start" name="lock-closed-outline"></ion-icon>
+          <ion-label position="stacked">Contraseña</ion-label>
+          <ion-input
+            type="password"
+            [(ngModel)]="usuario.password"
+            name="password"
+            required
+            minlength="6"
+            #password="ngModel">
+          </ion-input>
+        </ion-item>
+        <ion-text color="danger" *ngIf="password.invalid && password.touched">
+          <p class="error-message">
+            {{ password.errors?.['required'] ? 'Contraseña requerida' : 'Mínimo 6 caracteres' }}
+          </p>
+        </ion-text>
+
+        <!-- Botones -->
+        <ion-button
+          expand="block"
+          type="submit"
+          [disabled]="form.invalid"
+          class="register-btn"
+          shape="round"
+          (click)="registrarUsuario()">
+          Crear Cuenta
+        </ion-button>
+
+        <ion-button
+          expand="block"
+          fill="outline"
+          class="register-cancel-btn"
+          (click)="volverInicio()"
+          shape="round">
+          Cancelar
+        </ion-button>
+      </form>
+    </div>
+  </div>
+</ion-content>

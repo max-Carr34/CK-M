@@ -1,0 +1,161 @@
+<app-sidebar-menu
+  #sidebarMenuRef
+  [isMenuOpen]="isMenuOpen"
+  (menuOpenChange)="isMenuOpen = $event">
+</app-sidebar-menu>
+
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <div slot="start" class="toolbar-start">
+      <button
+        class="menu-button"
+        (click)="toggleMenu()"
+        [class.open]="isMenuOpen">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <ion-title>
+      <span class="toolbar-title">Dashboard <span class="toolbar-title--light">Administrador</span></span>
+    </ion-title>
+    <div slot="end" class="toolbar-end">
+      <div class="admin-avatar">AD</div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="dashboard-wrapper">
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <p class="hero-greeting">Buenos días 👋</p>
+        <h1 class="hero-title">Bienvenido de vuelta</h1>
+        <p class="hero-subtitle">Administra tu inventario con facilidad</p>
+      </div>
+
+      <div class="stats-quick">
+
+        <div class="stat-item">
+          <div class="stat-item__icon">
+            <ion-icon name="cube-outline"></ion-icon>
+          </div>
+          <span class="stat-number">247</span>
+          <span class="stat-label">Productos</span>
+          <span class="stat-trend stat-trend--up">↑ 12%</span>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-item__icon">
+            <ion-icon name="cart-outline"></ion-icon>
+          </div>
+          <span class="stat-number">89</span>
+          <span class="stat-label">Ventas Hoy</span>
+          <span class="stat-trend stat-trend--up">↑ 5%</span>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-item__icon">
+            <ion-icon name="people-outline"></ion-icon>
+          </div>
+          <span class="stat-number">34</span>
+          <span class="stat-label">Usuarios</span>
+          <span class="stat-trend stat-trend--down">↓ 2%</span>
+        </div>
+
+        <div class="stat-item">
+          <div class="stat-item__icon">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+          </div>
+          <span class="stat-number">6</span>
+          <span class="stat-label">Stock Bajo</span>
+          <span class="stat-trend stat-trend--down">↓ Urgente</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Cards Section -->
+    <section class="cards-section">
+      <div class="section-header">
+        <h3 class="section-title">Acciones rápidas</h3>
+        <span class="section-subtitle">Gestiona tu tienda desde aquí</span>
+      </div>
+
+      <div class="cards-grid">
+
+        <!-- GESTIÓN DE PRODUCTOS -->
+        <ion-card class="action-card product-card" (click)="gestionprod()">
+          <ion-card-content class="card-content">
+            <div class="card-icon">
+              <ion-icon name="list-outline"></ion-icon>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Gestión de Productos</h3>
+            </div>
+            <div class="card-footer">
+              <span class="card-tag">Ver, editar y eliminar productos del inventario</span>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- AGREGAR PRODUCTO -->
+        <ion-card class="action-card add-card" (click)="goToAddProduct()">
+          <ion-card-content class="card-content">
+            <div class="card-icon">
+              <ion-icon name="add-circle-outline"></ion-icon>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Agregar Producto</h3>
+            </div>
+            <div class="card-footer">
+              <span class="card-tag">Registra nuevos productos rápidamente</span>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- REPORTES -->
+        <ion-card class="action-card report-card" (click)="goToReports()">
+          <ion-card-content class="card-content">
+            <div class="card-icon">
+              <ion-icon name="bar-chart-outline"></ion-icon>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Reportes & Analíticas</h3>
+              <p class="card-desc">Visualiza métricas y genera reportes detallados</p>
+            </div>
+            <div class="card-footer">
+              <span class="card-tag">Ver métricas</span>
+              <button class="card-action-btn">
+                <ion-icon name="arrow-forward-outline"></ion-icon>
+              </button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- USUARIOS -->
+        <ion-card class="action-card user-card" (click)="goToUsers()">
+          <ion-card-content class="card-content">
+            <div class="card-icon">
+              <ion-icon name="people-outline"></ion-icon>
+            </div>
+            <div class="card-body">
+              <h3 class="card-title">Gestión de Usuarios</h3>
+              <p class="card-desc">Controla accesos, roles y permisos del sistema</p>
+            </div>
+            <div class="card-footer">
+              <span class="card-tag">34 usuarios</span>
+              <button class="card-action-btn">
+                <ion-icon name="arrow-forward-outline"></ion-icon>
+              </button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+      </div>
+    </section>
+
+  </div>
+</ion-content>

@@ -1,0 +1,33 @@
+<!-- OVERLAY -->
+<div class="menu-overlay" [class.show]="isMenuOpen" (click)="closeMenu()"></div>
+
+<!-- SIDEBAR o Menú -->
+<div class="sidebar-menu" [class.open]="isMenuOpen">
+  <div class="sidebar-header">
+    <button class="close-btn" (click)="closeMenu()">✕</button>
+  </div>
+
+  <div class="sidebar-items">
+    <button class="sidebar-item" (click)="handleMenuOption('profile')">
+      <span>👤</span> Perfil
+    </button>
+    <button class="sidebar-item" (click)="handleMenuOption('contact')">
+      <span>📞</span> Contacto
+    </button>
+    <button class="sidebar-item" (click)="handleMenuOption('menu')">
+      <span>🍔</span> Menu
+    </button>
+    <button class="sidebar-item" (click)="handleMenuOption('notifications')">
+      <span>🔔</span> Comprobantes
+    </button>
+    <button class="sidebar-item" (click)="handleMenuOption('Promociones')">
+      <span>🎁</span> Promociones
+    </button>
+
+    <div class="sidebar-divider"></div>
+
+    <button class="sidebar-item logout-item" (click)="handleMenuOption('logout')">
+      <span>🚪</span> Cerrar Sesión
+    </button>
+  </div>
+</div>

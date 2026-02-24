@@ -1,0 +1,32 @@
+<ion-content class="ion-padding login-content">
+  <div class="login-wrapper">
+    <div class="login-card">
+      <h2>Recuperar Contraseña</h2>
+      <p>Ingresa tu correo para continuar</p>
+      
+      <p class="description-text">
+        Enviaremos un enlace de recuperación a tu correo para que puedas resetear tu contraseña.
+      </p>
+      
+      <form (ngSubmit)="onRecoverPassword()">
+        <ion-item lines="none" class="login-item">
+          <ion-icon name="mail-outline" slot="start"></ion-icon>
+          <ion-label position="stacked" style="color: black;">Correo Electrónico</ion-label>
+          <ion-input type="email" [(ngModel)]="email" name="email" required placeholder="Ingresa tu correo"></ion-input>
+        </ion-item>
+        
+        <ion-text class="forgot-password">
+          <a (click)="goBackToLogin()">Inicia Sesión</a>
+        </ion-text>
+        
+        <ion-button expand="block" type="submit" class="login-btn" shape="round" >
+          Mandar Link
+        </ion-button>
+        
+        <ion-button expand="block" fill="outline" shape="round" class="ion-margin-top" (click)="cancel()">
+          Cancelar
+        </ion-button>
+      </form>
+    </div>
+  </div>
+</ion-content>

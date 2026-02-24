@@ -1,0 +1,579 @@
+// Variables
+$primary-color: #1b69d5;
+$secondary-color: #031e49;
+$accent-color: #f6f6f6;
+$text-dark: #000000;
+$text-light: #ffffff;
+$text-gray: #0045bbcd;
+$bg-light: #5e5f60;
+$shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
+
+// Mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin transition($properties...) {
+  @if length($properties) == 0 {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  } @else {
+    $transitions: ();
+    @each $p in $properties {
+      $transitions: append($transitions, #{$p} 0.3s cubic-bezier(0.4, 0, 0.2, 1), comma);
+    }
+    transition: $transitions;
+  }
+}
+
+// Header
+ion-header {
+  box-shadow: $shadow;
+  
+  .header-toolbar {
+    --background: #{$text-light};
+    --padding-top: 8px;
+    --padding-bottom: 8px;
+    --min-height: 64px;
+  }
+
+  .header-content {
+    @include flex-between;
+    padding: 0 16px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .logo-section {
+    @include flex-center;
+    gap: 12px;
+    cursor: pointer;
+    @include transition;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  .logo-minimal {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    @include flex-center;
+
+    .logo-wing {
+      position: absolute;
+      width: 20px;
+      height: 3px;
+      background: linear-gradient(90deg, $accent-color, #4777c0);
+      border-radius: 2px;
+      transform: rotate(-15deg);
+      left: 0;
+      top: 15px;
+    }
+
+    .logo-body {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, $primary-color, $secondary-color);
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba($primary-color, 0.3);
+    }
+  }
+
+  .logo-text {
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    color: $primary-color;
+    letter-spacing: -0.5px;
+
+    @media (max-width: 480px) {
+      font-size: 14px;
+      max-width: 120px;
+      line-height: 1.2;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 8px;
+
+    ion-button {
+      height: 36px;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      @include transition;
+
+      @media (max-width: 480px) {
+        font-size: 11px;
+        height: 32px;
+        --padding-start: 12px;
+        --padding-end: 12px;
+      }
+    }
+
+    .login-button {
+      --background: linear-gradient(135deg, #{$accent-color}, #d1d5db);
+      --color: #{$text-light};
+      box-shadow: 0 4px 12px rgba($accent-color, 0.3);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba($accent-color, 0.4);
+      }
+    }
+
+    .register-button {
+      --background: transparent;
+      --color: #{$primary-color};
+      --border-width: 2px;
+      --border-style: solid;
+      --border-color: #{$primary-color};
+
+      &:hover {
+        --background: #{$primary-color};
+        --color: #{$text-light};
+      }
+    }
+  }
+}
+
+// Hero Section
+.hero-section {
+  position: relative;
+  height: 85vh;
+  min-height: 600px;
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    height: 75vh;
+    min-height: 500px;
+  }
+
+  .hero-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+    background-size: cover;
+    background-position: center;
+    animation: slowZoom 20s ease-in-out infinite alternate;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      135deg,
+      rgba($primary-color, 0.85) 0%,
+      rgba($secondary-color, 0.75) 100%
+    );
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    @include flex-center;
+    padding: 24px;
+  }
+
+  .hero-text {
+    text-align: center;
+    max-width: 900px;
+    width: 100%;
+  }
+
+  .hero-title {
+    font-size: clamp(40px, 8vw, 72px);
+    font-weight: 800;
+    color: $text-light;
+    margin: 0 0 16px 0;
+    letter-spacing: -2px;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    animation: fadeInUp 0.8s ease-out;
+  }
+
+  .hero-subtitle {
+    font-size: clamp(18px, 4vw, 28px);
+    color: rgba($text-light, 0.95);
+    margin: 0 0 40px 0;
+    font-weight: 300;
+    letter-spacing: 1px;
+    animation: fadeInUp 0.8s ease-out 0.2s both;
+  }
+
+  .flight-search {
+    background: rgba($text-light, 0.96);
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 8px 20px rgba(3, 17, 46, 0.08);
+    border: 1px solid rgba(27, 105, 213, 0.06);
+    backdrop-filter: blur(8px);
+    animation: fadeInUp 0.8s ease-out 0.4s both;
+    @include transition(transform);
+
+    @media (max-width: 768px) {
+      padding: 18px 14px;
+      border-radius: 12px;
+    }
+  }
+
+  .search-input {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr 1fr auto;
+    gap: 12px;
+    align-items: center;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+  }
+
+  .input-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+
+    label {
+      font-size: 11px;
+      font-weight: 700;
+      color: $text-gray;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+
+    input {
+      border: 1px solid rgba($bg-light, 0.18);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 16px;
+      color: $text-dark;
+      background: #fff;
+      width: 100%;
+      text-align: center;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+      @include transition(border-color, box-shadow);
+
+      &::placeholder {
+        color: lighten($text-gray, 15%);
+      }
+
+      &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 8px 20px rgba($primary-color, 0.08);
+      }
+    }
+  }
+
+  .swap-icon {
+    @include flex-center;
+    width: 40px;
+    height: 40px;
+    background: lighten($bg-light, 6%);
+    border-radius: 50%;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(2, 6, 23, 0.06);
+
+    @media (max-width: 768px) {
+      display: none;
+    }
+
+    .swap-arrow {
+      width: 20px;
+      height: 2px;
+      background: $text-gray;
+      position: relative;
+
+      &::before,
+      &::after {
+        content: '';
+        position: absolute;
+        width: 8px;
+        height: 2px;
+        background: $text-gray;
+        right: 0;
+      }
+
+      &::before {
+        transform: rotate(45deg);
+        top: -3px;
+      }
+
+      &::after {
+        transform: rotate(-45deg);
+        bottom: -3px;
+      }
+    }
+  }
+
+  .search-button {
+    background: linear-gradient(135deg, $primary-color, $secondary-color);
+    color: $text-light;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: not-allowed;
+    opacity: 0.65;
+    box-shadow: 0 6px 18px rgba(3, 17, 46, 0.08);
+    @include transition(transform, box-shadow, opacity);
+
+    @media (max-width: 768px) {
+      width: 100%;
+      padding: 14px;
+    }
+
+    /* Center horizontally when not full-width */
+    justify-self: center;
+
+    &:not(:disabled) {
+      cursor: pointer;
+      opacity: 1;
+
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(3, 17, 46, 0.12);
+      }
+    }
+  }
+
+  .scroll-indicator {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    @include flex-center;
+    flex-direction: column;
+    z-index: 2;
+
+    .scroll-line {
+      width: 2px;
+      height: 40px;
+      background: linear-gradient(to bottom, transparent, $text-light);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+  }
+}
+
+// Info Section
+.info-section {
+  padding: 80px 24px;
+  background: $text-light;
+
+  @media (max-width: 768px) {
+    padding: 60px 20px;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    @media (max-width: 768px) {
+      gap: 24px;
+    }
+  }
+
+  .info-card {
+    text-align: center;
+    padding: 40px 24px;
+    border-radius: 16px;
+    background: $text-light;
+    box-shadow: $shadow;
+    @include transition;
+
+    &:hover {
+      transform: translateY(-8px);
+      box-shadow: $shadow-lg;
+    }
+
+    .info-icon {
+      @include flex-center;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 24px;
+      background: linear-gradient(135deg, $primary-color, $secondary-color);
+      border-radius: 50%;
+      box-shadow: 0 8px 24px rgba($primary-color, 0.3);
+    }
+
+    .icon-plane,
+    .icon-globe,
+    .icon-shield {
+      width: 40px;
+      height: 40px;
+      background: $text-light;
+      border-radius: 8px;
+    }
+
+    h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: $text-dark;
+      margin: 0 0 12px 0;
+      letter-spacing: 1px;
+    }
+
+    p {
+      font-size: 15px;
+      color: $text-gray;
+      line-height: 1.6;
+      margin: 0;
+    }
+  }
+}
+
+// CTA Section
+.cta-section {
+  padding: 100px 24px;
+  background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+  position: relative;
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    padding: 80px 20px;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba($text-light, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .cta-content {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-title {
+    font-size: clamp(32px, 6vw, 48px);
+    font-weight: 800;
+    color: $text-light;
+    margin: 0 0 16px 0;
+    letter-spacing: -1px;
+  }
+
+  .cta-text {
+    font-size: clamp(16px, 3vw, 20px);
+    color: rgba($text-light, 0.9);
+    margin: 0 0 40px 0;
+    font-weight: 300;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    ion-button {
+      height: 48px;
+      font-size: 15px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      min-width: 180px;
+      @include transition;
+
+      @media (max-width: 480px) {
+        min-width: 150px;
+        height: 44px;
+        font-size: 14px;
+      }
+    }
+
+    .register-button {
+      --background: linear-gradient(135deg, #{$accent-color}, #d1d5db);
+      --color: #{$text-light};
+      box-shadow: 0 8px 24px rgba($accent-color, 0.4);
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba($accent-color, 0.5);
+      }
+    }
+
+    .login-button {
+      --background: transparent;
+      --color: #{$text-light};
+      --border-width: 2px;
+      --border-style: solid;
+      --border-color: #{$text-light};
+
+      &:hover {
+        --background: rgba(#{$text-light}, 0.1);
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slowZoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes scrollPulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(10px);
+  }
+}
+
+// Scroll suave
+ion-content {
+  --background: #{$bg-light};
+}

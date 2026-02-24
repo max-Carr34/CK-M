@@ -1,0 +1,39 @@
+.error-page {
+  --background: linear-gradient(180deg, #f9f9f9, #ffffff);
+
+  .error-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: 96px;
+    font-weight: 800;
+    color: #ff3b30;
+    margin-bottom: 8px;
+  }
+
+  h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #111;
+  }
+
+  p {
+    font-size: 15px;
+    color: #666;
+    margin: 12px 0 28px;
+  }
+
+  ion-button {
+    --background: #0a84ff;
+    --border-radius: 12px;
+    height: 48px;
+    font-weight: 600;
+  }
+}

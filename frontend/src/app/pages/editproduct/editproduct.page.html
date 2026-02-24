@@ -1,0 +1,84 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Editar Producto</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModal()">Cancelar</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="form-container">
+
+    <!-- INFORMACIÓN GENERAL -->
+    <div class="section-label">Información General</div>
+
+    <ion-item>
+      <ion-label position="stacked">Nombre</ion-label>
+      <ion-input name="name" [(ngModel)]="product.name" placeholder="Ej. Camisa de lino"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Descripción</ion-label>
+      <ion-textarea name="description" [(ngModel)]="product.description"
+        placeholder="Describe el producto..." [rows]="3"></ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Precio <span class="label-hint">MXN</span></ion-label>
+      <ion-input name="price" type="number" [(ngModel)]="product.price" placeholder="0.00"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Stock <span class="label-hint">unidades</span></ion-label>
+      <ion-input name="stock" type="number" [(ngModel)]="product.stock" placeholder="0"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Categoría</ion-label>
+      <ion-select name="category_id" [(ngModel)]="product.category_id" placeholder="Seleccionar">
+        <ion-select-option *ngFor="let c of categories" [value]="c.id">
+          {{ c.name }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- IMAGEN -->
+    <ion-item>
+      <ion-label position="stacked">URL de Imagen</ion-label>
+      <ion-input name="image" [(ngModel)]="product.image"
+        placeholder="https://res.cloudinary.com/..." type="url"
+        (ionInput)="product.image = $any($event).detail.value">
+      </ion-input>
+    </ion-item>
+
+    <!-- PREVIEW -->
+    <div class="image-preview" *ngIf="product.image">
+      <img [src]="product.image" alt="Vista previa">
+    </div>
+
+    <!-- POPULAR -->
+    <div class="toggle-inline">
+      <div class="toggle-left">
+        <div class="toggle-dot"></div>
+        <div>
+          <span class="toggle-title">Producto popular</span>
+          <span class="toggle-sub">Aparece destacado en vitrina</span>
+        </div>
+      </div>
+      <ion-toggle name="isPopular" [(ngModel)]="product.isPopular" class="custom-toggle"></ion-toggle>
+    </div>
+
+    <!-- BOTÓN GUARDAR -->
+    <div class="buttons-container">
+      <button class="save-btn" (click)="updateProduct()">
+        <span>Guardar Cambios</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5">
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+  </div>
+</ion-content>

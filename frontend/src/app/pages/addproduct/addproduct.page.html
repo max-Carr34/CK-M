@@ -1,0 +1,148 @@
+<ion-header class="app-header">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button fill="clear" class="back-btn" (click)="goBack()">
+        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title class="page-title">Catálogo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content class="page unique-catalog-page">
+  <div class="form-container">
+
+    <!-- Tarjeta principal con diseño glassmorphism -->
+    <div class="master-card">
+
+      <!-- Cabecera con título y pasos -->
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="card-icon">✨</div>
+          <div>
+            <h1 class="card-title">Nuevo Producto</h1>
+            <p class="card-subtitle">Completa los datos para agregar al catálogo</p>
+          </div>
+        </div>
+        <div class="card-steps">
+          <span class="step active">1</span>
+          <span class="step-line"></span>
+          <span class="step">2</span>
+        </div>
+      </div>
+
+      <!-- Sección 1: Información general -->
+      <div class="card-section">
+        <div class="section-tag">
+          <span>📋 Información general</span>
+        </div>
+
+        <!-- Nombre -->
+        <div class="field-group">
+          <label class="field-label">
+            <span class="label-text">Nombre del producto</span>
+            <span class="label-required">*</span>
+          </label>
+          <ion-input class="field-input" [(ngModel)]="product.name" placeholder="Ej. Camisa de lino"></ion-input>
+        </div>
+
+        <!-- Descripción -->
+        <div class="field-group">
+          <label class="field-label">
+            <span class="label-text">Descripción</span>
+            <span class="label-required">*</span>
+          </label>
+          <ion-textarea class="field-input field-textarea" [(ngModel)]="product.description"
+            placeholder="Describe el producto..." [rows]="3"></ion-textarea>
+        </div>
+
+        <!-- Fila compacta: Precio, Stock, Categoría -->
+        <div class="field-row-compact">
+          <div class="field-group">
+            <label class="field-label">
+              <span class="label-text">Precio</span>
+              <span class="label-hint">MXN</span>
+            </label>
+            <ion-input class="field-input" type="number" [(ngModel)]="product.price" placeholder="0.00"></ion-input>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">
+              <span class="label-text">Stock</span>
+              <span class="label-hint">unidades</span>
+            </label>
+            <ion-input class="field-input" type="number" [(ngModel)]="product.stock" placeholder="0"></ion-input>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">
+              <span class="label-text">Categoría</span>
+              <span class="label-required">*</span>
+            </label>
+            <ion-select class="field-input field-select" [(ngModel)]="product.category_id" placeholder="Seleccionar">
+              <ion-select-option *ngFor="let c of categories" [value]="c.id">
+                {{ c.name }}
+              </ion-select-option>
+            </ion-select>
+          </div>
+        </div>
+
+        <!-- URL de imagen + vista previa en línea -->
+        <div class="field-row-image">
+          <div class="field-group image-url-group">
+            <label class="field-label">
+              <span class="label-text">URL de imagen</span>
+              <span class="label-required">*</span>
+            </label>
+            <ion-input class="field-input field-url" type="text" [(ngModel)]="product.image"
+              (ionInput)="updateImagePreview()" placeholder="https://ejemplo.com/imagen.jpg">
+            </ion-input>
+          </div>
+
+          <div class="preview-wrapper" *ngIf="imagePreview">
+            <img [src]="imagePreview" class="preview-image" alt="Vista previa">
+            <div class="preview-overlay">
+              <span class="preview-badge">Vista previa</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Divisor decorativo -->
+      <div class="card-divider"></div>
+
+      <!-- Sección 2: Extras -->
+      <div class="card-section">
+        <div class="section-tag">
+          <span>⚡ Extras</span>
+        </div>
+
+        <!-- Toggle producto popular -->
+        <div class="toggle-inline">
+          <div class="toggle-left">
+            <div class="toggle-dot"></div>
+            <div>
+              <span class="toggle-title">Producto popular</span>
+              <span class="toggle-sub">Aparece destacado en vitrina</span>
+            </div>
+          </div>
+          <ion-toggle class="custom-toggle" [(ngModel)]="product.isPopular"></ion-toggle>
+        </div>
+      </div>
+
+      <!-- Footer con botón de guardado -->
+      <div class="card-footer">
+        <span class="footer-hint">* Todos los campos son obligatorios</span>
+        <button class="save-btn" (click)="saveProduct()">
+          <span>Guardar producto</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+
+    </div> <!-- fin master-card -->
+  </div> <!-- fin form-container -->
+</ion-content>

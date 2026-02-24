@@ -1,0 +1,152 @@
+<ion-header class="app-header">
+  <ion-toolbar>
+
+    <ion-buttons slot="start">
+      <ion-back-button
+        class="back-btn"
+        text=""
+        (click)="goBack()">
+      </ion-back-button>
+    </ion-buttons>
+
+    <ion-title class="page-title">PRODUCTOS</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button class="add-btn" routerLink="/addproduct">
+        <ion-icon name="add-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+
+
+
+<ion-content class="page">
+  <div class="page-container">
+
+    <!-- Hero strip -->
+    <div class="page-hero">
+      <div class="hero-left">
+        <span class="hero-eyebrow">Catálogo</span>
+        <h1 class="hero-title">Productos</h1>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-number">{{ filteredProducts.length }}</span>
+        <span class="stat-label">resultados</span>
+      </div>
+    </div>
+
+    <!-- Buscador -->
+    <div class="search-wrapper">
+      <div class="search-box">
+        <ion-icon name="search-outline" class="search-icon"></ion-icon>
+        <ion-input
+          class="search-input"
+          [(ngModel)]="searchQuery"
+          (ionInput)="applyFilters()"
+          placeholder="Buscar producto...">
+        </ion-input>
+        <button class="search-clear" *ngIf="searchQuery" (click)="clearSearch()">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Categorías (scroll horizontal) -->
+    <div class="categories-scroll">
+      <button
+        class="cat-chip"
+        [class.active]="selectedCategory === null"
+        (click)="selectCategory(null)">
+        <ion-icon name="grid-outline"></ion-icon>
+        Todos
+      </button>
+      <button
+        class="cat-chip"
+        *ngFor="let c of categories"
+        [class.active]="selectedCategory === c.id"
+        (click)="selectCategory(c.id)">
+        {{ c.name }}
+      </button>
+    </div>
+
+    <!-- Estado vacío -->
+    <div class="empty-state" *ngIf="filteredProducts.length === 0 && !isLoading">
+      <div class="empty-icon">📦</div>
+      <h3 class="empty-title">Sin resultados</h3>
+      <p class="empty-sub">Intenta con otro nombre o categoría</p>
+    </div>
+
+    <!-- Loading skeleton -->
+    <div class="products-grid" *ngIf="isLoading">
+      <div class="product-card skeleton" *ngFor="let s of [1,2,3,4,5,6]">
+        <div class="skeleton-img"></div>
+        <div class="skeleton-body">
+          <div class="skeleton-line wide"></div>
+          <div class="skeleton-line short"></div>
+          <div class="skeleton-line mid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grid de productos -->
+    <div class="products-grid" *ngIf="!isLoading && filteredProducts.length > 0">
+      <div
+        class="product-card"
+        *ngFor="let p of filteredProducts">
+
+        <!-- Badge popular -->
+        <div class="popular-badge" *ngIf="p.isPopular">
+          <ion-icon name="star"></ion-icon>
+          Popular
+        </div>
+
+        <!-- Imagen -->
+        <div class="card-image">
+          <img *ngIf="p.image" [src]="p.image" [alt]="p.name" class="product-img">
+          <div *ngIf="!p.image" class="product-img-placeholder">
+            <ion-icon name="image-outline"></ion-icon>
+          </div>
+        </div>
+
+        <!-- Info -->
+        <div class="card-body">
+          <div class="card-top">
+            <span class="product-category">{{ getCategoryName(p.category_id) }}</span>
+            <button
+              class="popular-toggle"
+              [class.on]="p.isPopular"
+              (click)="togglePopular(p)"
+              [title]="p.isPopular ? 'Quitar de populares' : 'Marcar como popular'">
+              <ion-icon [name]="p.isPopular ? 'star' : 'star-outline'"></ion-icon>
+            </button>
+          </div>
+
+          <h3 class="product-name">{{ p.name }}</h3>
+          <p class="product-desc" *ngIf="p.description">{{ p.description }}</p>
+
+          <div class="card-footer">
+            <div class="price-stock">
+              <span class="product-price">${{ p.price | number:'1.2-2' }}</span>
+              <span class="product-stock" [class.low]="p.stock <= 5">
+                {{ p.stock }} uds.
+              </span>
+            </div>
+
+            <div class="card-actions">
+              <button class="action-btn edit" (click)="editProduct(p)" title="Editar">
+                <ion-icon name="pencil-outline"></ion-icon>
+              </button>
+              <button class="action-btn delete" (click)="confirmDelete(p)" title="Eliminar">
+                <ion-icon name="trash-outline"></ion-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</ion-content>

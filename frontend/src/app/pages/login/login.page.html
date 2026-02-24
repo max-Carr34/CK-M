@@ -1,0 +1,56 @@
+<ion-header>
+  <ion-toolbar class="header-toolbar">
+    <div class="header-content">
+      <!-- Logo -->
+      <div class="logo-section">
+        <div class="logo-circle">
+          <div class="logo-inner">
+            <div class="logo-dot"></div>
+          </div>
+        </div>
+        <span class="logo-text">Preparatoria Marista</span>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding login-content">
+  
+  <div class="login-wrapper">
+    <div class="login-card">
+      <h2>¡Bienvenido!</h2>
+      <p>Inicia sesión para continuar</p>
+
+      <form (ngSubmit)="onLogin()">
+        <ion-item lines="none" class="login-item">
+          <ion-icon name="mail-outline" slot="start"></ion-icon>
+          <ion-label position="stacked" style="color: black;">Correo Electrónico</ion-label>
+          <ion-input type="email" [(ngModel)]="correo" name="correo" required></ion-input>
+        </ion-item>
+
+        <ion-item lines="none" class="login-item">
+          <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+          <ion-label position="stacked" style="color: black;">Contraseña</ion-label>
+          <ion-input type="password" [(ngModel)]="password" name="password" required></ion-input>
+        </ion-item>
+
+        <ion-text class="forgot-password">
+          <a (click)="recuperarCuenta()">¿Olvidaste tu contraseña?</a>
+        </ion-text>
+
+        <ion-button expand="block" type="submit" class="login-btn" shape="round">
+          Iniciar Sesión
+        </ion-button>
+
+        <ion-button expand="block" fill="outline" shape="round" class="ion-margin-top orange-outline" (click)="volverInicio()">
+          Cancelar
+        </ion-button>
+      </form>
+      <br>
+      <div class="register-link">
+        <p>¿No tienes cuenta? <a (click)="irRegistro()">Regístrate</a></p>
+      </div>
+    </div>
+  </div>
+
+</ion-content>
