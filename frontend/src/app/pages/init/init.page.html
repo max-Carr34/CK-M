@@ -1,55 +1,61 @@
 
-<ion-content class="page-container" fullscreen>
-
+<ion-content fullscreen>
   <div class="page-container">
-    <!-- Header -->
     <header class="header" [class.scrolled]="scrolled">
-      <div class="header-content">
-        <!-- BOTÓN MENÚ HAMBURGUESA -->
-        <button class="menu-button" (click)="toggleMenu()" [class.open]="isMenuOpen">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+  <div class="header-content">
 
+    <button class="menu-button"
+            (click)="toggleMenu()"
+            [class.open]="isMenuOpen">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
 
-        <!-- CONTENEDOR: Logo (sin menú, que ahora está global) -->
-        <div class="logo-section">
-          <div class="logo-icon">
-            <span class="flame-icon">🔥</span>
-          </div>
-          <div class="logo-text">
-            <h1 class="logo-title">Prepa Marista</h1>
-            <p class="logo-subtitle">Sabor que conquista</p>
-          </div>
-        </div>
-
-        <!-- Sidebar Menu: Ahora justo después del logo -->
-        <app-sidebar-menu #sidebarMenuRef [isMenuOpen]="isMenuOpen" (menuOpenChange)="isMenuOpen = $event"></app-sidebar-menu>
-
-        <!-- Header Actions -->
-        <div class="header-actions">
-          <input 
-          
-  #searchInput
-  type="text" 
-  class="search-input" 
-  placeholder="Buscar productos..."
-  [(ngModel)]="searchTerm"
-  (input)="filterProducts()"
-  (keydown.enter)="filterProducts()"
-  (click)="scrollToMenu()">
-          <button class="icon-btn search-btn" (click)="filterProducts()">
-            <span class="icon">🔍</span>
-          </button>
-          <button class="icon-btn cart-btn">
-            <span class="icon">🛒</span>
-            <span class="cart-badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
-          </button>
-          <button class="order-btn">Hacer Orden</button>
-        </div>
+    <div class="logo-section">
+      <div class="logo-icon">
+        <span class="flame-icon">🔥</span>
       </div>
-    </header>
+      <div class="logo-text">
+        <h1 class="logo-title">Prepa Marista</h1>
+        <p class="logo-subtitle">Sabor que conquista</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+
+  <input 
+    #searchInput
+    type="text"
+    class="search-input"
+    placeholder="Buscar productos..."
+    (input)="onSearchChange($event)" 
+    (keydown.enter)="scrollToMenu()"
+    (click)="scrollToMenu()">
+
+  <button class="icon-btn search-btn" (click)="filterProducts()">
+    🔍
+  </button>
+
+  <button class="icon-btn cart-btn" (click)="goToCart()">
+    🛒
+    <span class="cart-badge" *ngIf="cartCount > 0">
+      {{ cartCount }}
+    </span>
+  </button>
+
+  <button class="order-btn">Hacer Orden</button>
+
+</div>
+
+  </div>
+</header>
+
+<!-- 👇 Sidebar fuera del header -->
+<app-sidebar-menu
+  [isMenuOpen]="isMenuOpen"
+  (menuOpenChange)="isMenuOpen = $event">
+</app-sidebar-menu> 
 
     <!-- Hero -->
     <section class="hero-section" id="inicio">
@@ -111,6 +117,9 @@
     </section>
 
     <!-- Products -->
+     <div *ngIf="loading" class="loader">
+        Cargando productos...
+      </div>
     <section class="products-section" id="menu">
       <div class="section-header">
         <h2 class="section-title">Nuestro <span class="highlight-orange">Menú</span></h2>

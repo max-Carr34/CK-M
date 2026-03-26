@@ -10,15 +10,19 @@ export class RoleGuard implements CanActivate {
   ) {}
 
   canActivate(): boolean {
-    const role = this.auth.getUserRole();
+  const isLogged = this.auth.isLoggedIn();
+  const role = this.auth.getUserRole();
 
-    // ✅ SOLO ADMIN PUEDE PASAR
-    if (role === 'admin') {
-      return true;
-    }
-
-    // ❌ CUALQUIER OTRO ROL ES BLOQUEADO
-    this.router.navigate(['/error/403']); 
+  if (!isLogged) {
+    this.router.navigate(['/login']);
     return false;
+  }
+
+  if (role === 'admin') {
+    return true;
+  }
+
+  this.router.navigate(['/error/403']);
+  return false;
   }
 }

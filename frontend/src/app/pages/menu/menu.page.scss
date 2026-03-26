@@ -1,66 +1,742 @@
-// ============================================
-// VARIABLES - Colores
-// ============================================
-$primary-color: #1b69d5;
-$accent-color: #f6f6f6;
+@use "sass:color";
 
+/* ============================================
+   VARIABLES — Sistema del Home
+============================================ */
+
+$primary-color:    #1b69d5;
+$secondary-color:  #031e49;
+$accent-color:     #f6f6f6;
+
+$text-dark:   #000000;
+$text-light:  #ffffff;
+$text-gray:   #0045bbcd;
+
+$border-color:  #E8E8E8;
+$shadow-hover:  rgba($primary-color, 0.15);
+$shadow-light:  rgba(0, 0, 0, 0.04);
+$shadow-medium: rgba(0, 0, 0, 0.08);
+
+$light-blue:  #eaf1ff;      // Reemplaza light-orange del home
+$light-bg:    #f4f6fb;      // Fondo suave para imágenes
+
+$radius-sm: 8px;
 $radius-md: 12px;
+$radius-lg: 16px;
+$radius-xl: 24px;
+
+$transition-fast:   all 0.2s ease;
 $transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-// ============================================
-// BOTÓN MENÚ HAMBURGUESA
-// ============================================
+/* ============================================
+   MIXINS (igual que el home)
+============================================ */
 
-.menu-button {
-  width: 42px;
-  height: 42px;
+@mixin flex-center {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  gap: 5px;
-  cursor: pointer;
-  background: linear-gradient(135deg, $primary-color 0%, $accent-color 100%);
-  border: 2px solid transparent;
-  padding: 8px;
-  border-radius: $radius-md;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin hover-lift {
   transition: $transition-smooth;
-  box-shadow: 0 2px 8px rgba(27, 105, 213, 0.3);
+  @media (min-width: 769px) {
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px $shadow-medium;
+    }
+  }
+}
+
+/* ============================================
+   CONTENEDOR GENERAL
+============================================ */
+
+.menu-content {
+  --background: #f8f9fb;
+}
+
+/* ============================================
+   HEADER — Menú (override del header global)
+============================================ */
+
+// ============================================
+// BOTÓN MENÚ DESPLEGABLE — Siempre visible sobre el header
+// ============================================
+// El header tiene z-index: 100, este botón necesita estar por encima
+ion-menu-button,
+.menu-button,
+button.menu-button,
+[menu-toggle] {
+  position: fixed !important;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 200 !important;
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-sm;
+  background: white !important;
+  border: 1px solid $border-color;
+  color: $text-dark !important;
+  cursor: pointer;
+  transition: $transition-fast;
+  box-shadow: 0 2px 8px $shadow-light;
+
+  &:active {
+    background: $accent-color !important;
+    border-color: $primary-color;
+  }
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.97) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid $border-color;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  transition: $transition-smooth;
+
+  // Anula cualquier fondo oscuro heredado
+  color: $text-dark !important;
+
+  &.scrolled {
+    box-shadow: 0 2px 16px $shadow-light;
+    padding: 0.5rem 1.25rem;
+  }
+}
+
+.header-content {
+  @include flex-between;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 100%;
+}
+
+// Logo + texto del menú
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+  border-radius: $radius-md;
+  @include flex-center;
+  font-size: 1.1rem;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px $shadow-hover;
+}
+
+.logo-text {
+  min-width: 0;
+  flex: 1;
+
+  h1, .logo-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: $text-dark !important;
+    margin: 0;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  p, .logo-subtitle {
+    font-size: 0.65rem;
+    color: $text-gray !important;
+    margin: 0;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// Acciones del header (buscador + botones)
+// El gap aplica entre grupos, pero input+lupa se unen sin separación
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+
+  // Elimina el gap entre el input y el botón lupa para que formen un bloque
+  .search-input + .search-btn {
+    margin-left: calc(-0.5rem);  // Anula el gap del flex parent
+  }
+}
+
+// Input de búsqueda en el header
+// Se conecta visualmente con .search-btn formando un grupo unificado
+.search-input {
+  padding: 0.5rem 0.9rem;
+  border: 1px solid $border-color;
+  border-right: none;                          // Se une al botón lupa sin gap
+  border-radius: $radius-sm 0 0 $radius-sm;
+  background: $accent-color;
+  font-size: 0.85rem;
+  color: $text-dark;
+  outline: none;
+  transition: $transition-fast;
+  width: 160px;
+
+  &::placeholder {
+    color: #aab4c8;
+  }
+
+  &:focus {
+    border-color: $primary-color;
+    background: white;
+  }
+
+  @media (max-width: 480px) {
+    display: none;
+
+    // Cuando el input se oculta, el botón lupa recupera bordes completos
+    & + .search-btn {
+      border-radius: $radius-sm !important;
+      border-left: 1px solid $border-color !important;
+    }
+  }
+}
+
+// Botón lupa — pegado al input, forma una unidad de búsqueda
+.search-btn {
+  border-radius: 0 $radius-sm $radius-sm 0 !important;
+  border-left: none !important;
+  background: $accent-color !important;
+  transition: $transition-fast;
+
+  &:focus-within,
+  &:hover {
+    background: $light-blue !important;
+    border-color: $primary-color !important;
+  }
+
+  &:active {
+    background: $primary-color !important;
+    border-color: $primary-color !important;
+    transform: scale(0.95);
+  }
+}
+
+// Botón icono (carrito, etc.)
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: $radius-sm;
+  border: 1px solid $border-color;
+  background: white;
+  cursor: pointer;
+  @include flex-center;
+  transition: $transition-fast;
+  position: relative;
+  font-size: 1rem;
+  color: $text-dark;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    transform: scale(0.95);
+    background: $accent-color;
+    border-color: $primary-color;
+  }
+}
+
+.cart-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: $primary-color;
+  color: white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  @include flex-center;
+  font-size: 0.6rem;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba($primary-color, 0.4);
+}
+
+// Botón "Hacer Orden"
+.order-btn {
+  background: $primary-color;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.1rem;
+  border-radius: $radius-sm;
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: $transition-smooth;
+  box-shadow: 0 2px 8px $shadow-hover;
+  white-space: nowrap;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+
+  &:active {
+    transform: scale(0.95);
+    background: $secondary-color;
+    box-shadow: none;
+  }
+
+  @media (min-width: 769px) {
+    &:hover {
+      background: $secondary-color;
+      box-shadow: 0 4px 14px $shadow-hover;
+    }
+  }
+}
+
+// Espaciado del contenido bajo el header fijo
+.products-section {
+  padding-top: 90px; // Compensa la altura del header fijo
+}
+
+@media (min-width: 769px) {
+  .header {
+    padding: 1rem 2rem;
+
+    &.scrolled {
+      padding: 0.75rem 2rem;
+    }
+  }
+
+  .header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .logo-text {
+    h1, .logo-title {
+      font-size: 1.2rem;
+    }
+
+    p, .logo-subtitle {
+      font-size: 0.7rem;
+    }
+  }
+
+  .header-search {
+    width: 220px;
+  }
+
+  .products-section {
+    padding-top: 100px;
+  }
+}
+
+/* ============================================
+   SECCIÓN PRODUCTOS
+============================================ */
+
+.products-section {
+  background: $accent-color;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 4rem;
+}
+
+/* ============================================
+   HEADER DE SECCIÓN
+============================================ */
+
+.section-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 0 0.5rem;
+}
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: $text-dark;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+
+  .highlight-orange {
+    color: $primary-color;
+  }
+}
+
+.section-subtitle {
+  font-size: 0.95rem;
+  color: $text-gray;
+  line-height: 1.6;
+}
+
+/* ============================================
+   BUSCADOR
+============================================ */
+
+.search-container {
+  margin-bottom: 1.5rem;
+
+  .search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid $border-color;
+    border-radius: $radius-md;
+    background: white;
+    font-size: 0.9rem;
+    color: $text-dark;
+    transition: $transition-fast;
+    outline: none;
+
+    &::placeholder {
+      color: #aab4c8;
+    }
+
+    &:focus {
+      border-color: $primary-color;
+      box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+    }
+  }
+}
+
+/* ============================================
+   CATEGORÍAS
+============================================ */
+
+.categories-container {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  margin-bottom: 2rem;
+  padding: 0.5rem 0;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  // Fade lateral para indicar más contenido
+  &::after {
+    content: '';
+    position: sticky;
+    right: 0;
+    width: 40px;
+    flex-shrink: 0;
+    background: linear-gradient(to left, $accent-color, transparent);
+    pointer-events: none;
+  }
+}
+
+.category-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.2rem;
+  border-radius: $radius-md;
+  border: 1px solid $border-color;
+  background: white;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: $text-gray;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: $transition-fast;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+
+  .category-icon {
+    font-size: 1rem;
+  }
 
   &:active {
     transform: scale(0.95);
   }
 
-  span {
-    width: 22px;
-    height: 2.5px;
-    background: white;
-    border-radius: 3px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    transform-origin: center;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  &.active {
+    background: $primary-color;
+    border-color: $primary-color;
+    color: white;
+    box-shadow: 0 4px 12px $shadow-hover;
+  }
+}
+
+/* ============================================
+   GRID PRODUCTOS
+============================================ */
+
+.products-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+/* ============================================
+   PRODUCT CARD
+============================================ */
+
+.product-card {
+  background: white;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  border: 1px solid $border-color;
+  transition: $transition-smooth;
+  position: relative;
+  touch-action: manipulation;
+
+  &:active {
+    transform: scale(0.98);
   }
 
-  &.open {
-    background: white;
-    border-color: $primary-color;
+  // Hover solo en desktop
+  @media (min-width: 769px) {
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px $shadow-medium;
+      border-color: rgba($primary-color, 0.2);
 
-    span {
-      background: $primary-color;
+      .product-emoji {
+        transform: scale(1.08) rotate(4deg);
+      }
     }
+  }
+}
 
-    span:nth-child(1) {
-      transform: translateY(7.5px) rotate(45deg);
-    }
+/* Badge */
 
-    span:nth-child(2) {
-      opacity: 0;
-      transform: scaleX(0);
-    }
+.product-badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: $primary-color;
+  color: white;
+  padding: 0.35rem 0.85rem;
+  border-radius: 50px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  box-shadow: 0 2px 8px rgba($primary-color, 0.3);
+  letter-spacing: 0.02em;
+}
 
-    span:nth-child(3) {
-      transform: translateY(-7.5px) rotate(-45deg);
+/* Imagen */
+
+.product-image {
+  width: 100%;
+  height: 150px;
+  background: $light-bg;
+  @include flex-center;
+  overflow: hidden;
+}
+
+.product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: $transition-smooth;
+
+  .product-card:hover & {
+    transform: scale(1.04);
+  }
+}
+
+.product-emoji {
+  font-size: 64px;
+  transition: $transition-smooth;
+}
+
+/* Info */
+
+.product-info {
+  padding: 1.25rem;
+}
+
+.product-header {
+  @include flex-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.product-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: $text-dark;
+  flex: 1;
+  line-height: 1.3;
+}
+
+.product-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: $light-blue;
+  padding: 0.3rem 0.65rem;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: $primary-color;
+  flex-shrink: 0;
+}
+
+.product-description {
+  font-size: 0.85rem;
+  color: $text-gray;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+.product-footer {
+  @include flex-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.product-price {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: $text-dark;
+  letter-spacing: -0.02em;
+}
+
+.add-to-cart-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: $primary-color;
+  color: white;
+  border: none;
+  padding: 0.65rem 1.2rem;
+  border-radius: $radius-sm;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: $transition-smooth;
+  white-space: nowrap;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 2px 8px $shadow-hover;
+
+  &:active {
+    transform: scale(0.95);
+    background: $secondary-color;
+    box-shadow: none;
+  }
+
+  @media (min-width: 769px) {
+    &:hover {
+      background: $secondary-color;
+      box-shadow: 0 4px 14px $shadow-hover;
+      transform: scale(1.03);
     }
+  }
+}
+
+/* ============================================
+   ESTADO VACÍO (sin resultados)
+============================================ */
+
+.empty-state {
+  @include flex-center;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 3rem 1rem;
+  text-align: center;
+  color: $text-gray;
+
+  .empty-icon {
+    font-size: 3.5rem;
+    opacity: 0.5;
+  }
+
+  .empty-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: $text-dark;
+  }
+
+  .empty-text {
+    font-size: 0.9rem;
+  }
+}
+
+/* ============================================
+   RESPONSIVE
+============================================ */
+
+@media (min-width: 480px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 769px) {
+  .products-section {
+    padding: 5rem 2rem;
+  }
+
+  .section-header {
+    margin-bottom: 3rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .section-title {
+    font-size: 2.75rem;
+  }
+
+  .section-subtitle {
+    font-size: 1.05rem;
+  }
+
+  .categories-container {
+    justify-content: center;
+    padding: 1rem 0;
+    margin-left: auto;
+    margin-right: auto;
+
+    &::after {
+      display: none;
+    }
+  }
+
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .product-image {
+    height: 200px;
+  }
+
+  .product-emoji {
+    font-size: 5.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .products-grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   }
 }

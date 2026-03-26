@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { RoleGuard } from './guards/role-guard-guard';
+import { AuthGuard } from './guards/auth-guard-guards';
 
 export const routes: Routes = [
   {
@@ -20,7 +22,7 @@ export const routes: Routes = [
   },
   {
     path: 'init',
-    loadComponent: () => import('./pages/init/init.page').then( m => m.InitPage)
+    loadComponent: () => import('./pages/init/init.page').then( m => m.InitPage), canActivate: [AuthGuard]
   },
   {
     path: 'recupass',
@@ -28,11 +30,11 @@ export const routes: Routes = [
   },
   {
     path: 'perfil',
-    loadComponent: () => import('./pages/perfil/perfil.page').then( m => m.PerfilPage)
+    loadComponent: () => import('./pages/perfil/perfil.page').then( m => m.PerfilPage), canActivate: [AuthGuard]
   },
   {
     path: 'admin-dashboard',
-    loadComponent: () => import('./pages/admin-dashboard/admin-dashboard.page').then( m => m.AdminDashboardPage)
+    loadComponent: () => import('./pages/admin-dashboard/admin-dashboard.page').then( m => m.AdminDashboardPage), canActivate: [RoleGuard]
   },
   {
     path: 'changepassw',
@@ -40,7 +42,7 @@ export const routes: Routes = [
   },
   {
     path: 'menu',
-    loadComponent: () => import('./pages/menu/menu.page').then( m => m.MenuPage)
+    loadComponent: () => import('./pages/menu/menu.page').then( m => m.MenuPage), canActivate: [AuthGuard]
   },
   {
     path: 'error404',
@@ -53,22 +55,23 @@ export const routes: Routes = [
  {
   path: 'add-product',
   loadComponent: () =>
-    import('./pages/addproduct/addproduct.page').then(m => m.AddProductPage)
+    import('./pages/addproduct/addproduct.page').then(m => m.AddProductPage), canActivate: [RoleGuard]
   },  
   {
-    path: 'products',
-    loadComponent: () => import('./pages/products/products.page').then( m => m.ProductsPage)
+    path: 'gestionprod',
+    loadComponent: () => import('./pages/gestionprod/gestionprod.page').then( m => m.GestionprodPage), canActivate: [RoleGuard]
+  },
+  
+  {
+    path: 'editproduct',
+    loadComponent: () => import('./pages/editproduct/editproduct.page').then( m => m.EditproductPage), canActivate: [RoleGuard]
   },
   {
-    path: 'gestionprod',
-    loadComponent: () => import('./pages/gestionprod/gestionprod.page').then( m => m.GestionprodPage)
+    path: 'cart',
+    loadComponent: () => import('./pages/cart/cart.page').then( m => m.CartPage), canActivate: [AuthGuard]
   },
   {
     path: '**',
     redirectTo: 'error404'
-  },
-  {
-    path: 'editproduct',
-    loadComponent: () => import('./pages/editproduct/editproduct.page').then( m => m.EditproductPage)
   },
 ];

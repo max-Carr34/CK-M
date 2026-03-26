@@ -1,20 +1,115 @@
-<app-sidebar-menu #sidebarMenuRef [isMenuOpen]="isMenuOpen" (menuOpenChange)="isMenuOpen = $event"></app-sidebar-menu>
+<ion-content class="page-container" fullscreen>
 
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <button class="menu-button" (click)="toggleMenu()" [class.open]="isMenuOpen" slot="start">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-    <ion-title>menu</ion-title>
-  </ion-toolbar>
-</ion-header>
+  <div class="page-container">
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">menu</ion-title>
-    </ion-toolbar>
-  </ion-header>
+    <!-- HEADER ORIGINAL -->
+    <header class="header" [class.scrolled]="scrolled">
+      <div class="header-content">
+
+        <button class="menu-button" (click)="toggleMenu()" [class.open]="isMenuOpen">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div class="logo-section">
+          <div class="logo-icon">
+            <span class="flame-icon">🔥</span>
+          </div>
+          <div class="logo-text">
+            <h1 class="logo-title">Prepa Marista</h1>
+            <p class="logo-subtitle">Sabor que conquista</p>
+          </div>
+        </div>
+
+        <app-sidebar-menu
+          [isMenuOpen]="isMenuOpen"
+          (menuOpenChange)="isMenuOpen = $event">
+        </app-sidebar-menu>
+
+        <div class="header-actions">
+          <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Buscar productos..."
+            [(ngModel)]="searchTerm"
+            (input)="filterProducts()">
+
+          <button class="icon-btn search-btn" (click)="filterProducts()">
+            🔍
+          </button>
+
+          <button class="icon-btn cart-btn">
+            🛒
+            <span class="cart-badge" *ngIf="cartCount > 0">
+              {{ cartCount }}
+            </span>
+          </button>
+
+          <button class="order-btn">Hacer Orden</button>
+        </div>
+      </div>
+    </header>
+
+
+    <!-- SOLO SECCIÓN PRODUCTOS -->
+    <section class="products-section" id="menu">
+
+      <div class="section-header">
+        <h2 class="section-title">
+          Nuestro <span class="highlight-orange">Menú</span>
+        </h2>
+        <p class="section-subtitle">
+          Descubre nuestra deliciosa variedad
+        </p>
+      </div>
+
+      <div class="categories-container">
+        <button *ngFor="let category of categories"
+                [class.active]="activeCategory === category.id"
+                class="category-btn"
+                (click)="setActiveCategory(category.id)">
+          {{ category.name }}
+        </button>
+      </div>
+
+      <div class="products-grid">
+        <div *ngFor="let product of filteredProducts" class="product-card">
+
+          <div class="product-badge" *ngIf="product.isPopular">
+            🔥 Popular
+          </div>
+
+          <div class="product-image">
+            <img *ngIf="product.image"
+                 [src]="product.image"
+                 class="product-img"/>
+          </div>
+
+          <div class="product-info">
+
+            <h3 class="product-name">{{ product.name }}</h3>
+
+            <p class="product-description">
+              {{ product.description }}
+            </p>
+
+            <div class="product-footer">
+              <span class="product-price">
+                ${{ product.price }}
+              </span>
+
+              <button class="add-to-cart-btn"
+                      (click)="addToCart(product)">
+                Agregar +
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </section>
+    <app-footer></app-footer>
+  </div>
 </ion-content>
