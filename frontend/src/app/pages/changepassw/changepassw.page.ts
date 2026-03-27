@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import {
   IonContent,
   IonHeader,
@@ -12,7 +13,7 @@ import {
   IonInput,
   ToastController
 } from '@ionic/angular/standalone';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-changepassw',
@@ -32,66 +33,70 @@ import { Router } from '@angular/router';
     IonInput
   ]
 })
-export class ChangepasswPage {
-  currentPassword = '';
+export class ChangepasswPage implements OnInit {
+
   newPassword = '';
   confirmPassword = '';
+  token = ''; // 🔥 IMPORTANTE
 
   constructor(
     private router: Router,
-    private toastCtrl: ToastController
+    private route: ActivatedRoute,
+    private toastCtrl: ToastController,
+    private http: HttpClient
   ) {}
 
+  ngOnInit() {
+    // 🔥 Obtener token de la URL
+    this.token = this.route.snapshot.queryParamMap.get('token') || '';
+  }
+
   async onChangePassword() {
-    if (!this.currentPassword || !this.newPassword || !this.confirmPassword) {
-      return (await this.toastCtrl.create({
-        message: 'Todos los campos son obligatorios',
-        duration: 3000,
-        color: 'warning'
-      })).present();
+
+    if (!this.newPassword || !this.confirmPassword) {
+      return this.showToast('Todos los campos son obligatorios', 'warning');
     }
 
     if (this.newPassword !== this.confirmPassword) {
-      return (await this.toastCtrl.create({
-        message: 'Las contraseñas no coinciden',
-        duration: 3000,
-        color: 'danger'
-      })).present();
+      return this.showToast('Las contraseñas no coinciden', 'danger');
     }
 
-    if (this.currentPassword === this.newPassword) {
-      return (await this.toastCtrl.create({
-        message: 'La nueva contraseña debe ser diferente a la actual',
-        duration: 3000,
-        color: 'warning'
-      })).present();
+    if (!this.token) {
+      return this.showToast('Token inválido o ausente', 'danger');
     }
 
-    console.log('Cambio de contraseña:', {
-      currentPassword: this.currentPassword,
+    this.http.post('http://localhost:3000/reset-password', {
+      token: this.token,
       newPassword: this.newPassword
+    }).subscribe({
+      next: async () => {
+        await this.showToast('Contraseña actualizada 🎉', 'success');
+
+        this.newPassword = '';
+        this.confirmPassword = '';
+
+        setTimeout(() => this.router.navigate(['/login']), 2000);
+      },
+      error: async (err) => {
+        await this.showToast(
+          err.error?.message || 'Token inválido o expirado',
+          'danger'
+        );
+      }
     });
-
-    (await this.toastCtrl.create({
-      message: 'Contraseña cambiada exitosamente 🎉',
-      duration: 2000,
-      color: 'success'
-    })).present();
-
-    this.currentPassword = '';
-    this.newPassword = '';
-    this.confirmPassword = '';
-
-    setTimeout(() => this.router.navigate(['/perfil']), 2000);
   }
 
   async cancel() {
-    (await this.toastCtrl.create({
-      message: 'Volviendo al Inicio',
-      duration: 1500,
-      color: 'medium'
-    })).present();
+    await this.showToast('Volviendo al login', 'medium');
+    this.router.navigate(['/login']);
+  }
 
-    this.router.navigate(['/home']);
+  async showToast(message: string, color: string) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 3000,
+      color
+    });
+    await toast.present();
   }
 }
