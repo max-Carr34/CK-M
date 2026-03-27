@@ -37,7 +37,7 @@ export class ChangepasswPage implements OnInit {
 
   newPassword = '';
   confirmPassword = '';
-  token = ''; // 🔥 IMPORTANTE
+  token = '';
 
   constructor(
     private router: Router,
@@ -47,7 +47,6 @@ export class ChangepasswPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    // 🔥 Obtener token de la URL
     this.token = this.route.snapshot.queryParamMap.get('token') || '';
   }
 
@@ -65,16 +64,12 @@ export class ChangepasswPage implements OnInit {
       return this.showToast('Token inválido o ausente', 'danger');
     }
 
-    this.http.post('http://localhost:3000/reset-password', {
+    this.http.post('http://localhost:3000/api/reset-password', {
       token: this.token,
       newPassword: this.newPassword
     }).subscribe({
       next: async () => {
         await this.showToast('Contraseña actualizada 🎉', 'success');
-
-        this.newPassword = '';
-        this.confirmPassword = '';
-
         setTimeout(() => this.router.navigate(['/login']), 2000);
       },
       error: async (err) => {

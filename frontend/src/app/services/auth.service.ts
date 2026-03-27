@@ -102,11 +102,10 @@ export class AuthService {
     this.roleSubject.next(null);
   }
 
-  forgotPassword(correo: string) {
-  return this.http.post<{ message: string }>(
-    `${this.apiUrl}/request-reset-password`,
-    { correo }
-  );
+  forgotPassword(email: string) {
+  return this.http.post('http://localhost:3000/api/request-reset-password', {
+    correo: email
+  });
   }
 
   resetPassword(token: string, newPassword: string) {
