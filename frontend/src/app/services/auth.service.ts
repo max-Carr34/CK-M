@@ -95,16 +95,35 @@ export class AuthService {
     return roles.some(role => role.trim().toLowerCase() === userRole);
   }
 
-  /** ✅ Logout lógico (SIN navegación) */
+  // LOGOUT
   logout() {
+    const refreshToken = localStorage.getItem('refreshToken');
+
+    // Llamada al backend para invalidar sesión
+    if (refreshToken) {
+      this.http.post('http://localhost:3000/logout', { refreshToken })
+        .subscribe({
+          next: () => console.log('✅ Logout backend OK'),
+          error: (err) => console.error('❌ Error logout backend:', err)
+        });
+    }
+    // LIMPIA TODO
     localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
     localStorage.removeItem('usuario');
+
+    // Resetear rol
     this.roleSubject.next(null);
   }
 
   forgotPassword(email: string) {
   return this.http.post('http://localhost:3000/api/request-reset-password', {
     correo: email
+  });
+  }
+  refreshToken() {
+  return this.http.post<any>('http://localhost:3000/refresh', {
+    refreshToken: localStorage.getItem('refreshToken')
   });
   }
 

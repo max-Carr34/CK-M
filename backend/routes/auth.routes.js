@@ -1,8 +1,8 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
-const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken'); // JWT
+const crypto = require('crypto'); //BrCrypt
+const nodemailer = require('nodemailer'); //Nodemailer
 const db = require('../db');
 require('dotenv').config();
 
@@ -33,24 +33,28 @@ const transporter = nodemailer.createTransport({
 ================================= */
 function verifyToken(req, res, next) {
   const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) {
+  if (!authHeader) {
     return res.status(401).json({ message: 'Token requerido' });
   }
 
-  jwt.verify(token, SECRET_KEY, (err, decoded) => {
-    if (err) {
-      return res.status(403).json({ message: 'Token inválido' });
-    }
+  const token = authHeader.split(' ')[1];
 
+  if (!token) {
+    return res.status(401).json({ message: 'Formato de token inválido' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
     req.user = decoded;
     next();
-  });
+  } catch (error) {
+    return res.status(403).json({ message: 'Token inválido o expirado' });
+  }
 }
 
 /* ===============================
-   LOGIN
+   LOGIN (JWT MEJORADO CON REFRESH)
 ================================= */
 router.post('/login', (req, res) => {
   const { correo, password } = req.body;
@@ -80,20 +84,40 @@ router.post('/login', (req, res) => {
         return res.status(401).json({ message: 'Contraseña incorrecta' });
       }
 
-      const token = jwt.sign(
+      // ACCESS TOKEN (15 min)
+      const accessToken = jwt.sign(
         {
           userId: user.id,
           nombre: user.nombre,
           correo: user.correo,
           rol: user.rol
         },
-        SECRET_KEY,
-        { expiresIn: '1h' }
+        process.env.JWT_SECRET,   // usa variable de entorno
+        { expiresIn: '15m' }
       );
 
+      // REFRESH TOKEN (7 días)
+      const refreshToken = jwt.sign(
+        { userId: user.id },
+        process.env.JWT_REFRESH_SECRET,
+        { expiresIn: '7d' }
+      );
+
+      // GUARDAR REFRESH TOKEN EN BD
+      db.query(
+        'INSERT INTO refresh_tokens (user_id, token) VALUES (?, ?)',
+        [user.id, refreshToken],
+        (err) => {
+          if (err) {
+            console.error('❌ Error guardando refresh token:', err);
+          }
+        }
+      );
+      // RESPUESTA AL CLIENTE
       res.status(200).json({
         mensaje: 'Inicio de sesión exitoso',
-        token,
+        accessToken,
+        refreshToken,
         usuario: {
           id: user.id,
           nombre: user.nombre,
@@ -109,8 +133,9 @@ router.post('/login', (req, res) => {
   });
 });
 
+
 /* ===============================
-   CAMBIAR CONTRASEÑA (LOGUEADO)
+   CAMBIAR CONTRASEÑA (PROTEGIDO)
 ================================= */
 router.post('/change-password', verifyToken, async (req, res) => {
   const { currentPassword, newPassword } = req.body;
@@ -153,7 +178,6 @@ router.post('/change-password', verifyToken, async (req, res) => {
   );
 });
 
-
 /* ===============================
    SOLICITAR RECUPERACIÓN
 ================================= */
@@ -176,7 +200,7 @@ router.post('/request-reset-password', (req, res) => {
 
       const userId = results[0].id;
       const token = crypto.randomBytes(32).toString('hex');
-      const expire = Date.now() + 600000; // 10 minutos
+      const expire = Date.now() + 600000; // 10 min
 
       db.query(
         'UPDATE usuarios SET resetPasswordToken = ?, resetPasswordExpires = ? WHERE id = ?',
@@ -186,7 +210,8 @@ router.post('/request-reset-password', (req, res) => {
             return res.status(500).json({ message: 'Error al guardar token' });
           }
 
-          const resetLink = `http://localhost:8100/changepassw?token=${token}`; 
+          const resetLink = `http://localhost:8100/changepassw?token=${token}`;
+
           const mailOptions = {
             from: process.env.EMAIL_USER,
             to: correo,
@@ -211,7 +236,7 @@ router.post('/request-reset-password', (req, res) => {
 });
 
 /* ===============================
-   RESET PASSWORD CON TOKEN
+   RESET PASSWORD
 ================================= */
 router.post('/reset-password', (req, res) => {
   const { token, newPassword } = req.body;
@@ -254,5 +279,56 @@ router.post('/reset-password', (req, res) => {
     }
   );
 });
+
+router.post('/refresh', (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(401).json({ message: 'Refresh token requerido' });
+  }
+
+  // Verificar que exista en BD
+  db.query(
+    'SELECT * FROM refresh_tokens WHERE token = ?',
+    [refreshToken],
+    (err, results) => {
+      if (err) return res.status(500).json({ message: 'Error en DB' });
+
+      if (results.length === 0) {
+        return res.status(403).json({ message: 'Token no válido' });
+      }
+
+      try {
+        const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+
+        const newAccessToken = jwt.sign(
+          {
+            userId: decoded.userId
+          },
+          SECRET_KEY,
+          { expiresIn: '15m' }
+        );
+
+        res.json({ accessToken: newAccessToken });
+
+      } catch (error) {
+        return res.status(403).json({ message: 'Refresh token expirado' });
+      }
+    }
+  );
+});
+
+router.post('/logout', (req, res) => {
+  const { refreshToken } = req.body;
+
+  db.query(
+    'DELETE FROM refresh_tokens WHERE token = ?',
+    [refreshToken],
+    () => {
+      res.json({ message: 'Sesión cerrada' });
+    }
+  );
+});
+
 
 module.exports = router;
