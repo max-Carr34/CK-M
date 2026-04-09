@@ -64,11 +64,32 @@
       </button>
       <button
         class="cat-chip"
-        *ngFor="let c of categories"
+        *ngFor="let c of categories; trackBy: trackByCategory"
         [class.active]="selectedCategory === c.id"
         (click)="selectCategory(c.id)">
         {{ c.name }}
       </button>
+    </div>
+
+    <!-- Barra de ordenamiento -->
+    <div class="sort-bar" *ngIf="!isLoading && filteredProducts.length > 0">
+      <span class="sort-label">
+        <ion-icon name="funnel-outline"></ion-icon>
+        Ordenar:
+      </span>
+      <div class="sort-options">
+        <button
+          class="sort-chip"
+          *ngFor="let opt of sortOptions"
+          [class.active]="sortField === opt.value"
+          (click)="setSort(opt.value)">
+          {{ opt.label }}
+          <ion-icon
+            *ngIf="sortField === opt.value"
+            [name]="sortDir === 'asc' ? 'arrow-up-outline' : 'arrow-down-outline'">
+          </ion-icon>
+        </button>
+      </div>
     </div>
 
     <!-- Estado vacío -->
@@ -94,12 +115,19 @@
     <div class="products-grid" *ngIf="!isLoading && filteredProducts.length > 0">
       <div
         class="product-card"
-        *ngFor="let p of filteredProducts">
+        [class.out-of-stock]="p.stock === 0"
+        *ngFor="let p of filteredProducts; trackBy: trackByProduct">
 
         <!-- Badge popular -->
         <div class="popular-badge" *ngIf="p.isPopular">
           <ion-icon name="star"></ion-icon>
           Popular
+        </div>
+
+        <!-- Badge sin stock -->
+        <div class="stock-out-badge" *ngIf="p.stock === 0">
+          <ion-icon name="close-circle-outline"></ion-icon>
+          Agotado
         </div>
 
         <!-- Imagen -->
@@ -129,16 +157,23 @@
           <div class="card-footer">
             <div class="price-stock">
               <span class="product-price">${{ p.price | number:'1.2-2' }}</span>
-              <span class="product-stock" [class.low]="p.stock <= 5">
-                {{ p.stock }} uds.
+              <span
+                class="product-stock"
+                [class.low]="p.stock > 0 && p.stock <= 5"
+                [class.out]="p.stock === 0">
+                <ion-icon
+                  [name]="p.stock === 0 ? 'close-circle-outline' : p.stock <= 5 ? 'warning-outline' : 'checkmark-circle-outline'"
+                  class="stock-icon">
+                </ion-icon>
+                {{ p.stock === 0 ? 'Agotado' : p.stock + ' uds.' }}
               </span>
             </div>
 
             <div class="card-actions">
-              <button class="action-btn edit" (click)="editProduct(p)" title="Editar">
+              <button class="action-btn edit" (click)="editProduct(p)" title="Editar producto">
                 <ion-icon name="pencil-outline"></ion-icon>
               </button>
-              <button class="action-btn delete" (click)="confirmDelete(p)" title="Eliminar">
+              <button class="action-btn delete" (click)="confirmDelete(p)" title="Eliminar producto">
                 <ion-icon name="trash-outline"></ion-icon>
               </button>
             </div>
@@ -149,4 +184,31 @@
     </div>
 
   </div>
+  <!-- Modal eliminar producto -->
+<div class="delete-overlay" *ngIf="productToDelete" (click)="cancelDelete()">
+  <div class="delete-modal" (click)="$event.stopPropagation()">
+
+    <div class="delete-modal-icon">
+      <ion-icon name="trash-outline"></ion-icon>
+    </div>
+
+    <h3 class="delete-modal-title">Eliminar producto</h3>
+    <p class="delete-modal-msg">
+      ¿Seguro que quieres eliminar
+      <strong>{{ productToDelete?.name }}</strong>?
+      Esta acción no se puede deshacer.
+    </p>
+
+    <div class="delete-modal-actions">
+      <button class="delete-modal-btn cancel" (click)="cancelDelete()">
+        Cancelar
+      </button>
+      <button class="delete-modal-btn confirm" (click)="executeDelete()">
+        <ion-icon name="trash-outline"></ion-icon>
+        Eliminar
+      </button>
+    </div>
+
+  </div>
+</div>
 </ion-content>

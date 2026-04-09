@@ -36,7 +36,7 @@ export class RegistroPage {
 
   async registrarUsuario() {
 
-    // ✅ Validación
+    // Validación
     if (!this.usuario.nombre || !this.usuario.correo || !this.usuario.password) {
       const toast = await this.toastCtrl.create({
         message: 'Todos los campos son obligatorios',
@@ -48,10 +48,26 @@ export class RegistroPage {
 
     console.log('Datos a enviar:', this.usuario);
 
-    this.http.post(this.API_URL, this.usuario).subscribe({
-      next: async (response) => {
-        console.log('Registro exitoso:', response);
+    this.http.post<any>(this.API_URL, this.usuario).subscribe({
+      next: async (res) => {
+        console.log('Registro exitoso:', res);
 
+        // VALIDAR QUE VENGAN TOKENS
+        if (!res || !res.accessToken) {
+          const toast = await this.toastCtrl.create({
+            message: '❌ Error al iniciar sesión automática',
+            duration: 2500,
+            color: 'danger'
+          });
+          return toast.present();
+        }
+
+        // GUARDAR SESIÓN AUTOMÁTICAMENTE
+        localStorage.setItem('token', res.accessToken);
+        localStorage.setItem('refreshToken', res.refreshToken);
+        localStorage.setItem('usuario', JSON.stringify(res.usuario));
+
+        // TOAST
         const toast = await this.toastCtrl.create({
           message: 'Registro exitoso 🎉',
           duration: 2000,
@@ -59,6 +75,7 @@ export class RegistroPage {
         });
         await toast.present();
 
+        // REDIRECCIÓN DIRECTA (YA LOGUEADO)
         this.router.navigate(['/init']);
       },
 
@@ -74,6 +91,7 @@ export class RegistroPage {
       }
     });
   }
+
   volverLogin() {
     this.router.navigate(['/login']);
   }

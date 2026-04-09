@@ -23,36 +23,40 @@ export class LoginPage {
   private toast = inject(ToastController);
 
   onLogin() {
-    // Validación de campos vacíos
+    // ✅ Validación de campos vacíos
     if (!this.correo.trim() || !this.password.trim()) {
-      // Si marca error alerta de warning
       this.mostrarToast('⚠️ Datos incompletos', 'warning');
       return;
     }
 
-    // Llamada al servicio de login
+    // ✅ Llamada al servicio
     this.auth.login(this.correo, this.password).subscribe({
       next: (res) => {
-        // Si la respuesta no tiene token, alerta de danger
-        if (!res || !res.token) {
+
+        //CAMBIO IMPORTANTE: ahora usamos accessToken
+        if (!res || !res.accessToken) {
           this.mostrarToast('❌ Credenciales inválidas', 'danger');
           return;
         }
 
-        // Token guardado correctamente
+        //GUARDAR TOKENS
+        localStorage.setItem('token', res.accessToken);
+        localStorage.setItem('refreshToken', res.refreshToken);
+        localStorage.setItem('usuario', JSON.stringify(res.usuario));
+
         console.log('✅ TOKEN GUARDADO:', localStorage.getItem('token'));
 
-        // Determina el rol del usuario y la ruta de navegación
+        // 🔥 Rol del usuario
         const rol = res.usuario.rol.toLowerCase();
         const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
 
-        // Si hay returnUrl, navega ahí
+        // ✅ Si hay returnUrl
         if (returnUrl) {
           this.router.navigateByUrl(returnUrl);
           return;
         }
 
-        // Si el rol es admin, navega al dashboard; si no, a init
+        // ✅ Redirección por rol
         if (rol === 'admin') {
           this.router.navigate(['/admin-dashboard']);
         } else {
@@ -60,16 +64,13 @@ export class LoginPage {
         }
       },
       error: (err) => {
-        // Si marca error alerta de danger
         console.error('❌ Error en login:', err);
         this.mostrarToast('❌ Error de servidor', 'danger');
       }
     });
   }
 
-  // ✅ AHORA SOLO NAVEGA A RECUPASS (NO MODAL)
   recuperarCuenta() {
-    console.log('➡️ Navegando a recupass...');
     this.router.navigate(['/recupass']);
   }
 

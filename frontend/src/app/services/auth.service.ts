@@ -4,8 +4,15 @@ import { BehaviorSubject, catchError, tap, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 interface LoginResponse {
-  token: string;
-  usuario: { id: number; nombre: string; correo: string; rol: string };
+  mensaje: string;
+  accessToken: string;
+  refreshToken: string;
+  usuario: {
+    id: number;
+    nombre: string;
+    correo: string;
+    rol: string;
+  };
 }
 
 @Injectable({ providedIn: 'root' })
@@ -28,26 +35,27 @@ export class AuthService {
 
   /** ✅ Login */
   login(correo: string, password: string) {
-    return this.http.post<LoginResponse>(
-      `${this.apiUrl}/login`,
-      { correo, password },
-    ).pipe(
-      tap(res => {
-        if (res?.token) {
-          this.saveToken(res.token);
-          this.saveUser(res.usuario);
-          this.roleSubject.next(res.usuario.rol.trim().toLowerCase());
-        }
-      }),
-      catchError(err => {
-        console.error('❌ Error en login:', err);
-        return of(null);
-      })
-    );
-  }
+  return this.http.post<LoginResponse>(
+    `${this.apiUrl}/login`,
+    { correo, password },
+  ).pipe(
+    tap(res => {
+      if (res?.accessToken) {
+        this.saveToken(res.accessToken);
+        this.saveRefreshToken(res.refreshToken);
+        this.saveUser(res.usuario);
+        this.roleSubject.next(res.usuario.rol.trim().toLowerCase());
+      }
+    }),
+    catchError(err => {
+      console.error('❌ Error en login:', err);
+      return of(null);
+    })
+  );
+}
 
   saveToken(token: string) {
-    if (token) localStorage.setItem('token', token);
+  localStorage.setItem('accessToken', token);
   }
 
   saveUser(usuario: any) {
@@ -58,8 +66,10 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+  return localStorage.getItem('accessToken');
+  
   }
+  
 
   getUser(): any | null {
     const user = localStorage.getItem('usuario');
@@ -73,7 +83,7 @@ export class AuthService {
   getUserRole(): string | null {
     return this.getUser()?.rol?.trim().toLowerCase() || null;
   }
-
+  //Roles 
   isAdmin(): boolean {
     return this.getUserRole() === 'admin';
   }
@@ -115,12 +125,16 @@ export class AuthService {
     // Resetear rol
     this.roleSubject.next(null);
   }
+  saveRefreshToken(token: string) {
+  if (token) localStorage.setItem('refreshToken', token);
+}
 
   forgotPassword(email: string) {
   return this.http.post('http://localhost:3000/api/request-reset-password', {
     correo: email
   });
   }
+  
   refreshToken() {
   return this.http.post<any>('http://localhost:3000/refresh', {
     refreshToken: localStorage.getItem('refreshToken')

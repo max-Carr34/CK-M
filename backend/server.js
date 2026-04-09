@@ -9,7 +9,7 @@ const helmet = require('helmet'); // Protege headers HTTP
 const rateLimit = require('express-rate-limit'); // Evita ataques de fuerza bruta
 
 const routes = require('./routes/routes');
-const app = express();
+const app = express();  
 
 /* ===============================
    SEGURIDAD GLOBAL
@@ -30,7 +30,7 @@ const loginLimiter = rateLimit({
    CONFIGURACIÓN CORS
 ================================= */
 app.use(cors({
-  origin: 'http://localhost:8100',
+  origin: 'http://localhost:8100', // Aqui va el link de la ruta pára el front
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));

@@ -23,7 +23,6 @@ router.use('/usuarios', userRoutes);
 const authRoutes = require('./auth.routes');
 router.use(authRoutes);
 
-
 const productRoutes = require('./products.routes');
 router.use('/products', productRoutes);
 
