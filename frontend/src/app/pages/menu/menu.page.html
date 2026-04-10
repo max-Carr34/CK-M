@@ -1,17 +1,20 @@
-<ion-content class="page-container" fullscreen>
-
+<ion-content fullscreen>
   <div class="page-container">
 
-    <!-- HEADER ORIGINAL -->
+    <!-- 🔝 HEADER -->
     <header class="header" [class.scrolled]="scrolled">
       <div class="header-content">
 
-        <button class="menu-button" (click)="toggleMenu()" [class.open]="isMenuOpen">
+        <!-- ☰ Botón menú -->
+        <button class="menu-button"
+                (click)="toggleMenu()"
+                [class.open]="isMenuOpen">
           <span></span>
           <span></span>
           <span></span>
         </button>
 
+        <!-- 🔥 Logo -->
         <div class="logo-section">
           <div class="logo-icon">
             <span class="flame-icon">🔥</span>
@@ -22,34 +25,49 @@
           </div>
         </div>
 
-        <app-sidebar-menu
-          [isMenuOpen]="isMenuOpen"
-          (menuOpenChange)="isMenuOpen = $event">
-        </app-sidebar-menu>
-
+        <!-- 🔍 Acciones -->
         <div class="header-actions">
+
           <input 
-            type="text" 
-            class="search-input" 
+            type="text"
+            class="search-input"
             placeholder="Buscar productos..."
-            [(ngModel)]="searchTerm"
-            (input)="filterProducts()">
+            (input)="onSearchChange($event)" 
+            (keydown.enter)="scrollToMenu()"
+            (click)="scrollToMenu()"
+          >
 
           <button class="icon-btn search-btn" (click)="filterProducts()">
             🔍
           </button>
 
-          <ion-button routerLink="/cart">
-            🛒 {{ cartCount }}
-          </ion-button>
+          <!-- 🛒 Carrito -->
+          <button class="icon-btn cart-btn" (click)="goToCart()">
+            🛒
+            <span class="cart-badge" *ngIf="cartCount > 0">
+              {{ cartCount }}
+            </span>
+          </button>
 
-          <button class="order-btn">Hacer Orden</button>
+          <button class="order-btn">
+            Hacer Orden
+          </button>
+
         </div>
       </div>
     </header>
 
+    <!-- 📱 SIDEBAR (IMPORTANTE) -->
+    <app-sidebar-menu
+      [isMenuOpen]="isMenuOpen"
+      (menuOpenChange)="isMenuOpen = $event">
+    </app-sidebar-menu>
 
-    <!-- SOLO SECCIÓN PRODUCTOS -->
+    <app-product-carousel 
+      [products]="products.slice(0,5)">
+    </app-product-carousel>
+
+    <!-- 🍔 PRODUCTOS -->
     <section class="products-section" id="menu">
 
       <div class="section-header">
@@ -61,6 +79,7 @@
         </p>
       </div>
 
+      <!-- 🧩 Categorías -->
       <div class="categories-container">
         <button *ngFor="let category of categories"
                 [class.active]="activeCategory === category.id"
@@ -70,36 +89,50 @@
         </button>
       </div>
 
+      <!-- 🛍️ Productos -->
       <div class="products-grid">
         <div *ngFor="let product of filteredProducts" class="product-card">
 
+          <!-- 🔥 Badge -->
           <div class="product-badge" *ngIf="product.isPopular">
             🔥 Popular
           </div>
 
+          <!-- 🖼️ Imagen -->
           <div class="product-image">
-            <img *ngIf="product.image"
+            <img *ngIf="product.image; else noImage"
                  [src]="product.image"
                  class="product-img"/>
+            
+            <ng-template #noImage>
+              <span class="product-emoji">📦</span>
+            </ng-template>
           </div>
 
+          <!-- 📄 Info -->
           <div class="product-info">
 
-            <h3 class="product-name">{{ product.name }}</h3>
+            <h3 class="product-name">
+              {{ product.name }}
+            </h3>
 
             <p class="product-description">
               {{ product.description }}
             </p>
 
             <div class="product-footer">
+
+              <!-- 💰 Precio -->
               <span class="product-price">
-                ${{ product.price }}
+                {{ product.price | currency:'MXN':'symbol':'1.2-2' }}
               </span>
 
+              <!-- ➕ Agregar -->
               <button class="add-to-cart-btn"
                       (click)="addToCart(product)">
                 Agregar +
               </button>
+
             </div>
 
           </div>
@@ -107,6 +140,9 @@
       </div>
 
     </section>
+
+    <!-- 🔻 Footer -->
     <app-footer></app-footer>
+
   </div>
 </ion-content>

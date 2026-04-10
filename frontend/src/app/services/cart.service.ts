@@ -20,44 +20,50 @@ export class CartService {
   cart$ = this.cartSubject.asObservable();
 
   constructor() {
-  const data = localStorage.getItem('cart');
-  this.cart = data ? JSON.parse(data) : [];
-  this.cartSubject.next(this.cart);
-}
-private updateCart() {
-  localStorage.setItem('cart', JSON.stringify(this.cart));
-  this.cartSubject.next([...this.cart]);
-}
+    const data = localStorage.getItem('cart');
+    this.cart = data ? JSON.parse(data) : [];
+
+    // 🔥 emitir copia SIEMPRE
+    this.cartSubject.next([...this.cart]);
+  }
+
+  // 🔥 método central (NO LO ROMPAS)
+  private updateCart() {
+    this.cart = [...this.cart]; // 👈 fuerza nueva referencia
+    localStorage.setItem('cart', JSON.stringify(this.cart));
+    this.cartSubject.next([...this.cart]); // 👈 clave para Angular
+  }
 
   getCart() {
-    return this.cart;
+    return [...this.cart];
   }
+
   updateQuantity(id: number, quantity: number) {
-  const item = this.cart.find(p => p.id === id);
+    const item = this.cart.find(p => p.id === id);
 
-  if (item) {
-    item.quantity = quantity;
+    if (!item) return;
 
-    if (item.quantity <= 0) {
+    if (quantity <= 0) {
       this.removeFromCart(id);
       return;
     }
-  }
 
-  this.updateCart();
-}
+    item.quantity = quantity;
+
+    this.updateCart();
+  }
 
   addToCart(product: any) {
     const existing = this.cart.find(item => item.id === product.id);
 
     if (existing) {
-      existing.quantity++;
+      existing.quantity += 1;
     } else {
       this.cart.push({
         id: product.id,
         name: product.name,
         price: product.price,
-        image: product.image,
+        image: product.image || null,
         quantity: 1
       });
     }
@@ -72,7 +78,10 @@ private updateCart() {
 
   clearCart() {
     this.cart = [];
-    this.updateCart();
+
+    // 🔥 MUY IMPORTANTE: limpiar bien todo
+    localStorage.setItem('cart', JSON.stringify(this.cart));
+    this.cartSubject.next([]);
   }
 
   getTotalItems() {

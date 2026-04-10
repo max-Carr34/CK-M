@@ -1,0 +1,28 @@
+<div class="carousel-container" *ngIf="products.length > 0">
+
+  <div class="carousel">
+
+    <div 
+      class="slide"
+      *ngFor="let product of products; let i = index"
+      [class.active]="i === currentIndex"
+    >
+      <img 
+        *ngIf="product.image"
+        [src]="product.image"
+        class="carousel-img"
+      />
+
+      <div class="carousel-info">
+        <h2>{{ product.name }}</h2>
+        <p>${{ product.price }}</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Controles -->
+  <button class="prev-btn" (click)="prev()">‹</button>
+  <button class="next-btn" (click)="next()">›</button>
+
+</div>

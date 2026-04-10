@@ -57,6 +57,10 @@
   (menuOpenChange)="isMenuOpen = $event">
 </app-sidebar-menu> 
 
+<app-product-carousel 
+  [products]="products.filter(p => p.isPopular)">
+</app-product-carousel>
+
     <!-- Hero -->
     <section class="hero-section" id="inicio">
       <div class="hero-content">

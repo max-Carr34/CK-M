@@ -1,7 +1,6 @@
-import { firstValueFrom } from 'rxjs'; // Promesa
-import { Subject } from 'rxjs';
-import { debounceTime } from 'rxjs/operators'; // debounce para el buscador
-import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
+import { firstValueFrom, Subject, Subscription } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
+import { Component, OnInit, OnDestroy, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { ProductService } from 'src/app/services/product.service';
@@ -11,6 +10,7 @@ import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CartService } from 'src/app/services/cart.service';
+import { ProductCarouselComponent } from 'src/app/components/product-carousel/product-carousel.component';
 
 export interface Category {
   id: number;
@@ -36,12 +36,13 @@ export interface Product {
     CommonModule,
     FormsModule,
     FooterComponent,
-    SidebarMenuComponent
+    SidebarMenuComponent,
+    ProductCarouselComponent
   ],
   templateUrl: './init.page.html',
   styleUrls: ['./init.page.scss']
 })
-export class InitPage implements OnInit {
+export class InitPage implements OnInit, OnDestroy {
 
   categories: Category[] = [];
   products: Product[] = [];
@@ -50,11 +51,14 @@ export class InitPage implements OnInit {
   activeCategory = 0;
   searchTerm = '';
   cartCount = 0;
+
   isMenuOpen = false;
   scrolled = false;
-  searchSubject = new Subject<string>(); //debounce
-  loading = true; // Loader
+  loading = true;
   error = false;
+
+  searchSubject = new Subject<string>();
+  private cartSub!: Subscription;
 
   @ViewChild('searchInput') searchInput!: ElementRef;
   @ViewChild('sidebarMenuRef') sidebarMenu!: SidebarMenuComponent;
@@ -69,51 +73,57 @@ export class InitPage implements OnInit {
   ngOnInit() {
     this.loadData();
 
-    this.searchSubject //configuracion de Debounce
-    .pipe(debounceTime(400))
-    .subscribe(value => {
-      this.searchTerm = value;
-      this.filterProducts();
+    // 🔍 debounce buscador
+    this.searchSubject
+      .pipe(debounceTime(400))
+      .subscribe(value => {
+        this.searchTerm = value;
+        this.filterProducts();
+      });
+
+    // 🔥 AQUÍ ESTÁ LA CLAVE (reactivo)
+    this.cartSub = this.cartService.cart$.subscribe(items => {
+      this.cartCount = items.reduce((total, item) => total + item.quantity, 0);
     });
-    this.cartCount = this.cartService.getTotalItems(); // Config Carrito
+  }
+
+  ngOnDestroy() {
+    this.cartSub?.unsubscribe();
   }
 
   async loadData() {
+    this.loading = true;
+    this.error = false;
 
-  this.loading = true;
-  this.error = false;
+    try {
+      const [categories, products] = await Promise.all([
+        firstValueFrom(this.productService.getCategories()),
+        firstValueFrom(this.productService.getProducts())
+      ]);
 
-  try {
+      this.categories = [{ id: 0, name: 'Todos' }, ...categories];
+      this.products = products;
+      this.filteredProducts = products;
 
-    const [categories, products] = await Promise.all([
-      firstValueFrom(this.productService.getCategories()),
-      firstValueFrom(this.productService.getProducts())
-    ]);
-
-    this.categories = [{ id: 0, name: 'Todos' }, ...categories];
-
-    this.products = products;
-    this.filteredProducts = products;
-
-  } catch (error) {
-    console.error('Error cargando datos', error); //Loader
-    this.error = true;
-  } finally {
-    this.loading = false;
+    } catch (error) {
+      console.error('Error cargando datos', error);
+      this.error = true;
+    } finally {
+      this.loading = false;
+    }
   }
-}
 
-   onSearchChange(event: any) {
-  this.searchSubject.next(event.target.value);
+  onSearchChange(event: any) {
+    this.searchSubject.next(event.target.value);
   }
 
   setActiveCategory(categoryId: number) {
     this.activeCategory = categoryId;
     this.filterProducts();
   }
-  
+
   goToCart() {
-  this.router.navigate(['/cart']);
+    this.router.navigate(['/cart']);
   }
 
   filterProducts() {
@@ -132,13 +142,12 @@ export class InitPage implements OnInit {
     this.filteredProducts = filtered;
   }
 
-
+  // 🛒 AGREGAR AL CARRITO (simple y correcto)
   addToCart(product: Product) {
-  this.cartService.addToCart(product);
-  this.cartCount = this.cartService.getTotalItems();
+    this.cartService.addToCart(product);
   }
 
-  scrollToMenu() {
+ scrollToMenu() {
     document.getElementById('menu')?.scrollIntoView({ behavior: 'smooth' });
   }
 

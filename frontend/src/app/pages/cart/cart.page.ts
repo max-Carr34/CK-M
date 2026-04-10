@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CartItem, CartService } from '../../services/cart.service';
-import { AlertController, ToastController, AnimationController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 
@@ -24,13 +24,14 @@ export class CartPage implements OnInit, OnDestroy {
   constructor(
     private cartService: CartService,
     private alertController: AlertController,
-    private toastController: ToastController,
-    private animationCtrl: AnimationController
+    private toastController: ToastController
   ) {}
 
   ngOnInit() {
     this.cartSub = this.cartService.cart$.subscribe((items: CartItem[]) => {
-      this.cartItems = items;
+      // 🔥 IMPORTANTE: nueva referencia SIEMPRE
+      this.cartItems = [...items];
+
       this.totalItems = this.cartService.getTotalItems();
       this.totalPrice = this.cartService.getTotalPrice();
     });
@@ -108,42 +109,54 @@ export class CartPage implements OnInit, OnDestroy {
     await alert.present();
   }
 
-  // 💳 Checkout (simulación por ahora)
+  // 💳 Checkout
   async checkout() {
-    if (this.isEmpty) return;
+    if (this.isEmpty || this.isCheckingOut) return;
 
     this.isCheckingOut = true;
 
-    // Simulación de proceso
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      // Simulación
+      await new Promise(resolve => setTimeout(resolve, 1500));
 
-    this.isCheckingOut = false;
+      // 🔥 Limpiar carrito correctamente
+      this.cartService.clearCart();
 
-    this.cartService.clearCart();
+      // 🔥 Forzar reset visual inmediato
+      this.cartItems = [];
+      this.totalItems = 0;
+      this.totalPrice = 0;
 
-    const toast = await this.toastController.create({
-      message: '¡Pedido realizado con éxito! 🎉',
-      duration: 3000,
-      position: 'top',
-      color: 'success',
-      icon: 'checkmark-circle-outline',
-      cssClass: 'success-toast'
-    });
+      const toast = await this.toastController.create({
+        message: '¡Pedido realizado con éxito! 🎉',
+        duration: 3000,
+        position: 'top',
+        color: 'success',
+        icon: 'checkmark-circle-outline',
+        cssClass: 'success-toast'
+      });
 
-    await toast.present();
+      await toast.present();
+
+    } catch (error) {
+      console.error('Error en checkout:', error);
+    } finally {
+      // 🔥 SIEMPRE liberar UI
+      this.isCheckingOut = false;
+    }
   }
 
-  // 🔁 trackBy para rendimiento
+  // 🔁 trackBy
   trackById(_: number, item: CartItem): number {
     return item.id;
   }
 
-  // 💰 Subtotal por producto
+  // 💰 Subtotal
   getItemSubtotal(item: CartItem): number {
     return item.price * item.quantity;
   }
 
-  // 🔔 Toast reutilizable
+  // 🔔 Toast
   private async showToast(message: string, icon: string) {
     const toast = await this.toastController.create({
       message,
