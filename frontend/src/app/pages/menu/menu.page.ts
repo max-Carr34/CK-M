@@ -104,7 +104,6 @@ export class MenuPage implements OnInit {
   }
 
   addToCart(product: Product) {
-    this.cartCount++;
     console.log('Producto agregado:', product.name);
   }
 

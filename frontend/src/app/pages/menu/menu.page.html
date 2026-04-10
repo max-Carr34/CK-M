@@ -39,12 +39,9 @@
             🔍
           </button>
 
-          <button class="icon-btn cart-btn">
-            🛒
-            <span class="cart-badge" *ngIf="cartCount > 0">
-              {{ cartCount }}
-            </span>
-          </button>
+          <ion-button routerLink="/cart">
+            🛒 {{ cartCount }}
+          </ion-button>
 
           <button class="order-btn">Hacer Orden</button>
         </div>

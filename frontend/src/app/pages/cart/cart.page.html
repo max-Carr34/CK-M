@@ -1,13 +1,156 @@
-<ion-header [translucent]="true">
+<ion-header class="cart-header" translucent="true">
   <ion-toolbar>
-    <ion-title>cart</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text=""></ion-back-button>
+    </ion-buttons>
+
+    <ion-title>
+      <span class="header-title">Mi Carrito</span>
+      <ion-badge *ngIf="!isEmpty" class="header-badge" color="primary">
+        {{ totalItems }}
+      </ion-badge>
+    </ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button
+        *ngIf="!isEmpty"
+        (click)="clearCart()"
+        fill="clear"
+        class="clear-btn"
+      >
+        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">cart</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="cart-content" [fullscreen]="true">
+
+  <!-- Estado vacío -->
+  <div *ngIf="isEmpty" class="empty-state">
+    <div class="empty-icon-wrap">
+      <ion-icon name="cart-outline" class="empty-icon"></ion-icon>
+      <div class="empty-pulse"></div>
+    </div>
+    <h2 class="empty-title">Tu carrito está vacío</h2>
+    <p class="empty-subtitle">Agrega productos para empezar tu compra</p>
+    <ion-button routerLink="/home" expand="block" class="go-shopping-btn" fill="solid" shape="round">
+      <ion-icon slot="start" name="storefront-outline"></ion-icon>
+      Explorar productos
+    </ion-button>
+  </div>
+
+  <!-- Lista de productos -->
+  <div *ngIf="!isEmpty" class="cart-container">
+
+    <div class="section-label">
+      <ion-icon name="bag-handle-outline"></ion-icon>
+      <span>{{ cartItems.length }} {{ cartItems.length === 1 ? 'producto' : 'productos' }}</span>
+    </div>
+
+    <ion-list class="cart-list" lines="none">
+      <div
+        *ngFor="let item of cartItems; trackBy: trackById"
+        class="cart-card"
+      >
+        <!-- Imagen del producto -->
+        <div class="card-image-wrap">
+          <img
+            *ngIf="item.image"
+            [src]="item.image"
+            [alt]="item.name"
+            class="card-image"
+            loading="lazy"
+          />
+          <div *ngIf="!item.image" class="card-image-placeholder">
+            <ion-icon name="image-outline"></ion-icon>
+          </div>
+        </div>
+
+        <!-- Info del producto -->
+        <div class="card-info">
+          <p class="card-name">{{ item.name }}</p>
+          <p class="card-unit-price">{{ item.price | currency:'MXN':'symbol':'1.2-2' }} c/u</p>
+
+          <!-- Controles de cantidad -->
+          <div class="qty-controls">
+            <button class="qty-btn minus" (click)="decreaseQuantity(item)">
+              <ion-icon [name]="item.quantity === 1 ? 'trash-outline' : 'remove-outline'"></ion-icon>
+            </button>
+            <span class="qty-value">{{ item.quantity }}</span>
+            <button class="qty-btn plus" (click)="increaseQuantity(item)">
+              <ion-icon name="add-outline"></ion-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Subtotal -->
+        <div class="card-subtotal">
+          <span class="subtotal-label">Subtotal</span>
+          <span class="subtotal-value">{{ getItemSubtotal(item) | currency:'MXN':'symbol':'1.2-2' }}</span>
+          <button class="remove-btn" (click)="removeItem(item.id)">
+            <ion-icon name="close-circle-outline"></ion-icon>
+          </button>
+        </div>
+      </div>
+    </ion-list>
+
+    <!-- Resumen de pedido -->
+    <div class="order-summary">
+      <h3 class="summary-title">
+        <ion-icon name="receipt-outline"></ion-icon>
+        Resumen del pedido
+      </h3>
+
+      <div class="summary-row">
+        <span>Subtotal ({{ totalItems }} artículos)</span>
+        <span>{{ totalPrice | currency:'MXN':'symbol':'1.2-2' }}</span>
+      </div>
+
+      <div class="summary-row">
+        <span>Envío</span>
+        <span class="free-shipping">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          Gratis
+        </span>
+      </div>
+
+      <div class="summary-divider"></div>
+
+      <div class="summary-row total-row">
+        <span>Total</span>
+        <span class="total-price">{{ totalPrice | currency:'MXN':'symbol':'1.2-2' }}</span>
+      </div>
+    </div>
+
+  </div>
+
 </ion-content>
+
+<!-- Footer con botón de pago -->
+<ion-footer *ngIf="!isEmpty" class="cart-footer">
+  <ion-toolbar>
+    <div class="footer-content">
+      <div class="footer-total">
+        <span class="footer-total-label">Total</span>
+        <span class="footer-total-price">{{ totalPrice | currency:'MXN':'symbol':'1.2-2' }}</span>
+      </div>
+      <ion-button
+        expand="block"
+        class="checkout-btn"
+        [disabled]="isCheckingOut"
+        (click)="checkout()"
+        shape="round"
+      >
+        <ng-container *ngIf="!isCheckingOut">
+          <ion-icon slot="start" name="card-outline"></ion-icon>
+          Proceder al pago
+        </ng-container>
+        <ng-container *ngIf="isCheckingOut">
+          <ion-spinner name="crescent" class="checkout-spinner"></ion-spinner>
+          Procesando...
+        </ng-container>
+      </ion-button>
+    </div>
+  </ion-toolbar>
+</ion-footer>
