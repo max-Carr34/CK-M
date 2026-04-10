@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, catchError, tap, of } from 'rxjs';
+import { BehaviorSubject, catchError, tap, of , throwError} from 'rxjs';
 import { environment } from '../../environments/environment';
 
 interface LoginResponse {
@@ -21,11 +21,11 @@ export class AuthService {
   private apiUrl = environment.apiUrl;
   private http = inject(HttpClient);
 
-  /** ✅ Rol reactivo */
+  /** 🔥 Estado reactivo del rol */
   private roleSubject = new BehaviorSubject<string | null>(this.getUserRole());
   role$ = this.roleSubject.asObservable();
 
-  /** ✅ Headers */
+  /** 🔐 Headers con token */
   private getHeaders(): HttpHeaders {
     const token = this.getToken();
     const headers: any = { 'Content-Type': 'application/json' };
@@ -33,57 +33,66 @@ export class AuthService {
     return new HttpHeaders(headers);
   }
 
-  /** ✅ Login */
+  /** 🔑 LOGIN */
   login(correo: string, password: string) {
-  return this.http.post<LoginResponse>(
-    `${this.apiUrl}/login`,
-    { correo, password },
-  ).pipe(
-    tap(res => {
-      if (res?.accessToken) {
-        this.saveToken(res.accessToken);
-        this.saveRefreshToken(res.refreshToken);
-        this.saveUser(res.usuario);
-        this.roleSubject.next(res.usuario.rol.trim().toLowerCase());
-      }
-    }),
-    catchError(err => {
-      console.error('❌ Error en login:', err);
-      return of(null);
-    })
-  );
-}
-
-  saveToken(token: string) {
-  localStorage.setItem('accessToken', token);
+    return this.http.post<LoginResponse>(
+      `${this.apiUrl}/login`,
+      { correo, password }
+    ).pipe(
+      tap(res => {
+        if (res?.accessToken) {
+          this.saveSession(res);
+        }
+      }),
+      catchError(err => {
+        console.error('❌ Error en login:', err);
+        return of(null);
+      })
+    );
   }
 
-  saveUser(usuario: any) {
-    if (usuario && usuario.rol) {
-      usuario.rol = usuario.rol.trim().toLowerCase();
-      localStorage.setItem('usuario', JSON.stringify(usuario));
-    }
+  /** 💾 Guardar sesión completa */
+  private saveSession(res: LoginResponse) {
+    const session = {
+      accessToken: res.accessToken,
+      refreshToken: res.refreshToken,
+      usuario: {
+        ...res.usuario,
+        rol: res.usuario.rol.trim().toLowerCase()
+      },
+      // ⏱️ Expira en 1 hora
+      expira: Date.now() + (60 * 60 * 1000)
+    };
+
+    localStorage.setItem('session', JSON.stringify(session));
+    this.roleSubject.next(session.usuario.rol);
   }
 
+  /** 🔍 Obtener sesión */
+  private getSession(): any | null {
+    const data = localStorage.getItem('session');
+    return data ? JSON.parse(data) : null;
+  }
+
+  /** 🔐 TOKEN */
   getToken(): string | null {
-  return localStorage.getItem('accessToken');
-  
+    return this.getSession()?.accessToken || null;
   }
-  
 
+  /** 👤 USUARIO */
   getUser(): any | null {
-    const user = localStorage.getItem('usuario');
-    return user ? JSON.parse(user) : null;
+    return this.getSession()?.usuario || null;
   }
 
   getUserId(): number | null {
     return this.getUser()?.id || null;
   }
 
+  /** 🎭 ROLES */
   getUserRole(): string | null {
-    return this.getUser()?.rol?.trim().toLowerCase() || null;
+    return this.getUser()?.rol || null;
   }
-  //Roles 
+
   isAdmin(): boolean {
     return this.getUserRole() === 'admin';
   }
@@ -92,60 +101,108 @@ export class AuthService {
     return this.getUserRole() === 'user';
   }
 
-   // Verifica si hay token Y usuario
-  isAuthenticated(): boolean {
-  return !!this.getToken() && !!this.getUser();
-  }
-  isLoggedIn(): boolean {
-  return this.isAuthenticated();
- }
-
   hasRole(roles: string[]): boolean {
     const userRole = this.getUserRole() || '';
-    return roles.some(role => role.trim().toLowerCase() === userRole);
+    return roles.some(r => r.trim().toLowerCase() === userRole);
   }
 
-  // LOGOUT
-  logout() {
-    const refreshToken = localStorage.getItem('refreshToken');
+  /** ✅ AUTH */
+  isAuthenticated(): boolean {
+    const session = this.getSession();
 
-    // Llamada al backend para invalidar sesión
-    if (refreshToken) {
-      this.http.post('http://localhost:3000/logout', { refreshToken })
-        .subscribe({
-          next: () => console.log('✅ Logout backend OK'),
-          error: (err) => console.error('❌ Error logout backend:', err)
-        });
+    if (!session) return false;
+
+    // ⏱️ Validar expiración
+    if (Date.now() > session.expira) {
+      this.logout();
+      return false;
     }
-    // LIMPIA TODO
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('usuario');
 
-    // Resetear rol
-    this.roleSubject.next(null);
+    return true;
   }
-  saveRefreshToken(token: string) {
-  if (token) localStorage.setItem('refreshToken', token);
+
+  isLoggedIn(): boolean {
+    return this.isAuthenticated();
+  }
+
+  /** 🔄 Verificar sesión con backend */
+  checkSession() {
+    return this.http.get(`${this.apiUrl}/verify-token`, {
+      headers: this.getHeaders()
+    }).pipe(
+      catchError(err => {
+        console.warn('⚠️ Sesión inválida');
+        this.logout();
+        return of(null);
+      })
+    );
+  }
+
+  /** 🔁 REFRESH TOKEN */
+  refreshToken() {
+  const refreshToken = this.getSession()?.refreshToken;
+
+  if (!refreshToken) {
+    this.logout();
+    return throwError(() => new Error('No refresh token'));
+  }
+
+  return this.http.post<any>(
+    `${this.apiUrl}/refresh`,
+    { refreshToken }
+  ).pipe(
+    tap(res => {
+      if (res?.accessToken) {
+        this.updateAccessToken(res.accessToken);
+      }
+    }),
+    catchError(err => {
+      console.error('❌ Error refresh token');
+      this.logout();
+      return throwError(() => err); // 🔥 YA NO devuelve null
+    })
+  );
 }
 
-  forgotPassword(email: string) {
-  return this.http.post('http://localhost:3000/api/request-reset-password', {
-    correo: email
-  });
+  /** 🚪 LOGOUT */
+  logout() {
+    const refreshToken = this.getSession()?.refreshToken;
+
+    if (refreshToken) {
+      this.http.post(`${this.apiUrl}/logout`, { refreshToken })
+        .subscribe({
+          next: () => console.log('✅ Logout backend'),
+          error: () => console.warn('⚠️ Error backend logout')
+        });
+    }
+
+    // 🧹 LIMPIEZA TOTAL
+    localStorage.removeItem('session');
+
+    this.roleSubject.next(null);
   }
-  
-  refreshToken() {
-  return this.http.post<any>('http://localhost:3000/refresh', {
-    refreshToken: localStorage.getItem('refreshToken')
-  });
+
+  /** 🔁 RESET PASSWORD */
+  forgotPassword(email: string) {
+    return this.http.post(`${this.apiUrl}/request-reset-password`, {
+      correo: email
+    });
   }
 
   resetPassword(token: string, newPassword: string) {
-    return this.http.post<{ message: string }>(
+    return this.http.post(
       `${this.apiUrl}/reset-password`,
       { token, newPassword },
       { headers: this.getHeaders() }
     );
   }
+  updateAccessToken(newToken: string) {
+  const session = this.getSession();
+  if (!session) return;
+
+  session.accessToken = newToken;
+  session.expira = Date.now() + (60 * 60 * 1000);
+
+  localStorage.setItem('session', JSON.stringify(session));
+}
 }

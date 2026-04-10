@@ -5,7 +5,15 @@ import {
   HttpEvent,
   HttpErrorResponse
 } from '@angular/common/http';
-import { Observable, throwError, BehaviorSubject, switchMap, catchError, filter, take } from 'rxjs';
+import {
+  Observable,
+  throwError,
+  BehaviorSubject,
+  switchMap,
+  catchError,
+  filter,
+  take
+} from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
 let isRefreshing = false;
@@ -20,6 +28,14 @@ export const authInterceptor = (
   const token = auth.getToken();
 
   let authReq = req;
+
+  // 🚫 Evitar interceptar login y refresh
+  if (
+    req.url.includes('/login') ||
+    req.url.includes('/refresh')
+  ) {
+    return next(req);
+  }
 
   // 🔐 Agregar token
   if (token) {
@@ -36,51 +52,56 @@ export const authInterceptor = (
 
       if (error.status === 401 || error.status === 403) {
 
-        if (!isRefreshing) {
-
-          isRefreshing = true;
-          refreshTokenSubject.next(null);
-
-          return auth.refreshToken().pipe(
-
-            switchMap((res: any) => {
-
-              isRefreshing = false;
-
-              const newToken = res.accessToken;
-              auth.saveToken(newToken);
-
-              refreshTokenSubject.next(newToken);
-
-              return next(
+        // 🔁 Si ya se está refrescando
+        if (isRefreshing) {
+          return refreshTokenSubject.pipe(
+            filter(token => token !== null),
+            take(1),
+            switchMap(token =>
+              next(
                 req.clone({
                   setHeaders: {
-                    Authorization: `Bearer ${newToken}`
+                    Authorization: `Bearer ${token}`
                   }
                 })
-              );
-            }),
-
-            catchError(err => {
-              isRefreshing = false;
-              auth.logout();
-              return throwError(() => err);
-            })
+              )
+            )
           );
         }
 
-        return refreshTokenSubject.pipe(
-          filter(token => token !== null),
-          take(1),
-          switchMap(token =>
-            next(
+        // 🔄 Iniciar refresh
+        isRefreshing = true;
+        refreshTokenSubject.next(null);
+
+        return auth.refreshToken().pipe(
+
+          switchMap((res: any) => {
+
+            if (!res?.accessToken) {
+              throw new Error('No token recibido');
+            }
+
+            isRefreshing = false;
+
+            const newToken = res.accessToken;
+
+            auth.updateAccessToken(newToken);
+            refreshTokenSubject.next(newToken);
+
+            return next(
               req.clone({
                 setHeaders: {
-                  Authorization: `Bearer ${token}`
+                  Authorization: `Bearer ${newToken}`
                 }
               })
-            )
-          )
+            );
+          }),
+
+          catchError(err => {
+            isRefreshing = false;
+            auth.logout();
+            return throwError(() => err);
+          })
         );
       }
 
