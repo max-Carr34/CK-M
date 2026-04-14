@@ -1,7 +1,6 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
-
 
 export interface Product {
   id: number;
@@ -21,32 +20,42 @@ export interface Product {
 export class ProductCarouselComponent implements OnInit, OnDestroy {
 
   @Input() products: Product[] = [];
+  @Output() addToCart = new EventEmitter<Product>();
 
   currentIndex = 0;
-  intervalId: any;
+  private intervalId: any;
 
   ngOnInit() {
     this.startAutoSlide();
   }
 
   ngOnDestroy() {
-    clearInterval(this.intervalId);
+    this.stopAutoSlide();
   }
 
   startAutoSlide() {
-    this.intervalId = setInterval(() => {
-      this.next();
-    }, 3000);
+    this.intervalId = setInterval(() => this.next(), 3500);
+  }
+
+  stopAutoSlide() {
+    clearInterval(this.intervalId);
   }
 
   next() {
-    if (this.products.length === 0) return;
+    if (!this.products.length) return;
     this.currentIndex = (this.currentIndex + 1) % this.products.length;
   }
 
   prev() {
-    if (this.products.length === 0) return;
-    this.currentIndex =
-      (this.currentIndex - 1 + this.products.length) % this.products.length;
+    if (!this.products.length) return;
+    this.currentIndex = (this.currentIndex - 1 + this.products.length) % this.products.length;
+  }
+
+  goTo(index: number) {
+    this.currentIndex = index;
+  }
+
+  onAddToCart(product: Product) {
+    this.addToCart.emit(product);
   }
 }

@@ -1,28 +1,42 @@
-<div class="carousel-container" *ngIf="products.length > 0">
+<div class="carousel-wrapper" *ngIf="products.length > 0">
 
-  <div class="carousel">
-
-    <div 
-      class="slide"
+  <div class="carousel-track">
+    <div
+      class="carousel-slide"
       *ngFor="let product of products; let i = index"
       [class.active]="i === currentIndex"
     >
-      <img 
+      <img
         *ngIf="product.image"
         [src]="product.image"
-        class="carousel-img"
+        [alt]="product.name"
+        class="carousel-image"
       />
+      <div class="carousel-overlay"></div>
 
-      <div class="carousel-info">
-        <h2>{{ product.name }}</h2>
-        <p>${{ product.price }}</p>
+      <div class="carousel-footer">
+        <div class="carousel-info">
+          <span class="popular-badge">⭐ Popular</span>
+          <h2 class="product-name">{{ product.name }}</h2>
+          <p class="product-price">${{ product.price | number:'1.2-2' }}</p>
+        </div>
+        <button class="add-btn" (click)="onAddToCart(product)">+</button>
       </div>
     </div>
-
   </div>
 
-  <!-- Controles -->
-  <button class="prev-btn" (click)="prev()">‹</button>
-  <button class="next-btn" (click)="next()">›</button>
+  <!-- Botones -->
+  <button class="nav-btn prev" (click)="prev()">&#8249;</button>
+  <button class="nav-btn next" (click)="next()">&#8250;</button>
+
+  <!-- Dots indicadores -->
+  <div class="dots">
+    <span
+      class="dot"
+      *ngFor="let p of products; let i = index"
+      [class.active]="i === currentIndex"
+      (click)="goTo(i)"
+    ></span>
+  </div>
 
 </div>

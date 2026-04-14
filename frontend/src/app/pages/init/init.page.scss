@@ -458,61 +458,6 @@ body {
   }
 }
 
-.hero-image {
-  position: relative;
-  @include flex-center;
-  order: 1;
-  width: 100%;
-  max-width: 280px;
-}
-
-.floating-burger {
-  font-size: 10rem;
-  animation: float 4s ease-in-out infinite;
-  filter: drop-shadow(0 10px 30px $shadow-medium);
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-15px);
-  }
-}
-
-.decoration-circle {
-  position: absolute;
-  border-radius: 50%;
-  opacity: 0.05;
-  background: $primary-orange;
-
-  &.circle-1 {
-    width: 200px;
-    height: 200px;
-    top: -50px;
-    right: -50px;
-  }
-
-  &.circle-2 {
-    width: 120px;
-    height: 120px;
-    bottom: -30px;
-    left: -30px;
-  }
-
-  &.circle-3 {
-    width: 80px;
-    height: 80px;
-    top: 30%;
-    left: 5%;
-  }
-}
-
-.wave-decoration {
-  display: none; // Ocultar en móvil para mejor rendimiento
-}
-
 // ============================================
 // FEATURES SECTION - OPTIMIZADO PARA MÓVIL
 // ============================================

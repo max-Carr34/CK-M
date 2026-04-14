@@ -1,67 +1,52 @@
-
 <ion-content fullscreen>
   <div class="page-container">
     <header class="header" [class.scrolled]="scrolled">
-  <div class="header-content">
+      <div class="header-content">
 
-    <button class="menu-button"
-            (click)="toggleMenu()"
-            [class.open]="isMenuOpen">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
+        <button class="menu-button" (click)="toggleMenu()" [class.open]="isMenuOpen">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
 
-    <div class="logo-section">
-      <div class="logo-icon">
-        <span class="flame-icon">🔥</span>
+        <div class="logo-section">
+          <div class="logo-icon">
+            <span class="flame-icon">🔥</span>
+          </div>
+          <div class="logo-text">
+            <h1 class="logo-title">Prepa Marista</h1>
+            <p class="logo-subtitle">Sabor que conquista</p>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <input #searchInput type="text" class="search-input" placeholder="Buscar productos..."
+            (input)="onSearchChange($event)" (keydown.enter)="scrollToMenu()" (click)="scrollToMenu()">
+
+          <button class="icon-btn search-btn" (click)="filterProducts()">
+            🔍
+          </button>
+
+          <button class="icon-btn cart-btn" (click)="goToCart()">
+            🛒
+            <span class="cart-badge" *ngIf="cartCount > 0">
+              {{ cartCount }}
+            </span>
+          </button>
+
+          <button class="order-btn">Hacer Orden</button>
+        </div>
       </div>
-      <div class="logo-text">
-        <h1 class="logo-title">Prepa Marista</h1>
-        <p class="logo-subtitle">Sabor que conquista</p>
-      </div>
+    </header>
+
+    <app-sidebar-menu [isMenuOpen]="isMenuOpen" (menuOpenChange)="isMenuOpen = $event">
+    </app-sidebar-menu>
+
+    <div class="main-carousel-container">
+      <app-product-carousel [products]="popularProducts">
+      </app-product-carousel>
     </div>
 
-    <div class="header-actions">
-
-  <input 
-    #searchInput
-    type="text"
-    class="search-input"
-    placeholder="Buscar productos..."
-    (input)="onSearchChange($event)" 
-    (keydown.enter)="scrollToMenu()"
-    (click)="scrollToMenu()">
-
-  <button class="icon-btn search-btn" (click)="filterProducts()">
-    🔍
-  </button>
-
-  <button class="icon-btn cart-btn" (click)="goToCart()">
-    🛒
-    <span class="cart-badge" *ngIf="cartCount > 0">
-      {{ cartCount }}
-    </span>
-  </button>
-
-  <button class="order-btn">Hacer Orden</button>
-
-</div>
-
-  </div>
-</header>
-
-<!-- 👇 Sidebar fuera del header -->
-<app-sidebar-menu
-  [isMenuOpen]="isMenuOpen"
-  (menuOpenChange)="isMenuOpen = $event">
-</app-sidebar-menu> 
-
-<app-product-carousel 
-  [products]="products.filter(p => p.isPopular)">
-</app-product-carousel>
-
-    <!-- Hero -->
     <section class="hero-section" id="inicio">
       <div class="hero-content">
         <div class="hero-text">
@@ -79,14 +64,7 @@
             <button class="btn-secondary">Promociones</button>
           </div>
         </div>
-
-        <div class="hero-image">
-          <div class="floating-burger">🍔</div>
-          <div class="decoration-circle circle-1"></div>
-          <div class="decoration-circle circle-2"></div>
-          <div class="decoration-circle circle-3"></div>
         </div>
-      </div>
 
       <div class="wave-decoration">
         <svg viewBox="0 0 1440 120" class="wave-svg">
@@ -97,7 +75,6 @@
       </div>
     </section>
 
-    <!-- Features -->
     <section class="features-section">
       <div class="features-container">
         <div class="feature-card">
@@ -120,10 +97,10 @@
       </div>
     </section>
 
-    <!-- Products -->
-     <div *ngIf="loading" class="loader">
-        Cargando productos...
-      </div>
+    <div *ngIf="loading" class="loader">
+      Cargando productos...
+    </div>
+
     <section class="products-section" id="menu">
       <div class="section-header">
         <h2 class="section-title">Nuestro <span class="highlight-orange">Menú</span></h2>
@@ -133,10 +110,8 @@
       </div>
 
       <div class="categories-container">
-        <button *ngFor="let category of categories"
-                [class.active]="activeCategory === category.id"
-                class="category-btn"
-                (click)="setActiveCategory(category.id)">
+        <button *ngFor="let category of categories" [class.active]="activeCategory === category.id" class="category-btn"
+          (click)="setActiveCategory(category.id)">
           <span class="category-name">{{ category.name }}</span>
         </button>
       </div>
@@ -146,20 +121,15 @@
           <div class="product-badge" *ngIf="product.isPopular">
             <span class="badge-icon">🔥</span><span>Popular</span>
           </div>
-                    
+
           <div class="product-image">
-              <img 
-              *ngIf="product.image; else noImage"
-              [src]="product.image"
-              alt="{{ product.name }}"
-              class="product-img"
-            />
-            
+            <img *ngIf="product.image; else noImage" [src]="product.image" alt="{{ product.name }}"
+              class="product-img" />
+
             <ng-template #noImage>
               <span class="product-emoji">📦</span>
             </ng-template>
           </div>
-
 
           <div class="product-info">
             <div class="product-header">
@@ -183,6 +153,7 @@
         </div>
       </div>
     </section>
-        <app-footer></app-footer>
-      </div>
+
+    <app-footer></app-footer>
+  </div>
 </ion-content>

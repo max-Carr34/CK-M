@@ -48,6 +48,9 @@ export class InitPage implements OnInit, OnDestroy {
   products: Product[] = [];
   filteredProducts: Product[] = [];
 
+  // 🔥 NUEVO: productos para el carrusel
+  popularProducts: Product[] = [];
+
   activeCategory = 0;
   searchTerm = '';
   cartCount = 0;
@@ -81,7 +84,7 @@ export class InitPage implements OnInit, OnDestroy {
         this.filterProducts();
       });
 
-    // 🔥 AQUÍ ESTÁ LA CLAVE (reactivo)
+    // 🛒 CARRITO REACTIVO (esto evita freeze y bugs)
     this.cartSub = this.cartService.cart$.subscribe(items => {
       this.cartCount = items.reduce((total, item) => total + item.quantity, 0);
     });
@@ -102,8 +105,14 @@ export class InitPage implements OnInit, OnDestroy {
       ]);
 
       this.categories = [{ id: 0, name: 'Todos' }, ...categories];
+
       this.products = products;
       this.filteredProducts = products;
+
+      // 🔥 AQUÍ SE GENERA EL CARRUSEL (NO EN HTML)
+      this.popularProducts = products
+        .filter(p => p.isPopular && p.image) // solo con imagen
+        .slice(0, 5); // máximo 5
 
     } catch (error) {
       console.error('Error cargando datos', error);
@@ -142,12 +151,12 @@ export class InitPage implements OnInit, OnDestroy {
     this.filteredProducts = filtered;
   }
 
-  // 🛒 AGREGAR AL CARRITO (simple y correcto)
+  // 🛒 AGREGAR AL CARRITO
   addToCart(product: Product) {
     this.cartService.addToCart(product);
   }
 
- scrollToMenu() {
+  scrollToMenu() {
     document.getElementById('menu')?.scrollIntoView({ behavior: 'smooth' });
   }
 
