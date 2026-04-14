@@ -23,15 +23,15 @@ export class CartService {
     const data = localStorage.getItem('cart');
     this.cart = data ? JSON.parse(data) : [];
 
-    // 🔥 emitir copia SIEMPRE
+    // emitir copia SIEMPRE
     this.cartSubject.next([...this.cart]);
   }
 
-  // 🔥 método central (NO LO ROMPAS)
+  // método central (NO LO ROMPAS)
   private updateCart() {
-    this.cart = [...this.cart]; // 👈 fuerza nueva referencia
+    this.cart = [...this.cart]; // fuerza nueva referencia
     localStorage.setItem('cart', JSON.stringify(this.cart));
-    this.cartSubject.next([...this.cart]); // 👈 clave para Angular
+    this.cartSubject.next([...this.cart]); // clave para Angular
   }
 
   getCart() {
@@ -79,7 +79,7 @@ export class CartService {
   clearCart() {
     this.cart = [];
 
-    // 🔥 MUY IMPORTANTE: limpiar bien todo
+    // MUY IMPORTANTE: limpiar bien todo
     localStorage.setItem('cart', JSON.stringify(this.cart));
     this.cartSubject.next([]);
   }

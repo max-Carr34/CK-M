@@ -1,4 +1,8 @@
-<app-sidebar-menu #sidebarMenuRef [isMenuOpen]="isMenuOpen" (menuOpenChange)="isMenuOpen = $event"></app-sidebar-menu>
+<app-sidebar-menu 
+  #sidebarMenuRef 
+  [isMenuOpen]="isMenuOpen" 
+  (menuOpenChange)="isMenuOpen = $event">
+</app-sidebar-menu>
 
 <ion-header [translucent]="true">
   <ion-toolbar>
@@ -12,33 +16,31 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Perfil</ion-title>
-    </ion-toolbar>
-  </ion-header>
 
-  <!-- Sección de bienvenida -->
+  <!-- HEADER -->
   <div class="welcome-section">
     <ion-avatar class="user-avatar">
       <ion-icon name="person-circle-outline"></ion-icon>
     </ion-avatar>
+
     <h2>¡Hola, {{ userName }}!</h2>
     <p class="user-email">{{ userEmail }}</p>
   </div>
 
-  <!-- Mis Pedidos -->
+  <!-- PEDIDOS -->
   <ion-card *ngIf="orders.length > 0">
     <ion-card-header>
       <ion-card-title>Mis Pedidos</ion-card-title>
     </ion-card-header>
+
     <ion-card-content>
       <ion-list>
-        <ion-item *ngFor="let order of orders" button detail (click)="viewOrder(order)">
+        <ion-item *ngFor="let order of orders" button (click)="viewOrder(order)">
           <ion-icon name="receipt-outline" slot="start"></ion-icon>
+
           <ion-label>
             <h3>Pedido #{{ order.id }}</h3>
-            <p>{{ order.date }} - {{ order.status }}</p>
+            <p>{{ order.created_at || order.date }} - {{ order.status }}</p>
             <p>Total: ${{ order.total }}</p>
           </ion-label>
         </ion-item>
@@ -46,11 +48,12 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- Mensaje si no hay pedidos -->
+  <!-- EMPTY -->
   <ion-card *ngIf="orders.length === 0">
     <ion-card-header>
       <ion-card-title>Mis Pedidos</ion-card-title>
     </ion-card-header>
+
     <ion-card-content>
       <div class="empty-state">
         <ion-icon name="bag-outline" size="large"></ion-icon>
@@ -59,62 +62,71 @@
     </ion-card-content>
   </ion-card>
 
-  <!-- Comprar de Nuevo -->
+  <!-- COMPRAR DE NUEVO -->
   <ion-card *ngIf="recentProducts.length > 0">
     <ion-card-header>
       <ion-card-title>Comprar de Nuevo</ion-card-title>
     </ion-card-header>
+
     <ion-card-content>
       <ion-list>
-        <ion-item *ngFor="let product of recentProducts" button>
+        <ion-item *ngFor="let product of recentProducts">
+
           <ion-thumbnail slot="start">
             <img [src]="product.image" [alt]="product.name">
           </ion-thumbnail>
+
           <ion-label>
             <h3>{{ product.name }}</h3>
             <p>${{ product.price }}</p>
           </ion-label>
-          <ion-button slot="end" fill="outline" size="small" (click)="addToCart(product)">
+
+          <ion-button 
+            slot="end" 
+            fill="outline" 
+            size="small"
+            (click)="addToCart(product)"
+          >
             <ion-icon name="cart-outline" slot="start"></ion-icon>
             Agregar
           </ion-button>
+
         </ion-item>
       </ion-list>
     </ion-card-content>
   </ion-card>
 
-  <!-- Opciones de Cuenta -->
+  <!-- CUENTA -->
   <ion-card>
     <ion-card-header>
       <ion-card-title>Mi Cuenta</ion-card-title>
     </ion-card-header>
+
     <ion-card-content>
       <ion-list>
+
         <ion-item button (click)="goToAddressForm()">
           <ion-icon name="location-outline" slot="start"></ion-icon>
           <ion-label>
             <h3>Datos de Domicilio</h3>
-            <p>Administra tus direcciones de entrega</p>
+            <p>Administra tus direcciones</p>
           </ion-label>
-          <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
         </ion-item>
 
         <ion-item button (click)="goToPaymentMethods()">
           <ion-icon name="card-outline" slot="start"></ion-icon>
           <ion-label>
             <h3>Métodos de Pago</h3>
-            <p>Gestiona tus tarjetas y pagos</p>
+            <p>Gestiona tus pagos</p>
           </ion-label>
-          <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
         </ion-item>
 
         <ion-item button (click)="goToSettings()">
           <ion-icon name="settings-outline" slot="start"></ion-icon>
           <ion-label>
             <h3>Configuración</h3>
-            <p>Preferencias y notificaciones</p>
+            <p>Preferencias</p>
           </ion-label>
-          <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
         </ion-item>
 
         <ion-item button lines="none" (click)="logout()">
@@ -123,6 +135,7 @@
             <h3>Cerrar Sesión</h3>
           </ion-label>
         </ion-item>
+
       </ion-list>
     </ion-card-content>
   </ion-card>

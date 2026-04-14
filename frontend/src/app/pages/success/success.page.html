@@ -1,0 +1,41 @@
+<ion-content class="ion-padding success-page">
+
+  <div class="success-container">
+
+    <ion-icon name="checkmark-circle-outline" class="success-icon"></ion-icon>
+
+    <h1>¡Pedido realizado!</h1>
+
+    <div class="ticket-box">
+      <p>Número de orden</p>
+      <h2>#{{ orderId }}</h2>
+    </div>
+
+    <div class="ticket-box">
+      <p>Total a pagar</p>
+      <h2>{{ total | currency:'MXN' }}</h2>
+    </div>
+
+    <div class="ticket-box">
+      <p>Método de pago</p>
+      <h2 *ngIf="method === 'cash'">Efectivo</h2>
+      <h2 *ngIf="method === 'spei'">Transferencia</h2>
+    </div>
+
+    <div class="info-box">
+      <p *ngIf="method === 'cash'">
+        Presenta este número en caja para pagar.
+      </p>
+
+      <p *ngIf="method === 'spei'">
+        Tu pago será validado en breve.
+      </p>
+    </div>
+
+    <ion-button expand="block" (click)="goHome()">
+      Volver al menú
+    </ion-button>
+
+  </div>
+
+</ion-content>

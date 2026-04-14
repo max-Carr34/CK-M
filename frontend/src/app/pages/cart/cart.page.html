@@ -34,7 +34,7 @@
     </div>
     <h2 class="empty-title">Tu carrito está vacío</h2>
     <p class="empty-subtitle">Agrega productos para empezar tu compra</p>
-    <ion-button routerLink="/home" expand="block" class="go-shopping-btn" fill="solid" shape="round">
+    <ion-button (click)="goToMenu()" expand="block" class="go-shopping-btn" fill="solid" shape="round">
       <ion-icon slot="start" name="storefront-outline"></ion-icon>
       Explorar productos
     </ion-button>
@@ -105,14 +105,6 @@
       <div class="summary-row">
         <span>Subtotal ({{ totalItems }} artículos)</span>
         <span>{{ totalPrice | currency:'MXN':'symbol':'1.2-2' }}</span>
-      </div>
-
-      <div class="summary-row">
-        <span>Envío</span>
-        <span class="free-shipping">
-          <ion-icon name="checkmark-circle-outline"></ion-icon>
-          Gratis
-        </span>
       </div>
 
       <div class="summary-divider"></div>

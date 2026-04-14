@@ -70,8 +70,17 @@ export const routes: Routes = [
     path: 'cart',
     loadComponent: () => import('./pages/cart/cart.page').then( m => m.CartPage), canActivate: [AuthGuard]
   },
+   {
+    path: 'pag-pago',
+    loadComponent: () => import('./pages/pag-pago/pag-pago.page').then( m => m.PagPagoPage)
+  },
+   {
+  path: 'success',
+  loadComponent: () => import('./pages/success/success.page').then(m => m.SuccessPage)
+  },
   {
     path: '**',
     redirectTo: 'error404'
   },
+ 
 ];

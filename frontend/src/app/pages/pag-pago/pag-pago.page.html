@@ -1,0 +1,124 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/cart" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <div class="header-content">
+        <span class="header-title">Confirmar pedido</span>
+        <small class="header-subtitle">Revisa antes de pagar</small>
+      </div>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="main-container">
+    <div class="checkout-layout">
+      
+      <div class="info-section">
+        <div class="info-card">
+          <div class="card-header">
+            <ion-icon name="location-outline" color="primary"></ion-icon>
+            <ion-label>PUNTO DE ENTREGA</ion-label>
+          </div>
+          <ion-item lines="none" class="inner-item">
+            <ion-icon name="cafe-outline" slot="start"></ion-icon>
+            <ion-label>
+              <h2>Cafetería Central</h2>
+              <p>Entrega presencial en barra</p>
+            </ion-label>
+          </ion-item>
+        </div>
+
+        <div class="info-card">
+          <div class="card-header">
+            <ion-icon name="card-outline" color="primary"></ion-icon>
+            <ion-label>MÉTODO DE PAGO</ion-label>
+          </div>
+          
+          <ion-radio-group [(ngModel)]="paymentMethod">
+            <div class="payment-options-grid">
+              <ion-item lines="none" class="payment-option" [class.selected]="paymentMethod === 'spei'">
+                <ion-radio slot="start" value="spei"></ion-radio>
+                <ion-label>
+                  <h2>Transferencia SPEI</h2>
+                  <p>Inmediato</p>
+                </ion-label>
+                <ion-icon name="swap-horizontal-outline" slot="end" color="primary"></ion-icon>
+              </ion-item>
+
+              <ion-item lines="none" class="payment-option" [class.selected]="paymentMethod === 'cash'">
+                <ion-radio slot="start" value="cash"></ion-radio>
+                <ion-label>
+                  <h2>Efectivo</h2>
+                  <p>En caja</p>
+                </ion-label>
+                <ion-icon name="cash-outline" slot="end" color="success"></ion-icon>
+              </ion-item>
+            </div>
+
+            <div class="method-detail" *ngIf="paymentMethod === 'spei'">
+              <div class="clabe-box">
+                <small>CLABE INTERBANCARIA</small>
+                <div class="clabe-copy-row">
+                  <h3>0021 8000 1234 5678 90</h3>
+                  <ion-button fill="clear" (click)="copyClabe()">
+                    <ion-icon name="copy-outline"></ion-icon>
+                  </ion-button>
+                </div>
+                <p>BBVA · Cafetería App S.A.</p>
+              </div>
+              
+              <div class="upload-section">
+                <p>Adjunta tu comprobante:</p>
+                <div class="drop-zone" (click)="fileInput.click()">
+                  <input type="file" #fileInput hidden (change)="onFileSelected($event)">
+                  <ion-icon name="cloud-upload-outline"></ion-icon>
+                  <span>Subir captura</span>
+                </div>
+              </div>
+            </div>
+          </ion-radio-group>
+        </div>
+      </div>
+
+      <div class="summary-section">
+        <div class="info-card">
+          <div class="card-header">
+            <ion-icon name="receipt-outline" color="primary"></ion-icon>
+            <ion-label>RESUMEN</ion-label>
+          </div>
+          <ion-list lines="none">
+            <ion-item *ngFor="let item of cartItems" class="summary-item">
+              <ion-label>
+                <span class="item-name">{{ item.name }}</span>
+                <span class="item-qty">x{{ item.quantity }}</span>
+              </ion-label>
+              <ion-note slot="end">{{ (item.price * item.quantity) | currency:'MXN' }}</ion-note>
+            </ion-item>
+          </ion-list>
+          <div class="divider"></div>
+          <div class="total-row">
+            <span>Total</span>
+            <span>{{ totalPrice | currency:'MXN' }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer class="ion-no-border">
+  <div class="footer-container">
+    <div class="total-box hide-on-desktop">
+      <small>TOTAL</small>
+      <h2>{{ totalPrice | currency:'MXN' }}</h2>
+    </div>
+    <ion-button expand="block" class="confirm-btn" (click)="confirmOrder()" [disabled]="!paymentMethod">
+      <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
+      Confirmar Pedido
+    </ion-button>
+  </div>
+</ion-footer>

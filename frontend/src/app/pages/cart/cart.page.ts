@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { CartItem, CartService } from '../../services/cart.service';
-import { AlertController, ToastController } from '@ionic/angular';
+import { AlertController, ToastController, NavController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 
@@ -24,14 +24,13 @@ export class CartPage implements OnInit, OnDestroy {
   constructor(
     private cartService: CartService,
     private alertController: AlertController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private navCtrl: NavController
   ) {}
 
   ngOnInit() {
     this.cartSub = this.cartService.cart$.subscribe((items: CartItem[]) => {
-      // 🔥 IMPORTANTE: nueva referencia SIEMPRE
       this.cartItems = [...items];
-
       this.totalItems = this.cartService.getTotalItems();
       this.totalPrice = this.cartService.getTotalPrice();
     });
@@ -53,6 +52,10 @@ export class CartPage implements OnInit, OnDestroy {
   // 🔽 Disminuir cantidad
   decreaseQuantity(item: CartItem) {
     this.cartService.updateQuantity(item.id, item.quantity - 1);
+  }
+
+  goToMenu() {
+    this.navCtrl.navigateForward('/menu');
   }
 
   // ❌ Eliminar producto
@@ -109,41 +112,17 @@ export class CartPage implements OnInit, OnDestroy {
     await alert.present();
   }
 
-  // 💳 Checkout
-  async checkout() {
+  // 💳 Checkout (CORREGIDO)
+  checkout() {
     if (this.isEmpty || this.isCheckingOut) return;
 
     this.isCheckingOut = true;
 
-    try {
-      // Simulación
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // 🔥 Limpiar carrito correctamente
-      this.cartService.clearCart();
-
-      // 🔥 Forzar reset visual inmediato
-      this.cartItems = [];
-      this.totalItems = 0;
-      this.totalPrice = 0;
-
-      const toast = await this.toastController.create({
-        message: '¡Pedido realizado con éxito! 🎉',
-        duration: 3000,
-        position: 'top',
-        color: 'success',
-        icon: 'checkmark-circle-outline',
-        cssClass: 'success-toast'
-      });
-
-      await toast.present();
-
-    } catch (error) {
-      console.error('Error en checkout:', error);
-    } finally {
-      // 🔥 SIEMPRE liberar UI
+    // 🔥 Solo navegación (NO backend aquí)
+    setTimeout(() => {
+      this.navCtrl.navigateForward('/pag-pago');
       this.isCheckingOut = false;
-    }
+    }, 500);
   }
 
   // 🔁 trackBy

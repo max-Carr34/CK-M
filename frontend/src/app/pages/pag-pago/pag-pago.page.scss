@@ -1,0 +1,512 @@
+// pag-pago.page.scss
+// Versión en blanco, basada en el sistema de estilos del carrito
+
+@use "sass:color";
+
+/* ============================================
+   VARIABLES (mismas que el carrito)
+============================================ */
+$primary-color:    #1b69d5;
+$secondary-color:  #031e49;
+$accent-color:     #f6f6f6;
+
+$text-dark:   #000000;
+$text-light:  #ffffff;
+$text-gray:   #6c757d; // Más neutro para mejor contraste sobre blanco
+
+$border-color:  #e9ecef;
+$shadow-hover:  rgba($primary-color, 0.1);
+$shadow-light:  rgba(0, 0, 0, 0.02);
+$shadow-medium: rgba(0, 0, 0, 0.05);
+
+$light-blue:  #eaf1ff;
+$light-bg:    #f8f9fa;
+
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 16px;
+$radius-xl: 24px;
+
+$transition-fast:   all 0.2s ease;
+$transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+/* ============================================
+   MIXINS (reutilizados)
+============================================ */
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ============================================
+   FONDO GENERAL BLANCO
+============================================ */
+:host {
+  --background: #ffffff;
+}
+
+ion-content {
+  --background: #ffffff;
+}
+
+/* ============================================
+   HEADER (blanco con sombra ligera)
+============================================ */
+ion-header {
+  ion-toolbar {
+    --background: #ffffff;
+    --border-color: #{$border-color};
+    --color: #{$text-dark};
+    box-shadow: 0 1px 2px $shadow-light;
+    padding: 0 0.5rem;
+  }
+
+  ion-back-button {
+    --color: #{$text-dark};
+  }
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+
+  .header-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: $text-dark;
+    letter-spacing: -0.01em;
+  }
+
+  .header-subtitle {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: $text-gray;
+  }
+}
+
+/* ============================================
+   CONTENEDOR PRINCIPAL
+============================================ */
+.main-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.checkout-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1rem;
+
+  @media (min-width: 768px) {
+    display: grid;
+    grid-template-columns: 1fr 0.9fr;
+    gap: 2rem;
+    align-items: start;
+    padding: 1rem 1rem 2rem;
+  }
+}
+
+/* ============================================
+   TARJETAS BLANCAS CON BORDE SUTIL
+============================================ */
+.info-card {
+  background: #ffffff;
+  border-radius: $radius-lg;
+  border: 1px solid $border-color;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  transition: $transition-smooth;
+  box-shadow: 0 1px 2px $shadow-light;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 1rem 0.5rem 1rem;
+    border-bottom: 1px solid $border-color;
+
+    ion-icon {
+      font-size: 1.2rem;
+      color: $primary-color;
+    }
+
+    ion-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: $text-gray;
+    }
+  }
+
+  .inner-item {
+    --padding-start: 0;
+    --inner-padding-end: 0;
+    margin: 0.5rem 1rem 1rem 1rem;
+    --background: transparent;
+
+    h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: $text-dark;
+      margin: 0 0 4px 0;
+    }
+
+    p {
+      font-size: 0.8rem;
+      color: $text-gray;
+      margin: 0;
+    }
+
+    ion-icon {
+      color: $primary-color;
+    }
+  }
+}
+
+/* ============================================
+   MÉTODOS DE PAGO (radio group)
+============================================ */
+.payment-options-grid {
+  margin: 0.5rem 0;
+
+  .payment-option {
+    --padding-start: 1rem;
+    --inner-padding-end: 1rem;
+    --min-height: 64px;
+    margin: 0;
+    border-radius: $radius-md;
+    transition: $transition-fast;
+    cursor: pointer;
+    --background: transparent;
+
+    &.selected {
+      background: rgba($primary-color, 0.05);
+    }
+
+    h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0 0 2px 0;
+      color: $text-dark;
+    }
+
+    p {
+      font-size: 0.75rem;
+      color: $text-gray;
+      margin: 0;
+    }
+
+    ion-radio {
+      --border-radius: 12px;
+      margin-right: 12px;
+    }
+
+    ion-icon[slot="end"] {
+      font-size: 1.2rem;
+    }
+  }
+}
+
+/* ============================================
+   DETALLE SPEI (blanco)
+============================================ */
+.method-detail {
+  padding: 1rem;
+  background: $light-bg; // gris muy suave para diferenciar
+  border-radius: $radius-md;
+  margin: 0 1rem 1rem 1rem;
+
+  .clabe-box {
+    background: #ffffff;
+    padding: 1rem;
+    border-radius: $radius-md;
+    border: 1px solid $border-color;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 2px $shadow-light;
+
+    small {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: $text-gray;
+      text-transform: uppercase;
+    }
+
+    .clabe-copy-row {
+      @include flex-between;
+      margin: 0.5rem 0;
+
+      h3 {
+        font-family: monospace;
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin: 0;
+        color: $text-dark;
+      }
+
+      ion-button {
+        --padding-start: 8px;
+        --padding-end: 8px;
+        margin: 0;
+        height: 32px;
+        --color: $primary-color;
+      }
+    }
+
+    p {
+      font-size: 0.7rem;
+      margin: 0;
+      color: $text-gray;
+    }
+  }
+
+  .upload-section {
+    p {
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: $text-dark;
+    }
+
+    .drop-zone {
+      border: 2px dashed $primary-color;
+      border-radius: $radius-md;
+      background: #ffffff;
+      padding: 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: $transition-fast;
+
+      &:active {
+        transform: scale(0.98);
+        background: $light-bg;
+      }
+
+      @media (min-width: 769px) {
+        &:hover {
+          background: $light-bg;
+          border-color: $secondary-color;
+        }
+      }
+
+      ion-icon {
+        font-size: 2rem;
+        color: $primary-color;
+        margin-bottom: 0.5rem;
+      }
+
+      span {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: $primary-color;
+      }
+    }
+  }
+}
+
+/* ============================================
+   RESUMEN DEL PEDIDO (blanco)
+============================================ */
+.summary-section {
+  .info-card {
+    margin-bottom: 0;
+  }
+
+  .summary-item {
+    --padding-start: 0;
+    --inner-padding-end: 0;
+    --min-height: 44px;
+    --background: transparent;
+
+    ion-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .item-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: $text-dark;
+    }
+
+    .item-qty {
+      font-size: 0.75rem;
+      color: $text-gray;
+      margin-left: 8px;
+    }
+
+    ion-note {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: $text-dark;
+    }
+  }
+
+  .divider {
+    height: 1px;
+    background: $border-color;
+    margin: 0.5rem 1rem;
+  }
+
+  .total-row {
+    @include flex-between;
+    padding: 0.5rem 1rem 1rem 1rem;
+
+    span:first-child {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: $text-gray;
+    }
+
+    span:last-child {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: $primary-color;
+      letter-spacing: -0.02em;
+    }
+  }
+}
+
+/* ============================================
+   FOOTER FIJO BLANCO
+============================================ */
+ion-footer {
+  ion-toolbar {
+    --background: #ffffff;
+    --border-color: #{$border-color};
+    padding: 0.5rem 1rem;
+    box-shadow: 0 -2px 8px $shadow-light;
+  }
+}
+
+.footer-container {
+  @include flex-between;
+  gap: 1rem;
+  width: 100%;
+
+  .total-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+
+    small {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: $text-gray;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: $text-dark;
+      letter-spacing: -0.02em;
+    }
+
+    &.hide-on-desktop {
+      @media (min-width: 768px) {
+        display: none;
+      }
+    }
+  }
+
+  .confirm-btn {
+    --background: #{$primary-color};
+    --background-activated: #{$secondary-color};
+    --background-disabled: #e9ecef;
+    --box-shadow: 0 2px 8px rgba($primary-color, 0.2);
+    --border-radius: #{$radius-sm};
+    font-weight: 700;
+    font-size: 0.9rem;
+    flex: 1;
+    max-width: 220px;
+    height: 46px;
+    transition: $transition-smooth;
+
+    &:not([disabled]) {
+      @media (min-width: 769px) {
+        &:hover {
+          --background: #{$secondary-color};
+          --box-shadow: 0 4px 12px rgba($primary-color, 0.3);
+        }
+      }
+    }
+
+    ion-icon {
+      font-size: 1.2rem;
+      margin-right: 0.4rem;
+    }
+  }
+}
+
+/* ============================================
+   AJUSTES GENERALES
+============================================ */
+ion-list {
+  background: transparent;
+  padding: 0;
+}
+
+ion-item {
+  --background: transparent;
+  --border-color: transparent;
+}
+
+ion-radio-group {
+  display: block;
+}
+
+/* ============================================
+   RESPONSIVE
+============================================ */
+@media (min-width: 768px) {
+  .main-container {
+    padding: 0;
+  }
+
+  .info-card .card-header {
+    padding: 1.25rem 1.25rem 0.5rem 1.25rem;
+  }
+
+  .payment-options-grid .payment-option {
+    --padding-start: 1.25rem;
+  }
+
+  .method-detail {
+    margin: 0 1.25rem 1.25rem 1.25rem;
+  }
+
+  .summary-section .total-row {
+    padding: 0.5rem 1.25rem 1.25rem 1.25rem;
+  }
+
+  ion-footer ion-toolbar {
+    padding: 0.75rem 2rem;
+  }
+
+  .footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}

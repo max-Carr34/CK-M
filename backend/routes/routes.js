@@ -8,7 +8,7 @@ const db = require('../db');
 const router = express.Router();
 const SECRET_KEY = 'ciremab12';
 
-// ✅ Configuración Nodemailer
+// Configuración Nodemailer
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -28,6 +28,9 @@ router.use('/products', productRoutes);
 
 const categoryRoutes = require('./categories.routes');
 router.use('/categories', categoryRoutes);
+
+const ordersRoutes = require('./orders.routes');
+router.use('/orders', ordersRoutes);
 
 
 module.exports = router;

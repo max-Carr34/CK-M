@@ -1,33 +1,61 @@
 <!-- OVERLAY -->
-<div class="menu-overlay" [class.show]="isMenuOpen" (click)="closeMenu()"></div>
+<div class="menu-overlay"
+     [class.show]="isMenuOpen"
+     (click)="closeMenu()">
+</div>
 
-<!-- SIDEBAR o Menú -->
+<!-- SIDEBAR -->
 <div class="sidebar-menu" [class.open]="isMenuOpen">
+
+  <!-- HEADER -->
   <div class="sidebar-header">
+
+    <div class="sidebar-avatar">
+      {{ getInitials() }}
+    </div>
+
+    <div class="sidebar-user">
+      <div class="sidebar-user__name">
+        {{ userName }}
+      </div>
+      <div class="sidebar-user__email">
+        {{ userEmail }}
+      </div>
+    </div>
+
     <button class="close-btn" (click)="closeMenu()">✕</button>
   </div>
 
-  <div class="sidebar-items">
-    <button class="sidebar-item" (click)="handleMenuOption('profile')">
-      <span>👤</span> Perfil
-    </button>
-    <button class="sidebar-item" (click)="handleMenuOption('contact')">
-      <span>📞</span> Contacto
-    </button>
-    <button class="sidebar-item" (click)="handleMenuOption('menu')">
-      <span>🍔</span> Menu
-    </button>
-    <button class="sidebar-item" (click)="handleMenuOption('notifications')">
-      <span>🔔</span> Comprobantes
-    </button>
-    <button class="sidebar-item" (click)="handleMenuOption('Promociones')">
-      <span>🎁</span> Promociones
+  <!-- NAV -->
+  <div class="sidebar-nav">
+
+    <div class="nav-group-label">General</div>
+
+    <button
+      *ngFor="let item of menuItems"
+      class="sidebar-item"
+      [class.active]="selected === item.key"
+      (click)="handleMenuOption(item.key)"
+    >
+      <div class="sidebar-item__icon">
+        {{ item.icon }}
+      </div>
+
+      <div class="sidebar-item__label">
+        {{ item.label }}
+      </div>
     </button>
 
     <div class="sidebar-divider"></div>
 
-    <button class="sidebar-item logout-item" (click)="handleMenuOption('logout')">
-      <span>🚪</span> Cerrar Sesión
+    <!-- LOGOUT -->
+    <button
+      class="sidebar-item logout-item"
+      (click)="handleMenuOption('logout')"
+    >
+      <div class="sidebar-item__icon">🚪</div>
+      <div class="sidebar-item__label">Cerrar sesión</div>
     </button>
+
   </div>
 </div>
