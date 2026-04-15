@@ -30,12 +30,14 @@ const transporter = nodemailer.createTransport({
 });
 
 /* ===============================
-   MIDDLEWARE TOKEN
+   MIDDLEWARE AUTH
 ================================= */
 function verifyToken(req, res, next) {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader) return res.status(401).json({ message: 'Token requerido' });
+  if (!authHeader) {
+    return res.status(401).json({ message: 'Token requerido' });
+  }
 
   const token = authHeader.split(' ')[1];
 
@@ -46,6 +48,34 @@ function verifyToken(req, res, next) {
   } catch {
     return res.status(403).json({ message: 'Token inválido o expirado' });
   }
+}
+
+/* ===============================
+   ROLE MIDDLEWARE
+================================= */
+function role(roles = []) {
+  return (req, res, next) => {
+    const userRole = req.user?.rol;
+
+    if (!roles.includes(userRole)) {
+      return res.status(403).json({ message: 'No tienes permisos' });
+    }
+
+    next();
+  };
+}
+
+/* ===============================
+   LOG HELPER (SIN IP)
+================================= */
+function logAction(userId, action) {
+  db.query(
+    'INSERT INTO access_logs (user_id, action) VALUES (?, ?)',
+    [userId, action],
+    (err) => {
+      if (err) console.error('Error en logAction:', err);
+    }
+  );
 }
 
 /* ===============================
@@ -76,10 +106,7 @@ router.post('/login', (req, res) => {
       }
 
       const accessToken = jwt.sign(
-        {
-          userId: user.id,
-          rol: user.rol
-        },
+        { userId: user.id, rol: user.rol },
         SECRET_KEY,
         { expiresIn: '15m' }
       );
@@ -94,6 +121,9 @@ router.post('/login', (req, res) => {
         'INSERT INTO refresh_tokens (user_id, token) VALUES (?, ?)',
         [user.id, refreshToken]
       );
+
+      // 🔥 LOG
+      logAction(user.id, 'LOGIN');
 
       res.json({
         accessToken,
@@ -124,6 +154,7 @@ router.post('/logout', (req, res) => {
     [refreshToken],
     (err) => {
       if (err) return res.status(500).json({ message: 'Error logout' });
+
       res.json({ message: 'Logout exitoso' });
     }
   );
@@ -168,7 +199,7 @@ router.post('/refresh', (req, res) => {
 });
 
 /* ===============================
-   CAMBIAR PASSWORD
+   CHANGE PASSWORD
 ================================= */
 router.post('/change-password', verifyToken, async (req, res) => {
   const { currentPassword, newPassword } = req.body;
@@ -196,9 +227,8 @@ router.post('/change-password', verifyToken, async (req, res) => {
         'UPDATE usuarios SET password = ? WHERE id = ?',
         [hashed, userId],
         () => {
-
-          // CERRAR TODAS LAS SESIONES
           db.query('DELETE FROM refresh_tokens WHERE user_id = ?', [userId]);
+          logAction(userId, 'CHANGE_PASSWORD');
 
           res.json({ message: 'Contraseña actualizada' });
         }
@@ -208,12 +238,10 @@ router.post('/change-password', verifyToken, async (req, res) => {
 });
 
 /* ===============================
-   SOLICITAR RESET
+   RESET PASSWORD REQUEST
 ================================= */
 router.post('/request-reset-password', (req, res) => {
   const { correo } = req.body;
-
-  if (!correo) return res.status(400).json({ message: 'Correo requerido' });
 
   db.query(
     'SELECT id FROM usuarios WHERE correo = ?',
@@ -271,9 +299,8 @@ router.post('/reset-password', async (req, res) => {
          WHERE id=?`,
         [hashed, userId],
         () => {
-
-          // CERRAR TODAS LAS SESIONES
           db.query('DELETE FROM refresh_tokens WHERE user_id = ?', [userId]);
+          logAction(userId, 'RESET_PASSWORD');
 
           res.json({ message: 'Contraseña actualizada' });
         }
@@ -282,4 +309,158 @@ router.post('/reset-password', async (req, res) => {
   );
 });
 
+/* ===============================
+   ADMIN STATS
+================================= */
+router.get('/admin/stats', verifyToken, role(['admin']), (req, res) => {
+
+  const stats = {};
+
+  db.query('SELECT COUNT(*) AS totalUsers FROM usuarios', (err, users) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    stats.totalUsers = users[0].totalUsers;
+
+    db.query("SELECT COUNT(*) AS admins FROM usuarios WHERE rol='admin'", (err2, admins) => {
+      if (err2) return res.status(500).json({ error: err2.message });
+
+      stats.admins = admins[0].admins;
+
+      db.query("SELECT COUNT(*) AS activeUsers FROM usuarios WHERE is_active = 1", (err3, active) => {
+        if (err3) return res.status(500).json({ error: err3.message });
+
+        stats.activeUsers = active[0].activeUsers;
+
+        res.json(stats);
+      });
+    });
+  });
+});
+
+/* ===============================
+   🔥 NUEVO: ADMIN LOGS
+================================= */
+router.get('/admin/logs', verifyToken, role(['admin']), (req, res) => {
+  db.query(`
+    SELECT l.id, u.nombre, l.action, l.created_at
+    FROM access_logs l
+    JOIN usuarios u ON u.id = l.user_id
+    ORDER BY l.created_at DESC
+    LIMIT 100
+  `, (err, results) => {
+    if (err) return res.status(500).json({ message: 'Error al obtener logs' });
+    res.json(results);
+  });
+});
+
+/* ===============================
+   ADMIN DELETE USER
+================================= */
+router.delete('/admin/users/:id', verifyToken, role(['admin']), (req, res) => {
+
+  const userId = req.params.id;
+
+  db.query('DELETE FROM usuarios WHERE id = ?', [userId], (err) => {
+    if (err) return res.status(500).json(err);
+
+    logAction(userId, 'DELETED_BY_ADMIN');
+
+    res.json({ message: 'Usuario eliminado' });
+  });
+});
+
+/* ===============================
+   ADMIN FORCE LOGOUT
+================================= */
+router.post('/admin/force-logout/:id', verifyToken, role(['admin']), (req, res) => {
+
+  const userId = req.params.id;
+
+  db.query('DELETE FROM refresh_tokens WHERE user_id = ?', [userId]);
+  logAction(userId, 'FORCE_LOGOUT');
+
+  res.json({ message: 'Sesión cerrada por admin' });
+});
+
+/* ===============================
+   ADMIN GET USERS
+================================= */
+router.get('/admin/users', verifyToken, role(['admin']), (req, res) => {
+  db.query(
+    `SELECT id, nombre, correo, rol, is_active 
+     FROM usuarios 
+     ORDER BY id DESC`,
+    (err, results) => {
+      if (err) {
+        console.error('Error users:', err);
+        return res.status(500).json({ message: 'Error al obtener usuarios' });
+      }
+
+      res.json(results);
+    }
+  );
+});
+/* ===============================
+   ADMIN UPDATE USER (correo)
+================================= */
+router.put('/admin/users/:id', verifyToken, role(['admin']), (req, res) => {
+  const id = req.params.id;
+  const { correo } = req.body;
+
+  if (!correo) {
+    return res.status(400).json({ message: 'Correo requerido' });
+  }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(correo)) {
+    return res.status(400).json({ message: 'Correo inválido' });
+  }
+  // Evitar correos duplicados
+  db.query(
+    'SELECT id FROM usuarios WHERE correo = ? AND id != ?',
+    [correo, id],
+    (err, exists) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Error DB' });
+      }
+
+      if (exists.length > 0) {
+        return res.status(400).json({ message: 'Correo ya en uso' });
+      }
+
+      db.query(
+        'UPDATE usuarios SET correo = ? WHERE id = ?',
+        [correo, id],
+        (err2, result) => {
+          if (err2) {
+            console.error(err2);
+            return res.status(500).json({ message: 'Error al actualizar' });
+          }
+
+          if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+          }
+
+          logAction(id, 'UPDATED_BY_ADMIN');
+
+          res.json({ message: 'Usuario actualizado correctamente' });
+        }
+      );
+    }
+  );
+});
+/* ===============================
+   ADMIN ACTIVE SESSIONS
+================================= */
+router.get('/admin/sessions', verifyToken, role(['admin']), (req, res) => {
+  db.query(`
+    SELECT rt.user_id, u.nombre, u.correo
+    FROM refresh_tokens rt
+    JOIN usuarios u ON u.id = rt.user_id
+  `, (err, results) => {
+    if (err) return res.status(500).json({ message: 'Error sesiones' });
+
+    res.json(results);
+  });
+});
 module.exports = router;

@@ -1,6 +1,7 @@
-import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
+import { CartService } from 'src/app/services/cart.service';
 
 export interface Product {
   id: number;
@@ -20,7 +21,8 @@ export interface Product {
 export class ProductCarouselComponent implements OnInit, OnDestroy {
 
   @Input() products: Product[] = [];
-  @Output() addToCart = new EventEmitter<Product>();
+
+  private cartService = inject(CartService);
 
   currentIndex = 0;
   private intervalId: any;
@@ -55,7 +57,8 @@ export class ProductCarouselComponent implements OnInit, OnDestroy {
     this.currentIndex = index;
   }
 
+  // ✅ FUNCIÓN CORREGIDA
   onAddToCart(product: Product) {
-    this.addToCart.emit(product);
+    this.cartService.addToCart(product);
   }
 }

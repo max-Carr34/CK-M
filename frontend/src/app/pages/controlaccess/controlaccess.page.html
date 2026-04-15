@@ -1,0 +1,241 @@
+<ion-header class="app-header">
+  <ion-toolbar>
+
+    <ion-buttons slot="start">
+      <ion-back-button
+        class="back-btn"
+        text=""
+        defaultHref="/admin-dashboard">
+      </ion-back-button>
+    </ion-buttons>
+
+    <ion-title class="page-title">ACCESOS</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button class="add-btn">
+        <ion-icon name="shield-checkmark-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="page">
+
+  <div class="page-container">
+
+    <!-- LOADING -->
+    <div *ngIf="isLoading" class="state-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <ion-label>Cargando panel...</ion-label>
+    </div>
+
+    <!-- ERROR -->
+    <div *ngIf="error" class="state-container error">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      <ion-label>Error al cargar datos ⚠️</ion-label>
+    </div>
+
+    <div *ngIf="stats && !isLoading">
+
+      <!-- HERO -->
+      <div class="page-hero">
+        <div class="hero-left">
+          <span class="hero-eyebrow">Panel</span>
+          <h1 class="hero-title">Accesos</h1>
+        </div>
+
+        <div class="hero-stat">
+          <span class="stat-number">{{ stats.totalUsers }}</span>
+          <span class="stat-label">usuarios</span>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <ion-grid class="ion-no-padding ion-margin-bottom">
+        <ion-row>
+          <ion-col size="12" size-md="4">
+            <ion-card class="kpi-card">
+              <ion-card-content>
+                <ion-icon name="people-outline"></ion-icon>
+                <div>
+                  <h2>{{ stats.totalUsers }}</h2>
+                  <p>Total Usuarios</p>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <ion-col size="12" size-md="4">
+            <ion-card class="kpi-card">
+              <ion-card-content>
+                <ion-icon name="key-outline"></ion-icon>
+                <div>
+                  <h2>{{ stats.admins }}</h2>
+                  <p>Admins</p>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+
+          <ion-col size="12" size-md="4">
+            <ion-card class="kpi-card">
+              <ion-card-content>
+                <ion-icon name="pulse-outline"></ion-icon>
+                <div>
+                  <h2>{{ stats.activeUsers }}</h2>
+                  <p>Activos</p>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+
+      <!-- SEGMENT -->
+      <ion-segment [(ngModel)]="segment" class="custom-segment">
+        <ion-segment-button value="logs">Logs</ion-segment-button>
+        <ion-segment-button value="sessions">Sesiones</ion-segment-button>
+        <ion-segment-button value="users">Usuarios</ion-segment-button>
+      </ion-segment>
+
+      <!-- CARD -->
+      <ion-card class="table-card">
+
+        <!-- BUSCADOR + FILTROS -->
+        <ion-toolbar class="table-toolbar">
+
+          <ion-searchbar
+            placeholder="Buscar usuario..."
+            [(ngModel)]="searchTerm"
+            (ionInput)="filterUsers()">
+          </ion-searchbar>
+
+          <ion-item lines="none">
+            <ion-label>Rol</ion-label>
+            <ion-select [(ngModel)]="selectedRole" (ionChange)="filterUsers()">
+              <ion-select-option value="all">Todos</ion-select-option>
+              <ion-select-option value="admin">Admin</ion-select-option>
+              <ion-select-option value="user">User</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-item lines="none">
+            <ion-label>Estado</ion-label>
+            <ion-select [(ngModel)]="selectedStatus" (ionChange)="filterUsers()">
+              <ion-select-option value="all">Todos</ion-select-option>
+              <ion-select-option value="active">Activo</ion-select-option>
+              <ion-select-option value="inactive">Inactivo</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+        </ion-toolbar>
+
+        <!-- LOGS -->
+        <div *ngIf="segment === 'logs'" class="table-container">
+          <ion-list>
+            <ion-item *ngFor="let log of logs">
+              <ion-icon name="document-text-outline" slot="start"></ion-icon>
+              <ion-label>
+                <h3>{{ log.nombre }}</h3>
+                <p>{{ log.action }}</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </div>
+
+        <!-- SESSIONS -->
+        <div *ngIf="segment === 'sessions'" class="table-container">
+          <ion-list>
+            <ion-item *ngFor="let s of sessions">
+              <ion-icon name="person-outline" slot="start"></ion-icon>
+
+              <ion-label>
+                <h3>{{ s.nombre }}</h3>
+                <p>Sesión activa</p>
+              </ion-label>
+
+              <ion-button color="danger" size="small" (click)="forceLogout(s.user_id)">
+                Cerrar
+              </ion-button>
+            </ion-item>
+          </ion-list>
+        </div>
+
+        <!-- USERS -->
+        <div *ngIf="segment === 'users'" class="table-container">
+          <table class="responsive-table">
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let user of filteredUsers">
+
+                <td>
+                  <div class="user-cell">
+                    <ion-icon name="person-outline"></ion-icon>
+                    <span>{{ user.nombre }}</span>
+                  </div>
+                </td>
+
+                <td>{{ user.correo }}</td>
+                <td>{{ user.rol }}</td>
+                <td>{{ user.estado }}</td>
+
+                <td class="actions">
+                  <ion-button fill="clear" (click)="editUser(user)">
+                    <ion-icon name="create-outline"></ion-icon>
+                  </ion-button>
+
+                  <ion-button fill="clear" color="danger" (click)="confirmDelete(user)">
+                    <ion-icon name="trash-outline"></ion-icon>
+                  </ion-button>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </ion-card>
+
+    </div>
+
+  </div>
+
+  <!-- DELETE MODAL -->
+  <div *ngIf="userToDelete" class="delete-overlay" (click)="cancelDelete()">
+    <div class="delete-modal" (click)="$event.stopPropagation()">
+
+      <div class="delete-modal-icon">
+        <ion-icon name="trash-outline"></ion-icon>
+      </div>
+
+      <h3 class="delete-modal-title">Eliminar usuario</h3>
+
+      <p class="delete-modal-msg">
+        ¿Seguro que quieres eliminar a
+        <strong>{{ userToDelete?.nombre }}</strong>?
+      </p>
+
+      <div class="delete-modal-actions">
+        <button class="delete-modal-btn cancel" (click)="cancelDelete()">
+          Cancelar
+        </button>
+
+        <button class="delete-modal-btn confirm" (click)="executeDelete()">
+          Eliminar
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</ion-content>

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { IonContent, IonButton } from '@ionic/angular/standalone';
 import { RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-error404',
@@ -9,5 +10,12 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [IonContent, IonButton, RouterModule],
 })
-export class Error404Page {}
+export class Error404Page {
+  constructor(private router: Router) {}
+
+  goHome() {
+    this.router.navigateByUrl('/init', { replaceUrl: true });
+  }
+}
+
 

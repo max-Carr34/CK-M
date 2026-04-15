@@ -4,7 +4,6 @@ import { BehaviorSubject, catchError, tap, of, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 interface LoginResponse {
-  mensaje: string;
   accessToken: string;
   refreshToken: string;
   usuario: {
@@ -15,14 +14,16 @@ interface LoginResponse {
   };
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthService {
 
   private apiUrl = environment.apiUrl;
   private http = inject(HttpClient);
 
   // ============================================
-  // ESTADO REACTIVO GLOBAL
+  // STATE
   // ============================================
   private userSubject = new BehaviorSubject<any | null>(this.getUser());
   user$ = this.userSubject.asObservable();
@@ -30,21 +31,17 @@ export class AuthService {
   private roleSubject = new BehaviorSubject<string | null>(this.getUserRole());
   role$ = this.roleSubject.asObservable();
 
-
   // ============================================
   // HEADERS
   // ============================================
   private getHeaders(): HttpHeaders {
     const token = this.getToken();
-    const headers: any = { 'Content-Type': 'application/json' };
 
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    return new HttpHeaders(headers);
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: token ? `Bearer ${token}` : ''
+    });
   }
-
 
   // ============================================
   // LOGIN
@@ -60,15 +57,14 @@ export class AuthService {
         }
       }),
       catchError(err => {
-        console.error('❌ Error en login:', err);
+        console.error('❌ Login error:', err);
         return of(null);
       })
     );
   }
 
-
   // ============================================
-  // GUARDAR SESIÓN
+  // SESSION
   // ============================================
   private saveSession(res: LoginResponse) {
     const session = {
@@ -76,79 +72,62 @@ export class AuthService {
       refreshToken: res.refreshToken,
       usuario: {
         ...res.usuario,
-        rol: res.usuario.rol.trim().toLowerCase()
+        rol: res.usuario.rol?.trim().toLowerCase()
       },
-      // CORREGIDO → 1 HORA REAL
       expira: Date.now() + (60 * 60 * 1000)
     };
 
     localStorage.setItem('session', JSON.stringify(session));
 
-    // ACTUALIZA TODO REACTIVO
     this.userSubject.next(session.usuario);
     this.roleSubject.next(session.usuario.rol);
   }
 
-
-  // ============================================
-  // OBTENER SESIÓN
-  // ============================================
-  private getSession(): any | null {
+  private getSession(): any {
     const data = localStorage.getItem('session');
     return data ? JSON.parse(data) : null;
   }
 
-
-  // ============================================
-  // TOKEN
-  // ============================================
   getToken(): string | null {
     return this.getSession()?.accessToken || null;
   }
 
-
-  // ============================================
-  // USUARIO
-  // ============================================
-  getUser(): any | null {
+  getUser(): any {
     return this.getSession()?.usuario || null;
+  }
+
+  getUserRole(): string | null {
+    return this.getUser()?.rol || null;
   }
 
   getUserId(): number | null {
     return this.getUser()?.id || null;
   }
 
-
   // ============================================
-  // ROLES
+  // ROLE HELPERS
   // ============================================
-  getUserRole(): string | null {
-    return this.getUser()?.rol || null;
-  }
-
   isAdmin(): boolean {
     return this.getUserRole() === 'admin';
   }
 
   isUser(): boolean {
-    return this.getUserRole() === 'user';
+    return this.getUserRole() === 'usuario';
   }
 
   hasRole(roles: string[]): boolean {
-    const userRole = this.getUserRole() || '';
-    return roles.some(r => r.trim().toLowerCase() === userRole);
+    const role = this.getUserRole() || '';
+    return roles.map(r => r.toLowerCase()).includes(role);
   }
 
-
   // ============================================
-  // AUTH
+  // AUTH CHECK
   // ============================================
   isAuthenticated(): boolean {
     const session = this.getSession();
 
     if (!session) return false;
 
-    // VALIDAR EXPIRACIÓN
     if (Date.now() > session.expira) {
       this.logout();
       return false;
@@ -161,22 +140,22 @@ export class AuthService {
     return this.isAuthenticated();
   }
 
+  // ============================================
+  // LOGOUT
+  // ============================================
+  logout() {
+    const refreshToken = this.getSession()?.refreshToken;
 
-  // ============================================
-  // VERIFY TOKEN
-  // ============================================
-  checkSession() {
-    return this.http.get(`${this.apiUrl}/verify-token`, {
-      headers: this.getHeaders()
-    }).pipe(
-      catchError(() => {
-        console.warn('⚠️ Sesión inválida');
-        this.logout();
-        return of(null);
-      })
-    );
+    if (refreshToken) {
+      this.http.post(`${this.apiUrl}/logout`, { refreshToken })
+        .subscribe();
+    }
+
+    localStorage.removeItem('session');
+
+    this.userSubject.next(null);
+    this.roleSubject.next(null);
   }
-
 
   // ============================================
   // REFRESH TOKEN
@@ -199,53 +178,87 @@ export class AuthService {
         }
       }),
       catchError(err => {
-        console.error('❌ Error refresh token');
         this.logout();
         return throwError(() => err);
       })
     );
   }
 
-
-  // ============================================
-  // ACTUALIZAR TOKEN
-  // ============================================
-  updateAccessToken(newToken: string) {
+  updateAccessToken(token: string) {
     const session = this.getSession();
     if (!session) return;
 
-    session.accessToken = newToken;
+    session.accessToken = token;
     session.expira = Date.now() + (60 * 60 * 1000);
 
     localStorage.setItem('session', JSON.stringify(session));
   }
+// ===============================
+// ADMIN
+// ===============================
+getStats() {
+  return this.http.get(`${this.apiUrl}/admin/stats`, {
+    headers: this.getHeaders()
+  });
+}
 
+getLogs() {
+  return this.http.get(`${this.apiUrl}/admin/logs`, {
+    headers: this.getHeaders()
+  });
+}
+
+deleteUser(id: number) {
+  return this.http.delete(`${this.apiUrl}/admin/users/${id}`, {
+    headers: this.getHeaders()
+  });
+}
+
+forceLogoutUser(id: number) {
+  return this.http.post(`${this.apiUrl}/admin/force-logout/${id}`, {}, {
+    headers: this.getHeaders()
+  });
+}
+
+getUsers() {
+  return this.http.get(`${this.apiUrl}/admin/users`, {
+    headers: this.getHeaders()
+  });
+}
+
+updateUser(id: number, correo: string) {
+  return this.http.put(`${this.apiUrl}/admin/users/${id}`, {
+    correo
+  }, {
+    headers: this.getHeaders()
+  });
+}
 
   // ============================================
-  // LOGOUT
+  // VERIFY SESSION
   // ============================================
-  logout() {
-    const refreshToken = this.getSession()?.refreshToken;
-
-    if (refreshToken) {
-      this.http.post(`${this.apiUrl}/logout`, { refreshToken }).subscribe();
-    }
-
-    localStorage.clear();
-    sessionStorage.clear();
-
-    // LIMPIA ESTADO GLOBAL
-    this.userSubject.next(null);
-    this.roleSubject.next(null);
+  checkSession() {
+    return this.http.get(`${this.apiUrl}/verify-token`, {
+      headers: this.getHeaders()
+    }).pipe(
+      catchError(() => {
+        this.logout();
+        return of(null);
+      })
+    );
+  }
+  getSessions() {
+  return this.http.get(`${this.apiUrl}/admin/sessions`, {
+    headers: this.getHeaders()
+  });
   }
 
-
   // ============================================
-  // RESET PASSWORD
+  // PASSWORD RESET
   // ============================================
-  forgotPassword(email: string) {
+  forgotPassword(correo: string) {
     return this.http.post(`${this.apiUrl}/request-reset-password`, {
-      correo: email
+      correo
     });
   }
 
@@ -256,4 +269,5 @@ export class AuthService {
       { headers: this.getHeaders() }
     );
   }
+  
 }

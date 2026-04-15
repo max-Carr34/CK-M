@@ -1,0 +1,563 @@
+@use "sass:color";
+
+// ─── PALETA ────────────────────────────────────────────────
+$primary: #2563eb;
+$primary-soft: rgba(37, 99, 235, 0.08);
+$primary-dark: #1d4ed8;
+$text: #0f172a;
+$text-light: #475569;
+$muted: #64748b;
+$border: #e2e8f0;
+$white: #ffffff;
+$bg: #f8fafc;
+$bg-hover: #f1f5f9;
+$success: #16a34a;
+$error: #dc2626;
+
+$r-sm: 8px;
+$r-md: 12px;
+$r-lg: 16px;
+$r-xl: 20px;
+$r-2xl: 24px;
+$r-full: 999px;
+
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+
+$transition: all 0.2s ease;
+
+// ─── PAGE ─────────────────────────────────────────────────
+:host {
+  display: block;
+}
+
+.page {
+  --background: #{$bg};
+  background: $bg;
+}
+
+ion-content.page {
+  --background: #{$bg};
+  --padding-bottom: 1rem;
+  --padding-top: 0;
+}
+
+// ─── HEADER ───────────────────────────────────────────────
+.app-header {
+  ion-toolbar {
+    --background: #{$white};
+    --border-color: #{$border};
+    --border-width: 0 0 1px 0;
+    --color: #{$text};
+
+    .page-title {
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: -0.3px;
+      color: $text;
+    }
+
+    .back-btn, .add-btn {
+      --color: #{$text};
+      --color-hover: #{$primary};
+    }
+  }
+}
+
+// ─── HERO SECTION ─────────────────────────────────────────
+.page-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem 0;
+
+  .hero-left {
+    .hero-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: $primary;
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .hero-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: $text;
+      margin: 0;
+    }
+  }
+
+  .hero-stat {
+    background: $primary-soft;
+    padding: 0.5rem 1.25rem;
+    border-radius: $r-lg;
+    text-align: center;
+
+    .stat-number {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: $primary;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: $text-light;
+      display: block;
+    }
+  }
+}
+
+// ─── KPI CARDS ────────────────────────────────────────────
+.kpi-card {
+  background: $white;
+  border-radius: $r-xl;
+  border: 1px solid $border;
+  box-shadow: $shadow-sm;
+  transition: $transition;
+  margin: 0;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+    border-color: color.adjust($border, $lightness: -5%);
+  }
+
+  ion-card-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem;
+  }
+
+  ion-icon {
+    font-size: 1.75rem;
+    color: $primary;
+    background: $primary-soft;
+    padding: 0.75rem;
+    border-radius: $r-md;
+  }
+
+  div {
+    text-align: right;
+
+    h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin: 0;
+      color: $text;
+    }
+
+    p {
+      font-size: 0.7rem;
+      font-weight: 600;
+      margin: 0.25rem 0 0;
+      color: $muted;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+  }
+}
+
+// ─── SEGMENT ──────────────────────────────────────────────
+.custom-segment {
+  background: $white;
+  border-radius: $r-full;
+  padding: 0.25rem;
+  border: 1px solid $border;
+  margin: 1.5rem 0;
+
+  ion-segment-button {
+    --indicator-height: 0;
+    --background-checked: transparent;
+    --color: #{$muted};
+    --color-checked: #{$white};
+    border-radius: $r-full;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: none;
+    min-height: 2.5rem;
+    margin: 0 0.125rem;
+    transition: $transition;
+
+    &::part(native) {
+      border-radius: $r-full;
+    }
+
+    &.segment-button-checked {
+      background: $primary;
+      color: $white;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+  }
+}
+
+// ─── CARD PRINCIPAL ───────────────────────────────────────
+.table-card {
+  background: $white;
+  border-radius: $r-2xl;
+  border: 1px solid $border;
+  box-shadow: $shadow-sm;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+// ─── TOOLBAR ──────────────────────────────────────────────
+.table-toolbar {
+  background: $white;
+  padding: 1rem;
+  border-bottom: 1px solid $border;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+
+  .search-wrapper {
+    flex: 2;
+    min-width: 200px;
+
+    ion-searchbar {
+      --background: #{$bg};
+      --border-radius: #{$r-full};
+      --box-shadow: none;
+      --placeholder-color: #{$muted};
+      --icon-color: #{$primary};
+      --clear-button-color: #{$muted};
+      padding: 0;
+    }
+  }
+
+  .filters-wrapper {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+
+    .filter-box {
+      --background: #{$bg};
+      --border-radius: #{$r-full};
+      --border-width: 0;
+      --inner-padding-end: 0.75rem;
+      --padding-start: 1rem;
+      --min-height: 2.75rem;
+
+      ion-label {
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: $muted;
+        margin-right: 0.5rem;
+      }
+
+      ion-select {
+        --color: #{$text};
+        font-weight: 700;
+        font-size: 0.8rem;
+      }
+    }
+  }
+}
+
+// ─── TABLA ────────────────────────────────────────────────
+.responsive-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead {
+    background: $bg-hover;
+
+    th {
+      padding: 0.875rem 1rem;
+      text-align: left;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: $muted;
+      border-bottom: 1px solid $border;
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid $border;
+      transition: $transition;
+
+      &:hover {
+        background: $primary-soft;
+      }
+
+      td {
+        padding: 0.875rem 1rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: $text;
+      }
+    }
+  }
+}
+
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 700;
+
+  ion-icon {
+    font-size: 1rem;
+    color: $primary;
+    background: $primary-soft;
+    padding: 0.5rem;
+    border-radius: $r-sm;
+  }
+}
+
+.actions {
+  white-space: nowrap;
+
+  ion-button {
+    --padding-start: 0.25rem;
+    --padding-end: 0.25rem;
+    margin: 0 0.125rem;
+    --color: #{$text-light};
+
+    &:hover {
+      --color: #{$primary};
+    }
+
+    &[color="danger"]:hover {
+      --color: #{$error};
+    }
+  }
+}
+
+// ─── LISTAS ───────────────────────────────────────────────
+.table-container.list-view {
+  background: $white;
+
+  ion-list {
+    background: $white;
+    padding: 0;
+  }
+
+  ion-item {
+    --background: #{$white};
+    --ion-item-background: #{$white};
+    --border-color: #{$border};
+    --inner-border-width: 0 0 1px 0;
+    --padding-start: 1rem;
+    --padding-end: 1rem;
+    --min-height: 4rem;
+    transition: $transition;
+
+    &:hover {
+      --background: #{$primary-soft};
+    }
+
+    .item-icon-box {
+      width: 2.5rem;
+      height: 2.5rem;
+      background: $primary-soft;
+      border-radius: $r-md;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 0.75rem;
+
+      ion-icon {
+        font-size: 1.2rem;
+        color: $primary;
+      }
+    }
+
+    h3 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: $text;
+      margin-bottom: 0.25rem;
+    }
+
+    p {
+      font-size: 0.7rem;
+      color: $muted;
+      margin: 0;
+    }
+
+    ion-button[slot="end"] {
+      --border-radius: #{$r-full};
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+  }
+}
+
+// ─── MODAL ────────────────────────────────────────────────
+.delete-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.delete-modal {
+  background: $white;
+  border-radius: $r-2xl;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 300px;
+  text-align: center;
+  box-shadow: $shadow-lg;
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin: 0 0 0.5rem;
+    color: $text;
+  }
+
+  p {
+    font-size: 0.85rem;
+    color: $muted;
+    margin-bottom: 1.5rem;
+  }
+
+  .delete-modal-actions {
+    display: flex;
+    gap: 0.75rem;
+
+    button {
+      flex: 1;
+      padding: 0.7rem;
+      border-radius: $r-full;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: $transition;
+
+      &.cancel {
+        background: $bg;
+        color: $text;
+
+        &:hover {
+          background: $border;
+        }
+      }
+
+      &.confirm {
+        background: $error;
+        color: white;
+
+        &:hover {
+          background: color.adjust($error, $lightness: -10%);
+        }
+      }
+    }
+  }
+}
+
+// ─── LOADING ──────────────────────────────────────────────
+.state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  gap: 1rem;
+  background: $white;
+  border-radius: $r-2xl;
+  border: 1px solid $border;
+
+  ion-spinner {
+    --color: #{$primary};
+  }
+
+  ion-label {
+    color: $muted;
+    font-weight: 500;
+  }
+}
+
+// ─── RESPONSIVE ───────────────────────────────────────────
+@media (max-width: 768px) {
+  .page-hero {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .hero-stat {
+      width: 100%;
+      text-align: left;
+    }
+  }
+
+  .table-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+
+    .search-wrapper {
+      width: 100%;
+    }
+
+    .filters-wrapper {
+      flex-direction: column;
+
+      .filter-box {
+        width: 100%;
+      }
+    }
+  }
+
+  // Tabla responsive
+  .responsive-table {
+    thead {
+      display: none;
+    }
+
+    tbody, tr, td {
+      display: block;
+    }
+
+    tr {
+      margin-bottom: 0.75rem;
+      border: 1px solid $border;
+      border-radius: $r-lg;
+      padding: 0.5rem;
+    }
+
+    td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem;
+      border-bottom: 1px dashed $border;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &::before {
+        content: attr(data-label);
+        font-weight: 800;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        color: $muted;
+        width: 40%;
+      }
+
+      &.actions::before {
+        display: none;
+      }
+    }
+  }
+}

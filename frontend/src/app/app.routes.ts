@@ -78,9 +78,12 @@ export const routes: Routes = [
   path: 'success/:id',
   loadComponent: () => import('./pages/success/success.page').then(m => m.SuccessPage)
   },
+   {
+    path: 'controlaccess',
+    loadComponent: () => import('./pages/controlaccess/controlaccess.page').then( m => m.ControlaccessPage)
+  },
   {
     path: '**',
     redirectTo: 'error404'
-  },
- 
+  }, 
 ];

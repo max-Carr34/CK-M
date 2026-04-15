@@ -90,6 +90,6 @@ export class AdminDashboardPage implements OnInit {
   }
 
   goToUsers(): void {
-    this.router.navigate(['/users']);
+    this.router.navigate(['/controlaccess']);
   }
 }
