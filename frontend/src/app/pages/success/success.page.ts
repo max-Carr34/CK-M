@@ -31,7 +31,7 @@ export class SuccessPage implements OnInit {
   private navCtrl = inject(NavController);
 
   ngOnInit() {
-    // 🔥 obtenemos el ID desde la URL (ej: /success/6)
+    // 🔥 ID desde la URL /success/:id
     this.orderId = this.route.snapshot.paramMap.get('id') || '';
 
     console.log('📦 ORDER ID:', this.orderId);
@@ -45,16 +45,16 @@ export class SuccessPage implements OnInit {
     this.loadOrder();
   }
 
-  // 🔥 traer datos reales desde backend
+  // 🔥 Traer pedido del backend
   loadOrder() {
     this.http.get(`http://localhost:3000/api/orders/${this.orderId}`)
       .subscribe({
         next: (res: any) => {
           console.log('✅ ORDER DATA:', res);
 
-          this.total = Number(res.total) || 0;
-          this.status = res.status || 'pending';
-          this.method = res.payment_method || 'cash';
+          this.total = Number(res.total ?? 0);
+          this.status = res.status ?? 'pending';
+          this.method = res.payment_method ?? 'cash';
 
           this.isLoading = false;
         },

@@ -75,7 +75,7 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/pag-pago/pag-pago.page').then( m => m.PagPagoPage)
   },
    {
-  path: 'success',
+  path: 'success/:id',
   loadComponent: () => import('./pages/success/success.page').then(m => m.SuccessPage)
   },
   {

@@ -1,6 +1,12 @@
 <ion-content class="ion-padding success-page">
 
-  <div class="success-container">
+  <!-- LOADING -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <!-- CONTENIDO -->
+  <div *ngIf="!isLoading" class="success-container">
 
     <ion-icon name="checkmark-circle-outline" class="success-icon"></ion-icon>
 
@@ -18,6 +24,7 @@
 
     <div class="ticket-box">
       <p>Método de pago</p>
+
       <h2 *ngIf="method === 'cash'">Efectivo</h2>
       <h2 *ngIf="method === 'spei'">Transferencia</h2>
     </div>

@@ -1,18 +1,24 @@
-// profile.page.scss
+// ============================================
+// VARIABLES
+// ============================================
+$primary: #1b69d5;
+$secondary: #031e49;
+$accent: #eef3fc;
+$gradient: linear-gradient(135deg, #1b69d5 0%, #2c7be5 100%);
+
+$radius: 12px;
+$transition: all 0.25s ease;
 
 // ============================================
-// VARIABLES - Colores
+// GLOBAL
 // ============================================
-$primary-color: #1b69d5;
-$accent-color: #f6f6f6;
-
-$radius-md: 12px;
-$transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+ion-content {
+  --background: #f5f9ff;
+}
 
 // ============================================
-// BOTÓN MENÚ HAMBURGUESA
+// MENU BUTTON (hamburguesa)
 // ============================================
-
 .menu-button {
   width: 42px;
   height: 42px;
@@ -22,13 +28,13 @@ $transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   align-items: center;
   gap: 5px;
   cursor: pointer;
-  background: linear-gradient(135deg, $primary-color 0%, $accent-color 100%);
-  border: 2px solid transparent;
+
+  background: $gradient;
+  border-radius: $radius;
   padding: 8px;
-  border-radius: $radius-md;
-  transition: $transition-smooth;
-  box-shadow: 0 2px 8px rgba(27, 105, 213, 0.3);
-  flex-shrink: 0;
+
+  box-shadow: 0 2px 10px rgba($primary, 0.25);
+  transition: $transition;
 
   &:active {
     transform: scale(0.95);
@@ -39,54 +45,52 @@ $transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     height: 2.5px;
     background: white;
     border-radius: 3px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    transform-origin: center;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    transition: $transition;
   }
 
   &.open {
     background: white;
-    border-color: $primary-color;
+    border: 2px solid $primary;
 
     span {
-      background: $primary-color;
+      background: $primary;
     }
 
     span:nth-child(1) {
-      transform: translateY(7.5px) rotate(45deg);
+      transform: translateY(7px) rotate(45deg);
     }
 
     span:nth-child(2) {
       opacity: 0;
-      transform: scaleX(0);
     }
 
     span:nth-child(3) {
-      transform: translateY(-7.5px) rotate(-45deg);
+      transform: translateY(-7px) rotate(-45deg);
     }
   }
 }
 
-ion-content {
-  --background: #fafafa;
-}
-
+// ============================================
+// HEADER / WELCOME
+// ============================================
 .welcome-section {
   text-align: center;
   padding: 2.5rem 1rem 2rem;
-  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 50%, #ffa600 100%);
-  color: white;
+  color: #fff;
+
+  background: $gradient;
   position: relative;
-  box-shadow: 0 4px 20px rgba(255, 107, 53, 0.3);
+
+  box-shadow: 0 4px 18px rgba($primary, 0.25);
 
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 30px;
-    background: #fafafa;
+    height: 25px;
+    background: #f5f9ff;
     border-radius: 30px 30px 0 0;
   }
 
@@ -94,187 +98,145 @@ ion-content {
     width: 90px;
     height: 90px;
     margin: 0 auto 1rem;
-    border: 4px solid rgba(255, 255, 255, 0.3);
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.15);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     ion-icon {
-      font-size: 90px;
+      font-size: 80px;
       color: white;
     }
   }
 
   h2 {
-    margin: 0.5rem 0 0.3rem;
-    font-size: 1.8rem;
+    margin: 0.5rem 0;
+    font-size: 1.7rem;
     font-weight: 700;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    letter-spacing: 0.5px;
   }
 
   .user-email {
-    opacity: 0.95;
-    font-size: 0.95rem;
-    font-weight: 400;
-    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    opacity: 0.9;
   }
 }
 
+// ============================================
+// CARDS
+// ============================================
 ion-card {
-  margin: 1.2rem 1rem;
   border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  background: white;
+  margin: 1rem;
+  background: #fff;
+
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
   overflow: hidden;
 
+  animation: fadeInUp 0.4s ease;
+
   ion-card-header {
-    padding: 1.2rem 1rem 0.8rem;
-    background: linear-gradient(to right, rgba(255, 107, 53, 0.05), rgba(255, 166, 0, 0.05));
-    border-bottom: 2px solid #fff3e0;
+    background: rgba($primary, 0.05);
+    border-bottom: 1px solid $accent;
+    padding: 1rem;
 
     ion-card-title {
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       font-weight: 700;
-      color: #ff6b35;
-      letter-spacing: 0.3px;
+      color: $primary;
     }
   }
 
   ion-card-content {
     padding: 0;
-
-    ion-list {
-      background: transparent;
-      padding: 0.5rem 0;
-    }
   }
 }
 
-.empty-state {
-  text-align: center;
-  padding: 3rem 2rem;
-  color: #9e9e9e;
-
-  ion-icon {
-    font-size: 72px;
-    margin-bottom: 1rem;
-    color: #ffb74d;
-    opacity: 0.6;
-  }
-
-  p {
-    font-size: 1.05rem;
-    margin: 0;
-    font-weight: 500;
-    color: #bdbdbd;
-  }
-}
-
+// ============================================
+// ITEMS
+// ============================================
 ion-item {
+  --background: #fff;
+  --min-height: 65px;
   --padding-start: 1rem;
   --padding-end: 1rem;
-  --background: white;
-  --border-color: #f5f5f5;
-  --min-height: 70px;
-  margin: 0.3rem 0;
-  transition: all 0.3s ease;
+
+  border-bottom: 1px solid #eef2f8;
+
+  transition: $transition;
 
   &:hover {
-    --background: #fff8f3;
+    --background: #f2f7ff;
   }
 
   ion-icon[slot="start"] {
-    font-size: 24px;
-    margin-right: 1rem;
-    color: #ff8c42;
-  }
-
-  ion-icon[slot="end"] {
-    color: #ff6b35;
+    color: $primary;
+    font-size: 22px;
+    margin-right: 10px;
   }
 
   ion-label {
     h3 {
-      font-weight: 600;
-      margin-bottom: 4px;
       font-size: 1rem;
-      color: #333;
+      font-weight: 600;
+      color: $secondary;
+      margin: 0;
     }
 
     p {
-      font-size: 0.88rem;
-      color: #757575;
-      margin-top: 2px;
-    }
-  }
-
-  &[color="danger"] {
-    ion-icon {
-      color: #f44336;
+      font-size: 0.85rem;
+      color: #6b7686;
     }
   }
 }
 
-ion-thumbnail {
-  --size: 65px;
-  --border-radius: 12px;
-  margin-right: 1rem;
-  border: 2px solid #fff3e0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+// ============================================
+// EMPTY STATE
+// ============================================
+.empty-state {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  color: #9aa4b2;
 
-  img {
-    object-fit: cover;
+  ion-icon {
+    font-size: 70px;
+    color: $primary;
+    opacity: 0.6;
+    margin-bottom: 10px;
+  }
+
+  p {
+    font-size: 1rem;
   }
 }
 
+// ============================================
+// BUTTONS
+// ============================================
 ion-button {
-  --border-radius: 8px;
-  --padding-start: 0.8rem;
-  --padding-end: 0.8rem;
-  font-weight: 600;
   text-transform: none;
+  font-weight: 600;
 
   &[fill="outline"] {
-    --border-color: #ff8c42;
-    --color: #ff6b35;
+    --border-color: #1b69d5;
+    --color: #1b69d5;
 
     &:hover {
-      --background: #fff3e0;
-    }
-
-    ion-icon {
-      font-size: 18px;
+      --background: rgba(27, 105, 213, 0.08);
     }
   }
 }
 
-// Estilos específicos para las tarjetas de pedidos
-ion-card:has(ion-card-title:contains("Mis Pedidos")) {
-  ion-item {
-    ion-icon[slot="start"] {
-      color: #ff6b35;
-    }
-
-    ion-label {
-      h3 {
-        color: #ff6b35;
-        font-weight: 700;
-      }
-
-      p:last-child {
-        color: #ff8c42;
-        font-weight: 600;
-      }
-    }
-  }
-}
-
-// Animaciones suaves
+// ============================================
+// ANIMATION
+// ============================================
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(15px);
   }
   to {
     opacity: 1;
@@ -282,45 +244,16 @@ ion-card:has(ion-card-title:contains("Mis Pedidos")) {
   }
 }
 
-ion-card {
-  animation: fadeInUp 0.5s ease-out;
-}
-
-ion-card:nth-child(1) {
-  animation-delay: 0.1s;
-}
-
-ion-card:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-ion-card:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-ion-card:nth-child(4) {
-  animation-delay: 0.4s;
-}
-
-// Responsive
+// ============================================
+// RESPONSIVE
+// ============================================
 @media (min-width: 768px) {
   ion-card {
-    margin: 1.5rem auto;
     max-width: 600px;
+    margin: 1.5rem auto;
   }
 
-  .welcome-section {
-    h2 {
-      font-size: 2rem;
-    }
-
-    .user-avatar {
-      width: 100px;
-      height: 100px;
-
-      ion-icon {
-        font-size: 100px;
-      }
-    }
+  .welcome-section h2 {
+    font-size: 2rem;
   }
 }

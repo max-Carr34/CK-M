@@ -29,17 +29,15 @@ export class SidebarMenuComponent implements OnInit, OnDestroy {
 
   selected: string = '';
 
-  // 🔥 DATOS REALES DEL USUARIO
+  // DATOS REALES DEL USUARIO
   userName: string = 'Usuario';
   userEmail: string = '';
 
   // 🚀 MENÚ
   menuItems: MenuItem[] = [
     { key: 'profile', label: 'Perfil', icon: '👤', route: '/perfil' },
-    { key: 'contact', label: 'Contacto', icon: '📞', route: '/communication-select' },
     { key: 'menu', label: 'Menú', icon: '🍔', route: '/menu' },
     { key: 'notifications', label: 'Comprobantes', icon: '🔔', route: '/notifications' },
-    { key: 'promotions', label: 'Promociones', icon: '🎁', route: '/promotions' }
   ];
 
   constructor(

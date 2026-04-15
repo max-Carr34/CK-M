@@ -6,26 +6,24 @@ const db = require('../db');
    CREAR PEDIDO
 ================================= */
 router.post('/', (req, res) => {
-  const { user_id, cart } = req.body;
+  const { user_id, cart, payment_method } = req.body;
 
   console.log('📥 BODY:', req.body);
 
-  // Validación
   if (!user_id || !cart || cart.length === 0) {
     return res.status(400).json({ message: 'Datos inválidos' });
   }
 
-  // Calcular total
   const total = cart.reduce((sum, item) => {
     return sum + item.price * item.quantity;
   }, 0);
 
   const orderSql = `
-    INSERT INTO orders (user_id, total, status)
-    VALUES (?, ?, 'pending')
+    INSERT INTO orders (user_id, total, status, payment_method)
+    VALUES (?, ?, 'pending', ?)
   `;
 
-  db.query(orderSql, [user_id, total], (err, result) => {
+  db.query(orderSql, [user_id, total, payment_method], (err, result) => {
     if (err) {
       console.error('❌ ERROR INSERT ORDER:', err);
       return res.status(500).json({ error: err.message });
@@ -61,7 +59,6 @@ router.post('/', (req, res) => {
   });
 });
 
-
 // OBTENER PEDIDOS POR USUARIO
 router.get('/user/:user_id', (req, res) => {
   const userId = req.params.user_id;
@@ -88,7 +85,7 @@ router.get('/:id', (req, res) => {
   const orderId = req.params.id;
 
   const sql = `
-    SELECT id, total, status
+    SELECT id, total, status, payment_method
     FROM orders
     WHERE id = ?
   `;
