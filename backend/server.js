@@ -31,10 +31,6 @@ const loginLimiter = rateLimit({
   }
 });
 
-/* ===============================
-   CONFIGURACIÓN CORS (LOCAL + PRODUCCIÓN)
-================================= */
-
 const allowedOrigins = [
   'http://localhost:8100',
   process.env.FRONTEND_URL
@@ -42,13 +38,17 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
+
+    // permitir herramientas como Postman o server-to-server
     if (!origin) return callback(null, true);
 
+    // validación real
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
 
-    return callback(null, true); // abierto mientras pruebas
+    // ❌ bloquear todo lo demás
+    return callback(new Error('No permitido por CORS'));
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -96,5 +96,5 @@ app.use('/api', routes);
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`🚀 API corriendo en puerto ${PORT}`);
+  console.log(`API corriendo en puerto ${PORT}`);
 });

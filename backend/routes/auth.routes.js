@@ -236,10 +236,6 @@ router.post('/change-password', verifyToken, async (req, res) => {
     }
   );
 });
-
-/* ===============================
-   RESET PASSWORD REQUEST
-================================= */
 router.post('/request-reset-password', (req, res) => {
   const { correo } = req.body;
 
@@ -247,6 +243,8 @@ router.post('/request-reset-password', (req, res) => {
     'SELECT id FROM usuarios WHERE correo = ?',
     [correo],
     (err, results) => {
+      if (err) return res.status(500).json({ message: 'Error servidor' });
+
       if (results.length === 0) {
         return res.status(404).json({ message: 'No existe usuario' });
       }
@@ -259,12 +257,18 @@ router.post('/request-reset-password', (req, res) => {
         [token, expire, results[0].id]
       );
 
-      const link = `http://localhost:8100/changepassw?token=${token}`;
+      // 🔥 FIX PRINCIPAL
+      const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:8100';
+
+      const link = `${FRONTEND_URL}/changepassw?token=${token}`;
 
       transporter.sendMail({
         to: correo,
         subject: 'Reset Password',
-        html: `<a href="${link}">Cambiar contraseña</a>`
+        html: `
+          <p>Haz clic para cambiar tu contraseña:</p>
+          <a href="${link}">Cambiar contraseña</a>
+        `
       });
 
       res.json({ message: 'Correo enviado' });
