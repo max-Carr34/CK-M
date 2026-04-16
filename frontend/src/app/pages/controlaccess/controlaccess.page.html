@@ -1,6 +1,5 @@
 <ion-header class="app-header">
   <ion-toolbar>
-
     <ion-buttons slot="start">
       <ion-back-button class="back-btn" text="" defaultHref="/admin-dashboard"></ion-back-button>
     </ion-buttons>
@@ -17,20 +16,17 @@
         <ion-icon name="shield-checkmark-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
-
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="page">
   <div class="page-container">
 
-    <!-- LOADING -->
     <div *ngIf="isLoading" class="state-container">
       <ion-spinner name="crescent"></ion-spinner>
       <ion-label>Cargando panel...</ion-label>
     </div>
 
-    <!-- ERROR -->
     <div *ngIf="error" class="state-container error">
       <ion-icon name="alert-circle-outline"></ion-icon>
       <ion-label>Error al cargar datos ⚠️</ion-label>
@@ -38,7 +34,6 @@
 
     <div *ngIf="stats && !isLoading">
 
-      <!-- HERO -->
       <div class="page-hero">
         <div class="hero-left">
           <span class="hero-eyebrow">Panel de control</span>
@@ -54,7 +49,6 @@
         </div>
       </div>
 
-      <!-- KPIs -->
       <div class="kpi-row">
         <div class="kpi-card">
           <div class="kpi-icon">
@@ -90,28 +84,27 @@
         </div>
       </div>
 
-      <!-- SEGMENT -->
       <div class="segment-wrapper">
         <ion-segment [(ngModel)]="segment" class="custom-segment">
           <ion-segment-button value="logs">
             <ion-icon name="document-text-outline"></ion-icon>
-            Logs
+            <ion-label>Logs</ion-label>
           </ion-segment-button>
+          
           <ion-segment-button value="sessions">
             <ion-icon name="wifi-outline"></ion-icon>
-            Sesiones
+            <ion-label>Sesiones</ion-label>
           </ion-segment-button>
+          
           <ion-segment-button value="users">
             <ion-icon name="people-outline"></ion-icon>
-            Usuarios
+            <ion-label>Usuarios</ion-label>
           </ion-segment-button>
         </ion-segment>
       </div>
 
-      <!-- CARD -->
       <div class="table-card">
 
-        <!-- TOOLBAR -->
         <div class="table-toolbar">
           <div class="search-wrapper">
             <ion-icon name="search-outline" class="search-icon"></ion-icon>
@@ -121,18 +114,20 @@
               (ionInput)="filterUsers()">
             </ion-searchbar>
           </div>
+          
           <div class="filters-wrapper">
             <div class="filter-pill">
               <ion-icon name="shield-outline"></ion-icon>
-              <ion-select [(ngModel)]="selectedRole" (ionChange)="filterUsers()" placeholder="Rol">
+              <ion-select [(ngModel)]="selectedRole" (ionChange)="filterUsers()" placeholder="Rol" interface="popover">
                 <ion-select-option value="all">Todos los roles</ion-select-option>
                 <ion-select-option value="admin">Admin</ion-select-option>
                 <ion-select-option value="user">User</ion-select-option>
               </ion-select>
             </div>
+            
             <div class="filter-pill">
               <ion-icon name="ellipse-outline"></ion-icon>
-              <ion-select [(ngModel)]="selectedStatus" (ionChange)="filterUsers()" placeholder="Estado">
+              <ion-select [(ngModel)]="selectedStatus" (ionChange)="filterUsers()" placeholder="Estado" interface="popover">
                 <ion-select-option value="all">Todos</ion-select-option>
                 <ion-select-option value="active">Activo</ion-select-option>
                 <ion-select-option value="inactive">Inactivo</ion-select-option>
@@ -141,9 +136,8 @@
           </div>
         </div>
 
-        <!-- LOGS -->
         <div *ngIf="segment === 'logs'" class="list-view">
-          <ion-list>
+          <ion-list lines="none">
             <ion-item *ngFor="let log of logs" class="list-item">
               <div class="list-icon-box" slot="start">
                 <ion-icon name="document-text-outline"></ion-icon>
@@ -156,9 +150,8 @@
           </ion-list>
         </div>
 
-        <!-- SESSIONS -->
         <div *ngIf="segment === 'sessions'" class="list-view">
-          <ion-list>
+          <ion-list lines="none">
             <ion-item *ngFor="let s of sessions" class="list-item">
               <div class="list-icon-box" slot="start">
                 <ion-icon name="person-outline"></ion-icon>
@@ -175,7 +168,6 @@
           </ion-list>
         </div>
 
-        <!-- USERS TABLE -->
         <div *ngIf="segment === 'users'" class="table-container">
           <table class="responsive-table">
             <thead>
@@ -222,7 +214,6 @@
     </div>
   </div>
 
-  <!-- DELETE MODAL -->
   <div *ngIf="userToDelete" class="delete-overlay" (click)="cancelDelete()">
     <div class="delete-modal" (click)="$event.stopPropagation()">
       <div class="delete-modal-icon">
