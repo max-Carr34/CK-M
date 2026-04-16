@@ -262,15 +262,21 @@ export class AuthService {
   // PASSWORD RESET
   // ============================================
   forgotPassword(correo: string) {
-    return this.http.post(`${this.apiUrl}/request-reset-password`, {
-      correo
-    });
-  }
+  return this.http.post(`${this.apiUrl}/api/request-reset-password`, {
+    correo
+  });
+}
 
-  resetPassword(token: string, newPassword: string) {
-    return this.http.post(
-      `${this.apiUrl}/reset-password`,
-      { token, newPassword }
-    );
-  }
+resetPassword(token: string, newPassword: string) {
+  return this.http.post(
+    `${this.apiUrl}/api/reset-password`,
+    { token, newPassword }
+  );
+}
+changePassword(currentPassword: string, newPassword: string) {
+  return this.http.post(
+    `${this.apiUrl}/api/change-password`,
+    { currentPassword, newPassword }
+  );
+}
 }
