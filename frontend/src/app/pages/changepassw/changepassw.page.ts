@@ -14,6 +14,7 @@ import {
   ToastController
 } from '@ionic/angular/standalone';
 import { Router, ActivatedRoute } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-changepassw',
@@ -64,10 +65,10 @@ export class ChangepasswPage implements OnInit {
       return this.showToast('Token inválido o ausente', 'danger');
     }
 
-    this.http.post('http://localhost:3000/api/reset-password', {
-      token: this.token,
-      newPassword: this.newPassword
-    }).subscribe({
+      this.http.post(`${environment.apiUrl}/reset-password`, {
+        token: this.token,
+        newPassword: this.newPassword
+      }).subscribe({
       next: async () => {
         await this.showToast('Contraseña actualizada 🎉', 'success');
         setTimeout(() => this.router.navigate(['/login']), 2000);

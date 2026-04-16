@@ -26,7 +26,7 @@ export class RegistroPage {
     password: ''
   };
 
-  API_URL = 'http://localhost:3000/api/usuarios';
+  API_URL = `${environment.apiUrl}/usuarios`;
 
   constructor(
     private http: HttpClient,

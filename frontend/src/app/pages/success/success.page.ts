@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import * as i from '@ionic/angular/standalone';
 import { NavController } from '@ionic/angular';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-success',
@@ -47,7 +48,7 @@ export class SuccessPage implements OnInit {
 
   // 🔥 Traer pedido del backend
   loadOrder() {
-    this.http.get(`http://localhost:3000/api/orders/${this.orderId}`)
+    this.http.get(`${environment.apiUrl}/orders/${this.orderId}`)
       .subscribe({
         next: (res: any) => {
           console.log('✅ ORDER DATA:', res);

@@ -10,7 +10,7 @@ import {
   locationOutline, swapHorizontalOutline, checkmarkCircleOutline,
   receiptOutline, cloudUploadOutline
 } from 'ionicons/icons';
-
+import { environment } from 'src/environments/environment';
 import { CartService, CartItem } from '../../services/cart.service';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
@@ -117,7 +117,7 @@ export class PagPagoPage implements OnInit, OnDestroy {
       payment_method: this.paymentMethod
     };
 
-    this.http.post('http://localhost:3000/api/orders', data).subscribe({
+    this.http.post(`${environment.apiUrl}/orders`, data).subscribe({
       next: async (res: any) => {
 
         await loading.dismiss();
