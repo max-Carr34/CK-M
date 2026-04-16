@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://localhost:3000' // 👈 cuando lo subas
+  apiUrl: 'https://marista-base-de-datos.onrender.com' // 👈 cuando lo subas
 };

@@ -13,7 +13,7 @@
     "sourceMap": true,
     "declaration": false,
     "experimentalDecorators": true,
-    "moduleResolution": "bundler", // 🔥 CAMBIO IMPORTANTE
+    "moduleResolution": "bundler", // CAMBIO IMPORTANTE
     "importHelpers": true,
     "target": "es2022",
     "module": "es2020",
