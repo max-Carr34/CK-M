@@ -20,40 +20,66 @@ export class CartService {
   cart$ = this.cartSubject.asObservable();
 
   constructor() {
-    const data = localStorage.getItem('cart');
-    this.cart = data ? JSON.parse(data) : [];
+    this.loadCart();
+  }
 
-    // emitir copia SIEMPRE
+  // ============================================
+  // LOAD CART (FIX IMPORTANTE)
+  // ============================================
+  private loadCart() {
+    try {
+      const data = localStorage.getItem('cart');
+      this.cart = data ? JSON.parse(data) : [];
+    } catch (e) {
+      console.error('Cart load error:', e);
+      this.cart = [];
+      localStorage.removeItem('cart');
+    }
+
+    this.emitCart();
+  }
+
+  // ============================================
+  // CENTRAL UPDATE
+  // ============================================
+  private updateCart() {
+    this.saveCart();
+    this.emitCart();
+  }
+
+  private saveCart() {
+    try {
+      localStorage.setItem('cart', JSON.stringify(this.cart));
+    } catch (e) {
+      console.error('Cart save error:', e);
+    }
+  }
+
+  private emitCart() {
     this.cartSubject.next([...this.cart]);
   }
 
-  // método central (NO LO ROMPAS)
-  private updateCart() {
-    this.cart = [...this.cart]; // fuerza nueva referencia
-    localStorage.setItem('cart', JSON.stringify(this.cart));
-    this.cartSubject.next([...this.cart]); // clave para Angular
-  }
-
+  // ============================================
+  // GETTERS
+  // ============================================
   getCart() {
     return [...this.cart];
   }
 
-  updateQuantity(id: number, quantity: number) {
-    const item = this.cart.find(p => p.id === id);
-
-    if (!item) return;
-
-    if (quantity <= 0) {
-      this.removeFromCart(id);
-      return;
-    }
-
-    item.quantity = quantity;
-
-    this.updateCart();
+  getTotalItems() {
+    return this.cart.reduce((total, item) => total + item.quantity, 0);
   }
 
+  getTotalPrice() {
+    return this.cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  }
+
+  // ============================================
+  // ADD ITEM
+  // ============================================
   addToCart(product: any) {
+    if (!product?.id) return;
+
     const existing = this.cart.find(item => item.id === product.id);
 
     if (existing) {
@@ -71,24 +97,37 @@ export class CartService {
     this.updateCart();
   }
 
+  // ============================================
+  // UPDATE QUANTITY
+  // ============================================
+  updateQuantity(id: number, quantity: number) {
+    const item = this.cart.find(p => p.id === id);
+
+    if (!item) return;
+
+    if (quantity <= 0) {
+      this.removeFromCart(id);
+      return;
+    }
+
+    item.quantity = quantity;
+    this.updateCart();
+  }
+
+  // ============================================
+  // REMOVE ITEM
+  // ============================================
   removeFromCart(id: number) {
     this.cart = this.cart.filter(item => item.id !== id);
     this.updateCart();
   }
 
+  // ============================================
+  // CLEAR CART
+  // ============================================
   clearCart() {
     this.cart = [];
-
-    // MUY IMPORTANTE: limpiar bien todo
-    localStorage.setItem('cart', JSON.stringify(this.cart));
-    this.cartSubject.next([]);
-  }
-
-  getTotalItems() {
-    return this.cart.reduce((total, item) => total + item.quantity, 0);
-  }
-
-  getTotalPrice() {
-    return this.cart.reduce((total, item) => total + item.price * item.quantity, 0);
+    this.saveCart();
+    this.emitCart();
   }
 }
