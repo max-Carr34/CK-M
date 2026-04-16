@@ -77,7 +77,6 @@ function logAction(userId, action) {
     }
   );
 }
-
 /* ===============================
    LOGIN
 ================================= */
@@ -92,7 +91,11 @@ router.post('/login', (req, res) => {
     'SELECT * FROM usuarios WHERE correo = ?',
     [correo],
     async (err, results) => {
-      if (err) return res.status(500).json({ message: 'Error DB' });
+
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Error DB' });
+      }
 
       if (results.length === 0) {
         return res.status(401).json({ message: 'Usuario no encontrado' });
@@ -100,41 +103,52 @@ router.post('/login', (req, res) => {
 
       const user = results[0];
 
-      const valid = await bcrypt.compare(password, user.password);
-      if (!valid) {
-        return res.status(401).json({ message: 'Contraseña incorrecta' });
-      }
+      try {
+        const valid = await bcrypt.compare(password, user.password);
 
-      const accessToken = jwt.sign(
-        { userId: user.id, rol: user.rol },
-        SECRET_KEY,
-        { expiresIn: '15m' }
-      );
-
-      const refreshToken = jwt.sign(
-        { userId: user.id },
-        REFRESH_SECRET,
-        { expiresIn: '7d' }
-      );
-
-      db.query(
-        'INSERT INTO refresh_tokens (user_id, token) VALUES (?, ?)',
-        [user.id, refreshToken]
-      );
-
-      // 🔥 LOG
-      logAction(user.id, 'LOGIN');
-
-      res.json({
-        accessToken,
-        refreshToken,
-        usuario: {
-          id: user.id,
-          nombre: user.nombre,
-          correo: user.correo,
-          rol: user.rol
+        if (!valid) {
+          return res.status(401).json({ message: 'Contraseña incorrecta' });
         }
-      });
+
+        const accessToken = jwt.sign(
+          { userId: user.id, rol: user.rol },
+          SECRET_KEY,
+          { expiresIn: '15m' }
+        );
+
+        const refreshToken = jwt.sign(
+          { userId: user.id },
+          REFRESH_SECRET,
+          { expiresIn: '7d' }
+        );
+
+        db.query(
+          'INSERT INTO refresh_tokens (user_id, token) VALUES (?, ?)',
+          [user.id, refreshToken],
+          (err) => {
+            if (err) {
+              console.error('Error guardando refresh token:', err);
+            }
+          }
+        );
+
+        logAction(user.id, 'LOGIN');
+
+        return res.json({
+          accessToken,
+          refreshToken,
+          usuario: {
+            id: user.id,
+            nombre: user.nombre,
+            correo: user.correo,
+            rol: user.rol
+          }
+        });
+
+      } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error interno' });
+      }
     }
   );
 });
@@ -153,9 +167,13 @@ router.post('/logout', (req, res) => {
     'DELETE FROM refresh_tokens WHERE token = ?',
     [refreshToken],
     (err) => {
-      if (err) return res.status(500).json({ message: 'Error logout' });
 
-      res.json({ message: 'Logout exitoso' });
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Error logout' });
+      }
+
+      return res.json({ message: 'Logout exitoso' });
     }
   );
 });
@@ -174,7 +192,10 @@ router.post('/refresh', (req, res) => {
     'SELECT * FROM refresh_tokens WHERE token = ?',
     [refreshToken],
     (err, results) => {
-      if (err) return res.status(500).json({ message: 'Error DB' });
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Error DB' });
+      }
 
       if (results.length === 0) {
         return res.status(403).json({ message: 'Token inválido' });
@@ -189,9 +210,12 @@ router.post('/refresh', (req, res) => {
           { expiresIn: '15m' }
         );
 
-        res.json({ accessToken: newAccessToken });
+        return res.json({ accessToken: newAccessToken });
 
-      } catch {
+      } catch (error) {
+
+        console.error('Error verificando refresh token:', error);
+
         return res.status(403).json({ message: 'Token expirado' });
       }
     }
@@ -213,71 +237,58 @@ router.post('/change-password', verifyToken, async (req, res) => {
     'SELECT password FROM usuarios WHERE id = ?',
     [userId],
     async (err, results) => {
-      if (err) return res.status(500).json({ message: 'Error DB' });
-
-      const valid = await bcrypt.compare(currentPassword, results[0].password);
-
-      if (!valid) {
-        return res.status(400).json({ message: 'Contraseña incorrecta' });
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Error DB' });
       }
-
-      const hashed = await bcrypt.hash(newPassword, 10);
-
-      db.query(
-        'UPDATE usuarios SET password = ? WHERE id = ?',
-        [hashed, userId],
-        () => {
-          db.query('DELETE FROM refresh_tokens WHERE user_id = ?', [userId]);
-          logAction(userId, 'CHANGE_PASSWORD');
-
-          res.json({ message: 'Contraseña actualizada' });
-        }
-      );
-    }
-  );
-});
-router.post('/request-reset-password', (req, res) => {
-  const { correo } = req.body;
-
-  db.query(
-    'SELECT id FROM usuarios WHERE correo = ?',
-    [correo],
-    (err, results) => {
-      if (err) return res.status(500).json({ message: 'Error servidor' });
 
       if (results.length === 0) {
-        return res.status(404).json({ message: 'No existe usuario' });
+        return res.status(404).json({ message: 'Usuario no encontrado' });
       }
 
-      const token = crypto.randomBytes(32).toString('hex');
-      const expire = Date.now() + 600000;
+      try {
+        const valid = await bcrypt.compare(currentPassword, results[0].password);
 
-      db.query(
-        'UPDATE usuarios SET resetPasswordToken=?, resetPasswordExpires=? WHERE id=?',
-        [token, expire, results[0].id]
-      );
+        if (!valid) {
+          return res.status(400).json({ message: 'Contraseña incorrecta' });
+        }
 
-      // 🔥 FIX PRINCIPAL
-      const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:8100';
+        const hashed = await bcrypt.hash(newPassword, 10);
 
-      const link = `${FRONTEND_URL}/changepassw?token=${token}`;
+        db.query(
+          'UPDATE usuarios SET password = ? WHERE id = ?',
+          [hashed, userId],
+          (err) => {
 
-      transporter.sendMail({
-        to: correo,
-        subject: 'Reset Password',
-        html: `
-          <p>Haz clic para cambiar tu contraseña:</p>
-          <a href="${link}">Cambiar contraseña</a>
-        `
-      });
+            if (err) {
+              console.error(err);
+              return res.status(500).json({ message: 'Error al actualizar' });
+            }
 
-      res.json({ message: 'Correo enviado' });
+            db.query(
+              'DELETE FROM refresh_tokens WHERE user_id = ?',
+              [userId],
+              (err) => {
+                if (err) console.error('Error limpiando tokens:', err);
+              }
+            );
+
+            logAction(userId, 'CHANGE_PASSWORD');
+
+            return res.json({ message: 'Contraseña actualizada' });
+          }
+        );
+
+      } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error interno' });
+      }
     }
   );
 });
 
 /* ===============================
-   RESET PASSWORD
+   RESSET PASSWORD
 ================================= */
 router.post('/reset-password', async (req, res) => {
   const { token, newPassword } = req.body;
@@ -286,33 +297,56 @@ router.post('/reset-password', async (req, res) => {
     'SELECT id, resetPasswordExpires FROM usuarios WHERE resetPasswordToken = ?',
     [token],
     async (err, results) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Error DB' });
+      }
 
       if (
         results.length === 0 ||
         results[0].resetPasswordExpires < Date.now()
       ) {
-        return res.status(400).json({ message: 'Token inválido' });
+        return res.status(400).json({ message: 'Token inválido o expirado' });
       }
 
-      const userId = results[0].id;
-      const hashed = await bcrypt.hash(newPassword, 10);
+      try {
+        const userId = results[0].id;
 
-      db.query(
-        `UPDATE usuarios 
-         SET password=?, resetPasswordToken=NULL, resetPasswordExpires=NULL 
-         WHERE id=?`,
-        [hashed, userId],
-        () => {
-          db.query('DELETE FROM refresh_tokens WHERE user_id = ?', [userId]);
-          logAction(userId, 'RESET_PASSWORD');
+        const hashed = await bcrypt.hash(newPassword, 10);
 
-          res.json({ message: 'Contraseña actualizada' });
-        }
-      );
+        db.query(
+          `UPDATE usuarios 
+           SET password=?, resetPasswordToken=NULL, resetPasswordExpires=NULL 
+           WHERE id=?`,
+          [hashed, userId],
+          (err) => {
+
+            if (err) {
+              console.error(err);
+              return res.status(500).json({ message: 'Error al actualizar password' });
+            }
+
+            db.query(
+              'DELETE FROM refresh_tokens WHERE user_id = ?',
+              [userId],
+              (err) => {
+                if (err) console.error('Error limpiando tokens:', err);
+              }
+            );
+
+            logAction(userId, 'RESET_PASSWORD');
+
+            return res.json({ message: 'Contraseña actualizada' });
+          }
+        );
+
+      } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error interno' });
+      }
     }
   );
 });
-
 /* ===============================
    ADMIN STATS
 ================================= */
@@ -321,28 +355,54 @@ router.get('/admin/stats', verifyToken, role(['admin']), (req, res) => {
   const stats = {};
 
   db.query('SELECT COUNT(*) AS totalUsers FROM usuarios', (err, users) => {
-    if (err) return res.status(500).json({ error: err.message });
+
+    // 🔥 1. ERROR + LOG
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Error DB' });
+    }
+
+    // 🔥 2. VALIDAR RESULTADO (TE FALTABA)
+    if (!users || users.length === 0) {
+      return res.status(500).json({ error: 'Error obteniendo usuarios' });
+    }
 
     stats.totalUsers = users[0].totalUsers;
 
     db.query("SELECT COUNT(*) AS admins FROM usuarios WHERE rol='admin'", (err2, admins) => {
-      if (err2) return res.status(500).json({ error: err2.message });
+
+      if (err2) {
+        console.error(err2);
+        return res.status(500).json({ error: 'Error DB' });
+      }
+
+      if (!admins || admins.length === 0) {
+        return res.status(500).json({ error: 'Error obteniendo admins' });
+      }
 
       stats.admins = admins[0].admins;
 
       db.query("SELECT COUNT(*) AS activeUsers FROM usuarios WHERE is_active = 1", (err3, active) => {
-        if (err3) return res.status(500).json({ error: err3.message });
+
+        if (err3) {
+          console.error(err3);
+          return res.status(500).json({ error: 'Error DB' });
+        }
+
+        if (!active || active.length === 0) {
+          return res.status(500).json({ error: 'Error obteniendo activos' });
+        }
 
         stats.activeUsers = active[0].activeUsers;
 
-        res.json(stats);
+        return res.json(stats);
       });
     });
   });
 });
 
 /* ===============================
-   🔥 NUEVO: ADMIN LOGS
+   ADMIN LOGS
 ================================= */
 router.get('/admin/logs', verifyToken, role(['admin']), (req, res) => {
   db.query(`
@@ -352,11 +412,19 @@ router.get('/admin/logs', verifyToken, role(['admin']), (req, res) => {
     ORDER BY l.created_at DESC
     LIMIT 100
   `, (err, results) => {
-    if (err) return res.status(500).json({ message: 'Error al obtener logs' });
-    res.json(results);
+
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ message: 'Error al obtener logs' });
+    }
+
+    if (!results) {
+      return res.status(500).json({ message: 'Error en resultados' });
+    }
+
+    return res.json(results);
   });
 });
-
 /* ===============================
    ADMIN DELETE USER
 ================================= */
@@ -364,12 +432,19 @@ router.delete('/admin/users/:id', verifyToken, role(['admin']), (req, res) => {
 
   const userId = req.params.id;
 
-  db.query('DELETE FROM usuarios WHERE id = ?', [userId], (err) => {
-    if (err) return res.status(500).json(err);
+  db.query('DELETE FROM usuarios WHERE id = ?', [userId], (err, result) => {
+
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ message: 'Error al eliminar usuario' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
 
     logAction(userId, 'DELETED_BY_ADMIN');
-
-    res.json({ message: 'Usuario eliminado' });
+    return res.json({ message: 'Usuario eliminado' });
   });
 });
 
@@ -380,10 +455,25 @@ router.post('/admin/force-logout/:id', verifyToken, role(['admin']), (req, res) 
 
   const userId = req.params.id;
 
-  db.query('DELETE FROM refresh_tokens WHERE user_id = ?', [userId]);
-  logAction(userId, 'FORCE_LOGOUT');
+  db.query(
+    'DELETE FROM refresh_tokens WHERE user_id = ?',
+    [userId],
+    (err, result) => {
 
-  res.json({ message: 'Sesión cerrada por admin' });
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Error cerrando sesión' });
+      }
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: 'Usuario sin sesiones activas' });
+      }
+
+      logAction(userId, 'FORCE_LOGOUT');
+
+      return res.json({ message: 'Sesión cerrada por admin' });
+    }
+  );
 });
 
 /* ===============================
@@ -395,15 +485,19 @@ router.get('/admin/users', verifyToken, role(['admin']), (req, res) => {
      FROM usuarios 
      ORDER BY id DESC`,
     (err, results) => {
+
       if (err) {
         console.error('Error users:', err);
         return res.status(500).json({ message: 'Error al obtener usuarios' });
       }
-
-      res.json(results);
+      if (!results) {
+        return res.status(500).json({ message: 'Error en resultados' });
+      }
+      return res.json(results);
     }
   );
 });
+
 /* ===============================
    ADMIN UPDATE USER (correo)
 ================================= */
@@ -414,18 +508,24 @@ router.put('/admin/users/:id', verifyToken, role(['admin']), (req, res) => {
   if (!correo) {
     return res.status(400).json({ message: 'Correo requerido' });
   }
+
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(correo)) {
     return res.status(400).json({ message: 'Correo inválido' });
   }
-  // Evitar correos duplicados
+
   db.query(
     'SELECT id FROM usuarios WHERE correo = ? AND id != ?',
     [correo, id],
     (err, exists) => {
+
       if (err) {
         console.error(err);
         return res.status(500).json({ message: 'Error DB' });
+      }
+
+      if (!exists) {
+        return res.status(500).json({ message: 'Error en resultados' });
       }
 
       if (exists.length > 0) {
@@ -436,6 +536,7 @@ router.put('/admin/users/:id', verifyToken, role(['admin']), (req, res) => {
         'UPDATE usuarios SET correo = ? WHERE id = ?',
         [correo, id],
         (err2, result) => {
+
           if (err2) {
             console.error(err2);
             return res.status(500).json({ message: 'Error al actualizar' });
@@ -447,12 +548,13 @@ router.put('/admin/users/:id', verifyToken, role(['admin']), (req, res) => {
 
           logAction(id, 'UPDATED_BY_ADMIN');
 
-          res.json({ message: 'Usuario actualizado correctamente' });
+          return res.json({ message: 'Usuario actualizado correctamente' });
         }
       );
     }
   );
 });
+
 /* ===============================
    ADMIN ACTIVE SESSIONS
 ================================= */
@@ -462,9 +564,18 @@ router.get('/admin/sessions', verifyToken, role(['admin']), (req, res) => {
     FROM refresh_tokens rt
     JOIN usuarios u ON u.id = rt.user_id
   `, (err, results) => {
-    if (err) return res.status(500).json({ message: 'Error sesiones' });
 
-    res.json(results);
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ message: 'Error sesiones' });
+    }
+
+    if (!results) {
+      return res.status(500).json({ message: 'Error en resultados' });
+    }
+
+    return res.json(results);
   });
 });
+
 module.exports = router;
