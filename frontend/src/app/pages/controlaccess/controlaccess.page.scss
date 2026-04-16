@@ -1,337 +1,791 @@
 @use "sass:color";
 
-// ─── VARIABLES DINÁMICAS ──────────────────────────────────
-// Colores más vibrantes y escala de grises profesional
-$primary: #2563eb;
-$primary-light: #60a5fa;
-$primary-soft: rgba(37, 99, 235, 0.05);
-$primary-dark: #1e40af;
+// ─── TOKENS ──────────────────────────────────────────────
+$blue-900: #0a1628;
+$blue-700: #1a3a6b;
+$blue-600: #1d4ed8;
+$blue-500: #2563eb;
+$blue-400: #3b82f6;
+$blue-100: #dbeafe;
+$blue-50:  #eff6ff;
 
-$text-main: #0f172a;    // Slate 900
-$text-muted: #475569;  // Slate 600
-$text-ghost: #94a3b8;  // Slate 400
+$white:    #ffffff;
+$gray-50:  #f8fafc;
+$gray-100: #f1f5f9;
+$gray-200: #e2e8f0;
+$gray-400: #94a3b8;
+$gray-600: #475569;
+$gray-900: #0f172a;
 
-$bg-page: #f8fafc;
-$bg-card: #ffffff;
-$border-color: #e2e8f0;
+$success:  #16a34a;
+$success-bg: #dcfce7;
+$error:    #dc2626;
+$error-bg: #fee2e2;
 
-// Elevación y Bordes
-$r-md: 12px;
-$r-xl: 18px;
-$r-2xl: 24px;
+$shadow-xs: 0 1px 3px rgba(0,0,0,.06);
+$shadow-sm: 0 2px 8px rgba(0,0,0,.07);
+$shadow-md: 0 8px 24px rgba(0,0,0,.08);
+$shadow-blue: 0 8px 24px rgba(37,99,235,.18);
 
-$shadow-subtle: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-$shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
-$transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+$r-sm:   6px;
+$r-md:   10px;
+$r-lg:   14px;
+$r-xl:   18px;
+$r-2xl:  24px;
+$r-full: 9999px;
 
-// ─── RESET & BASE ─────────────────────────────────────────
-:host {
-  display: block;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-}
+$t: all 0.2s cubic-bezier(.4,0,.2,1);
+
+// ─── BASE ─────────────────────────────────────────────────
+:host { display: block; }
 
 .page {
-  --background: #{$bg-page};
-  background: $bg-page;
+  --background: #{$gray-50};
+  background: $gray-50;
 }
 
-// ─── HEADER REFINADO ──────────────────────────────────────
-.app-header {
-  ion-toolbar {
-    --background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(12px); // Efecto cristal moderno
-    --border-width: 0 0 1px 0;
-    --border-color: #{$border-color};
-    padding: 0.5rem 1rem;
+ion-content.page {
+  --background: #{$gray-50};
+  --padding-bottom: 2rem;
+}
 
-    .page-title {
-      font-weight: 800;
-      font-size: 1.1rem;
-      letter-spacing: -0.02em;
-      color: $text-main;
-    }
+// ─── HEADER ───────────────────────────────────────────────
+.app-header ion-toolbar {
+  --background: #{$white};
+  --border-color: #{$gray-200};
+  --border-width: 0 0 1px 0;
+  --color: #{$gray-900};
+  --min-height: 56px;
+
+  .page-title {
+    display: flex;
+    justify-content: center;
+  }
+
+  .title-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: $blue-50;
+    color: $blue-600;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 0.35rem 0.85rem;
+    border-radius: $r-full;
+    border: 1.5px solid $blue-100;
+
+    ion-icon { font-size: 0.85rem; }
+  }
+
+  .back-btn, .add-btn {
+    --color: #{$gray-600};
+    --color-hover: #{$blue-500};
   }
 }
 
-// ─── HERO & STATS ─────────────────────────────────────────
+// ─── CONTAINER ────────────────────────────────────────────
+.page-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem;
+}
+
+// ─── HERO ─────────────────────────────────────────────────
 .page-hero {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 2rem 0;
-  padding: 0 1rem;
+  background: $blue-600;
+  border-radius: $r-2xl;
+  padding: 2rem 2.25rem;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  position: relative;
 
-  .hero-title {
-    font-size: 2rem;
-    font-weight: 800;
-    letter-spacing: -0.04em;
-    color: $text-main;
-    margin: 0;
+  // Decorative circles
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,.06);
+    pointer-events: none;
+  }
+  &::before {
+    width: 220px;
+    height: 220px;
+    right: -60px;
+    top: -80px;
+  }
+  &::after {
+    width: 120px;
+    height: 120px;
+    right: 80px;
+    bottom: -50px;
+    background: rgba(255,255,255,.04);
+  }
+
+  .hero-left {
+    z-index: 1;
 
     .hero-eyebrow {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: $primary;
       display: block;
-      margin-bottom: 0.5rem;
+      font-size: 0.65rem;
       font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: $blue-100;
+      margin-bottom: 0.4rem;
+    }
+
+    .hero-title {
+      font-size: 2.25rem;
+      font-weight: 900;
+      letter-spacing: -1px;
+      color: $white;
+      margin: 0 0 0.4rem;
+      line-height: 1;
+    }
+
+    .hero-sub {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,.65);
+      margin: 0;
     }
   }
 
   .hero-stat {
-    background: $bg-card;
-    padding: 1rem 1.5rem;
-    border-radius: $r-xl;
-    border: 1px solid $border-color;
-    box-shadow: $shadow-subtle;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
+    z-index: 1;
+    position: relative;
+    text-align: center;
+
+    .hero-stat-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.1rem;
+    }
 
     .stat-number {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: $primary;
+      font-size: 3rem;
+      font-weight: 900;
+      color: $white;
+      line-height: 1;
+      letter-spacing: -2px;
     }
+
     .stat-label {
-      font-size: 0.75rem;
-      color: $text-muted;
-      font-weight: 600;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: $blue-100;
+    }
+
+    .hero-stat-ring {
+      position: absolute;
+      inset: -12px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,.15);
+      pointer-events: none;
     }
   }
 }
 
-// ─── GRID DE KPI CARDS ────────────────────────────────────
-.kpi-grid {
+// ─── KPI ROW ──────────────────────────────────────────────
+.kpi-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.25rem;
-  margin-bottom: 2rem;
-  padding: 0 1rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.875rem;
+  margin-bottom: 1.5rem;
 }
 
 .kpi-card {
-  background: $bg-card;
+  background: $white;
+  border: 1.5px solid $gray-200;
   border-radius: $r-xl;
-  border: 1px solid $border-color;
-  padding: 1.5rem;
-  transition: $transition-smooth;
+  padding: 1.25rem;
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: $shadow-xs;
+  transition: $t;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: $shadow-hover;
-    border-color: $primary-light;
+    transform: translateY(-2px);
+    box-shadow: $shadow-sm;
+    border-color: $blue-100;
   }
 
-  .icon-wrapper {
-    background: $primary-soft;
-    padding: 1rem;
+  &--blue {
+    background: $blue-600;
+    border-color: $blue-600;
+    box-shadow: $shadow-blue;
+
+    .kpi-icon {
+      background: rgba(255,255,255,.15);
+      ion-icon { color: $white; }
+    }
+    .kpi-value { color: $white; }
+    .kpi-label { color: rgba(255,255,255,.7); }
+    .kpi-accent { background: rgba(255,255,255,.08); }
+  }
+
+  .kpi-icon {
+    width: 46px;
+    height: 46px;
     border-radius: $r-md;
-    color: $primary;
+    background: $blue-50;
     display: flex;
-    ion-icon { font-size: 1.5rem; }
-  }
-
-  .content {
-    h2 {
-      font-size: 1.5rem;
-      font-weight: 800;
-      margin: 0;
-      color: $text-main;
-    }
-    p {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: $text-muted;
-      text-transform: uppercase;
-      margin: 0;
-    }
-  }
-}
-
-// ─── TABLA Y CONTENEDOR PRINCIPAL ─────────────────────────
-.table-card {
-  background: $bg-card;
-  border-radius: $r-2xl;
-  border: 1px solid $border-color;
-  box-shadow: $shadow-subtle;
-  margin: 0 1rem 2rem;
-  overflow: hidden;
-
-  // Toolbar de la tabla
-  .table-toolbar {
-    padding: 1.25rem;
-    background: #ffffff;
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 1rem;
-    border-bottom: 1px solid $border-color;
+    justify-content: center;
+    flex-shrink: 0;
 
-    .search-wrapper {
-      flex: 1;
-      max-width: 400px;
-      ion-searchbar {
-        --background: #{$bg-page};
-        --border-radius: 12px;
-        --box-shadow: none;
-        padding: 0;
-      }
+    ion-icon {
+      font-size: 1.35rem;
+      color: $blue-500;
+    }
+  }
+
+  .kpi-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    flex: 1;
+  }
+
+  .kpi-value {
+    font-size: 1.7rem;
+    font-weight: 900;
+    color: $gray-900;
+    line-height: 1;
+    letter-spacing: -0.5px;
+  }
+
+  .kpi-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: $gray-400;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .kpi-accent {
+    position: absolute;
+    right: -12px;
+    bottom: -12px;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: $blue-50;
+    pointer-events: none;
+  }
+}
+
+// ─── SEGMENT ──────────────────────────────────────────────
+.segment-wrapper {
+  margin-bottom: 1.25rem;
+}
+
+.custom-segment {
+  background: $white;
+  border: 1.5px solid $gray-200;
+  border-radius: $r-xl;
+  padding: 0.3rem;
+  box-shadow: $shadow-xs;
+
+  ion-segment-button {
+    --indicator-height: 0;
+    --background: transparent;
+    --background-checked: transparent;
+    --color: #{$gray-400};
+    --color-checked: #{$white};
+    --border-radius: #{$r-lg};
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: none;
+    min-height: 2.6rem;
+    gap: 0.35rem;
+    transition: $t;
+
+    &::part(native) {
+      border-radius: $r-lg;
+      gap: 0.35rem;
     }
 
-    .filters-wrapper {
-      display: flex;
-      gap: 0.75rem;
-      
-      .filter-box {
-        --background: #{$bg-page};
-        --border-radius: 10px;
-        font-weight: 600;
-        font-size: 0.85rem;
-      }
+    ion-icon {
+      font-size: 0.95rem;
+    }
+
+    &.segment-button-checked {
+      background: $blue-600;
+      color: $white;
+      border-radius: $r-lg;
+      box-shadow: $shadow-blue;
     }
   }
 }
 
-// ─── ESTILOS DE TABLA MEJORADOS ───────────────────────────
+// ─── TABLE CARD ───────────────────────────────────────────
+.table-card {
+  background: $white;
+  border: 1.5px solid $gray-200;
+  border-radius: $r-2xl;
+  box-shadow: $shadow-sm;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+// ─── TOOLBAR ──────────────────────────────────────────────
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1.5px solid $gray-100;
+  flex-wrap: wrap;
+  background: $gray-50;
+
+  .search-wrapper {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+
+    .search-icon {
+      position: absolute;
+      left: 0.85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: $blue-400;
+      font-size: 1rem;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    ion-searchbar {
+      --background: #{$white};
+      --border-radius: #{$r-lg};
+      --box-shadow: none;
+      --placeholder-color: #{$gray-400};
+      --icon-color: transparent;
+      --clear-button-color: #{$gray-400};
+      --padding-start: 2.5rem;
+      border: 1.5px solid $gray-200;
+      border-radius: $r-lg;
+      padding: 0;
+      height: 2.75rem;
+      font-size: 0.85rem;
+      transition: $t;
+
+      &:focus-within {
+        border-color: $blue-400;
+        box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+      }
+    }
+  }
+
+  .filters-wrapper {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: $white;
+    border: 1.5px solid $gray-200;
+    border-radius: $r-lg;
+    padding: 0 0.85rem;
+    height: 2.75rem;
+    transition: $t;
+
+    &:focus-within {
+      border-color: $blue-400;
+      box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+    }
+
+    ion-icon {
+      font-size: 0.9rem;
+      color: $blue-400;
+      flex-shrink: 0;
+    }
+
+    ion-select {
+      --color: #{$gray-900};
+      font-size: 0.8rem;
+      font-weight: 600;
+      min-width: 110px;
+    }
+  }
+}
+
+// ─── LIST VIEW ────────────────────────────────────────────
+.list-view {
+  ion-list {
+    background: $white;
+    padding: 0;
+  }
+
+  ion-item.list-item {
+    --background: #{$white};
+    --border-color: #{$gray-100};
+    --inner-border-width: 0 0 1px 0;
+    --padding-start: 1.25rem;
+    --padding-end: 1.25rem;
+    --min-height: 4.5rem;
+    transition: $t;
+
+    &:hover {
+      --background: #{$blue-50};
+    }
+
+    &:last-child {
+      --inner-border-width: 0;
+    }
+
+    .list-icon-box {
+      width: 38px;
+      height: 38px;
+      border-radius: $r-md;
+      background: $blue-50;
+      border: 1.5px solid $blue-100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 0.875rem;
+      flex-shrink: 0;
+
+      ion-icon {
+        font-size: 1.1rem;
+        color: $blue-500;
+      }
+    }
+
+    ion-label {
+      h3 {
+        font-size: 0.88rem;
+        font-weight: 700;
+        color: $gray-900;
+        margin-bottom: 0.2rem;
+      }
+      p {
+        font-size: 0.72rem;
+        color: $gray-400;
+        margin: 0;
+      }
+    }
+
+    .close-btn {
+      --border-radius: #{$r-full};
+      --padding-start: 0.75rem;
+      --padding-end: 0.75rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      height: 2rem;
+    }
+  }
+}
+
+// ─── TABLE ────────────────────────────────────────────────
+.table-container {
+  overflow-x: auto;
+}
+
 .responsive-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
+  border-collapse: collapse;
 
-  thead th {
-    background: $bg-page;
-    padding: 1rem;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: $text-muted;
-    text-align: left;
-    border-bottom: 1px solid $border-color;
+  thead {
+    background: $gray-50;
+    th {
+      padding: 0.875rem 1.25rem;
+      text-align: left;
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: $gray-400;
+      border-bottom: 1.5px solid $gray-200;
+      white-space: nowrap;
+    }
   }
 
   tbody tr {
-    transition: $transition-smooth;
+    border-bottom: 1px solid $gray-100;
+    transition: $t;
 
     &:hover {
-      background: $primary-soft;
+      background: $blue-50;
     }
 
-    &:last-child td {
+    &:last-child {
       border-bottom: none;
     }
 
     td {
-      padding: 1.25rem 1rem;
-      font-size: 0.9rem;
-      color: $text-main;
-      border-bottom: 1px solid $border-color;
-      vertical-align: middle;
+      padding: 0.875rem 1.25rem;
+      font-size: 0.85rem;
+      color: $gray-900;
+      font-weight: 500;
     }
   }
 }
 
-// Células especiales
 .user-cell {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  
-  .avatar-mock {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    background: $primary;
-    color: white;
+  font-weight: 700;
+
+  .user-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: $r-md;
+    background: $blue-600;
+    color: $white;
+    font-size: 0.85rem;
+    font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
-    font-size: 0.8rem;
-  }
-
-  .user-info {
-    display: flex;
-    flex-direction: column;
-    span { font-weight: 700; }
-    small { color: $text-muted; font-size: 0.75rem; }
+    text-transform: uppercase;
+    flex-shrink: 0;
   }
 }
 
-.badge {
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-  font-size: 0.7rem;
+.role-badge {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: $r-full;
+  font-size: 0.68rem;
   font-weight: 700;
-  background: $bg-page;
-  color: $text-muted;
-  border: 1px solid $border-color;
+  background: $gray-100;
+  color: $gray-600;
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
 
-  &.status-active {
-    background: rgba(22, 163, 74, 0.1);
-    color: #16a34a;
-    border-color: rgba(22, 163, 74, 0.2);
+  &--admin {
+    background: $blue-50;
+    color: $blue-600;
+    border: 1px solid $blue-100;
   }
 }
 
-// ─── RESPONSIVE DESIGN (BREAKPOINTS MEJORADOS) ───────────
-@media (max-width: 992px) {
+.status-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: $gray-300;
+  margin-right: 0.45rem;
+  vertical-align: middle;
+
+  &--active {
+    background: $success;
+    box-shadow: 0 0 0 3px $success-bg;
+  }
+}
+
+.actions {
+  white-space: nowrap;
+
+  .action-btn {
+    --padding-start: 0.3rem;
+    --padding-end: 0.3rem;
+    --color: #{$gray-400};
+    margin: 0 0.1rem;
+    transition: $t;
+
+    &:hover { --color: #{$blue-500}; }
+    &[color="danger"]:hover { --color: #{$error}; }
+  }
+}
+
+// ─── DELETE MODAL ─────────────────────────────────────────
+.delete-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,.55);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn .18s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.delete-modal {
+  background: $white;
+  border-radius: $r-2xl;
+  padding: 2rem 1.75rem;
+  width: 90%;
+  max-width: 340px;
+  text-align: center;
+  box-shadow: 0 24px 64px rgba(0,0,0,.16);
+  animation: slideUp .2s cubic-bezier(.34,1.56,.64,1);
+
+  @keyframes slideUp {
+    from { transform: translateY(16px) scale(.97); opacity: 0; }
+    to   { transform: translateY(0)    scale(1);   opacity: 1; }
+  }
+
+  .delete-modal-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: $r-xl;
+    background: $error-bg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+    border: 2px solid lighten($error, 30%);
+
+    ion-icon {
+      font-size: 1.5rem;
+      color: $error;
+    }
+  }
+
+  .delete-modal-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: $gray-900;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.3px;
+  }
+
+  .delete-modal-msg {
+    font-size: 0.82rem;
+    color: $gray-600;
+    margin: 0 0 1.75rem;
+    line-height: 1.5;
+  }
+
+  .delete-modal-actions {
+    display: flex;
+    gap: 0.75rem;
+
+    button {
+      flex: 1;
+      padding: 0.7rem;
+      border-radius: $r-lg;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: $t;
+
+      &.cancel {
+        background: $gray-100;
+        color: $gray-900;
+        border: 1.5px solid $gray-200;
+        &:hover { background: $gray-200; }
+      }
+
+      &.confirm {
+        background: $error;
+        color: $white;
+        &:hover { background: color.adjust($error, $lightness: -8%); }
+      }
+    }
+  }
+}
+
+// ─── STATE ────────────────────────────────────────────────
+.state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 280px;
+  gap: 1rem;
+  background: $white;
+  border-radius: $r-2xl;
+  border: 1.5px solid $gray-200;
+
+  ion-spinner { --color: #{$blue-500}; }
+  ion-label   { color: $gray-400; font-weight: 500; }
+  ion-icon    { font-size: 2rem; color: $error; }
+
+  &.error ion-label { color: $error; }
+}
+
+// ─── RESPONSIVE ───────────────────────────────────────────
+@media (max-width: 768px) {
   .page-hero {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1.5rem;
-    
+    gap: 1.25rem;
+    padding: 1.5rem;
+
+    .hero-title { font-size: 1.75rem; }
+    .stat-number { font-size: 2.25rem; }
+
     .hero-stat {
       width: 100%;
-      align-items: flex-start;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      .hero-stat-ring { display: none; }
     }
   }
-}
 
-@media (max-width: 768px) {
+  .kpi-row {
+    grid-template-columns: 1fr;
+    gap: 0.625rem;
+  }
+
   .table-toolbar {
     flex-direction: column;
-    
-    .search-wrapper, .filters-wrapper {
-      width: 100%;
-      max-width: none;
-    }
+    align-items: stretch;
+
+    .search-wrapper { width: 100%; }
+    .filters-wrapper { flex-direction: column; }
+    .filter-pill { width: 100%; }
   }
 
-  // Transformar tabla en tarjetas para móvil
   .responsive-table {
     thead { display: none; }
-    
-    tbody tr {
-      display: block;
-      margin: 1rem;
-      border: 1px solid $border-color;
-      border-radius: $r-md;
-      background: $bg-card;
 
-      td {
-        display: flex;
-        justify-content: space-between;
-        padding: 0.75rem 1rem;
-        border-bottom: 1px solid $bg-page;
+    tbody, tr, td { display: block; }
 
-        &::before {
-          content: attr(data-label);
-          font-weight: 700;
-          color: $text-muted;
-          font-size: 0.75rem;
-        }
+    tr {
+      margin-bottom: 0.75rem;
+      border: 1.5px solid $gray-200 !important;
+      border-radius: $r-lg;
+      overflow: hidden;
+    }
 
-        &.actions {
-          justify-content: center;
-          background: $bg-page;
-          &::before { display: none; }
-        }
+    td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.625rem 1rem;
+      border-bottom: 1px dashed $gray-100;
+
+      &:last-child { border-bottom: none; }
+
+      &::before {
+        content: attr(data-label);
+        font-weight: 800;
+        font-size: 0.63rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: $gray-400;
+        width: 40%;
       }
+
+      &.actions::before { display: none; }
     }
   }
 }
