@@ -7,8 +7,8 @@ const methodOverride = require('method-override');
 const cors = require('cors');
 
 // seguridad
-const helmet = require('helmet'); // Protege headers HTTP
-const rateLimit = require('express-rate-limit'); // Evita ataques de fuerza bruta
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
 const routes = require('./routes/routes');
 
@@ -24,13 +24,16 @@ app.use(express.json({ limit: '10kb' }));
    RATE LIMIT LOGIN
 ================================= */
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
+  windowMs: 15 * 60 * 1000,
   max: 5,
   message: {
     message: 'Demasiados intentos, intenta más tarde'
   }
 });
 
+/* ===============================
+   CORS CONFIG (FIX REAL)
+================================= */
 const allowedOrigins = [
   'http://localhost:8100',
   process.env.FRONTEND_URL
@@ -53,8 +56,6 @@ app.use(cors({
   credentials: true
 }));
 
-// (preflight)
-app.options('*', cors());
 
 /* ===============================
    BODY PARSER
@@ -73,7 +74,7 @@ app.use((req, res, next) => {
 });
 
 /* ===============================
-   RUTA DE PRUEBA (IMPORTANTE)
+   RUTA DE PRUEBA
 ================================= */
 app.get('/', (req, res) => {
   res.json({
@@ -99,4 +100,5 @@ const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`API corriendo en puerto ${PORT}`);
+  console.log('🌍 FRONTEND_URL:', process.env.FRONTEND_URL);
 });
