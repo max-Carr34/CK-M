@@ -1,518 +1,337 @@
-// ─────────────────────────────────────────────
-// ACCESOS PAGE
-// ─────────────────────────────────────────────
+@use "sass:color";
 
-// ── Variables ──────────────────────────────
-$primary:        #6C5CE7;
-$primary-light:  #a29bfe;
-$primary-faint:  #f0eeff;
-$danger:         #e17055;
-$danger-light:   #ffeae4;
-$success:        #00b894;
-$success-light:  #e0faf5;
-$text-main:      var(--ion-color-dark);
-$text-muted:     var(--ion-color-medium);
-$border:         rgba(0, 0, 0, 0.08);
-$radius-sm:      8px;
-$radius-md:      12px;
-$radius-lg:      16px;
+// ─── VARIABLES DINÁMICAS ──────────────────────────────────
+// Colores más vibrantes y escala de grises profesional
+$primary: #2563eb;
+$primary-light: #60a5fa;
+$primary-soft: rgba(37, 99, 235, 0.05);
+$primary-dark: #1e40af;
 
-// ── Header ─────────────────────────────────
-.app-header ion-toolbar {
-  --background: #{$primary};
-  --border-width: 0;
+$text-main: #0f172a;    // Slate 900
+$text-muted: #475569;  // Slate 600
+$text-ghost: #94a3b8;  // Slate 400
 
-  .page-title {
-    color: #fff;
-    font-weight: 700;
-    font-size: 1rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
+$bg-page: #f8fafc;
+$bg-card: #ffffff;
+$border-color: #e2e8f0;
 
-  .back-btn,
-  .add-btn {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 1.3rem;
+// Elevación y Bordes
+$r-md: 12px;
+$r-xl: 18px;
+$r-2xl: 24px;
 
-    &:hover {
-      color: #fff;
+$shadow-subtle: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+$shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+$transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+// ─── RESET & BASE ─────────────────────────────────────────
+:host {
+  display: block;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.page {
+  --background: #{$bg-page};
+  background: $bg-page;
+}
+
+// ─── HEADER REFINADO ──────────────────────────────────────
+.app-header {
+  ion-toolbar {
+    --background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px); // Efecto cristal moderno
+    --border-width: 0 0 1px 0;
+    --border-color: #{$border-color};
+    padding: 0.5rem 1rem;
+
+    .page-title {
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+      color: $text-main;
     }
   }
 }
 
-// ── Page ───────────────────────────────────
-.page {
-  --background: #f4f3fc;
-}
-
-.page-container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 1.25rem 1rem 3rem;
-}
-
-// ── States ─────────────────────────────────
-.state-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 4rem 1rem;
-  color: $text-muted;
-
-  ion-spinner {
-    width: 40px;
-    height: 40px;
-    --color: #{$primary};
-  }
-
-  ion-icon {
-    font-size: 2.5rem;
-  }
-
-  ion-label {
-    font-size: 0.95rem;
-  }
-
-  &.error {
-    color: $danger;
-    ion-icon { font-size: 3rem; }
-  }
-}
-
-// ── Hero ───────────────────────────────────
+// ─── HERO & STATS ─────────────────────────────────────────
 .page-hero {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.5rem;
-
-  .hero-left {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .hero-eyebrow {
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: $primary;
-    margin-bottom: 2px;
-  }
+  align-items: center;
+  margin: 2rem 0;
+  padding: 0 1rem;
 
   .hero-title {
-    font-size: 1.8rem;
+    font-size: 2rem;
     font-weight: 800;
+    letter-spacing: -0.04em;
     color: $text-main;
     margin: 0;
-    line-height: 1.1;
+
+    .hero-eyebrow {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: $primary;
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
   }
 
   .hero-stat {
+    background: $bg-card;
+    padding: 1rem 1.5rem;
+    border-radius: $r-xl;
+    border: 1px solid $border-color;
+    box-shadow: $shadow-subtle;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    background: $primary;
-    border-radius: $radius-md;
-    padding: 0.6rem 1.2rem;
+    align-items: flex-end;
 
     .stat-number {
-      font-size: 1.8rem;
+      font-size: 1.5rem;
       font-weight: 800;
-      color: #fff;
-      line-height: 1;
+      color: $primary;
     }
-
     .stat-label {
-      font-size: 0.7rem;
+      font-size: 0.75rem;
+      color: $text-muted;
       font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.75);
-      margin-top: 2px;
     }
   }
 }
 
-// ── KPI Cards ──────────────────────────────
+// ─── GRID DE KPI CARDS ────────────────────────────────────
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+  padding: 0 1rem;
+}
+
 .kpi-card {
-  --background: #fff;
-  border-radius: $radius-md !important;
-  box-shadow: none !important;
-  border: 1px solid $border;
-  margin: 0 0 12px;
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  background: $bg-card;
+  border-radius: $r-xl;
+  border: 1px solid $border-color;
+  padding: 1.5rem;
+  transition: $transition-smooth;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba($primary, 0.1) !important;
+    transform: translateY(-4px);
+    box-shadow: $shadow-hover;
+    border-color: $primary-light;
   }
 
-  ion-card-content {
+  .icon-wrapper {
+    background: $primary-soft;
+    padding: 1rem;
+    border-radius: $r-md;
+    color: $primary;
     display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 1rem 1.1rem !important;
-
-    ion-icon {
-      font-size: 2rem;
-      color: $primary;
-      background: $primary-faint;
-      padding: 10px;
-      border-radius: $radius-sm;
-      flex-shrink: 0;
-    }
-
-    div {
-      h2 {
-        margin: 0;
-        font-size: 1.6rem;
-        font-weight: 800;
-        color: $text-main;
-        line-height: 1;
-      }
-
-      p {
-        margin: 4px 0 0;
-        font-size: 0.78rem;
-        font-weight: 600;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-        color: $text-muted;
-      }
-    }
-  }
-}
-
-// ── Segment ────────────────────────────────
-.custom-segment {
-  --background: rgba(108, 92, 231, 0.08);
-  border-radius: $radius-md;
-  padding: 4px;
-  margin-bottom: 1rem;
-
-  ion-segment-button {
-    --color:             #{$text-muted};
-    --color-checked:     #fff;
-    --background-checked: #{$primary};
-    --indicator-color:   transparent;
-    --border-radius:     #{$radius-sm};
-    font-size: 0.82rem;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    text-transform: none;
-    min-height: 36px;
-    transition: background 0.2s;
-  }
-}
-
-// ── Table Card ─────────────────────────────
-.table-card {
-  --background: #fff;
-  border-radius: $radius-lg !important;
-  box-shadow: none !important;
-  border: 1px solid $border;
-  margin: 0;
-  overflow: hidden;
-}
-
-// ── Toolbar (search + filters) ─────────────
-.table-toolbar {
-  --background: #fafafa;
-  --border-width: 0 0 1px;
-  --border-color: #{$border};
-  padding: 8px 12px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-
-  ion-searchbar {
-    --background: #fff;
-    --border-radius: #{$radius-sm};
-    --box-shadow: none;
-    --placeholder-color: #{$text-muted};
-    --color: #{$text-main};
-    --icon-color: #{$primary};
-    border: 1px solid $border;
-    border-radius: $radius-sm;
-    padding: 0 !important;
-    height: 40px;
-    min-width: 180px;
-    flex: 1;
+    ion-icon { font-size: 1.5rem; }
   }
 
-  ion-item {
-    --background: #fff;
-    --border-radius: #{$radius-sm};
-    --border-width: 1px;
-    --border-style: solid;
-    --border-color: #{$border};
-    --inner-padding-end: 8px;
-    --padding-start: 10px;
-    --min-height: 40px;
-    border-radius: $radius-sm;
-    font-size: 0.82rem;
-
-    ion-label {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: $text-muted;
-      margin-right: 4px;
-    }
-
-    ion-select {
-      font-size: 0.82rem;
-      --placeholder-color: #{$text-main};
+  .content {
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin: 0;
       color: $text-main;
     }
-  }
-}
-
-// ── Table Container ────────────────────────
-.table-container {
-  padding: 0.5rem 0;
-
-  ion-list {
-    padding: 0;
-    background: transparent;
-  }
-
-  ion-item {
-    --background: transparent;
-    --border-color: #{$border};
-    --inner-padding-end: 16px;
-    --padding-start: 16px;
-    font-size: 0.9rem;
-
-    ion-icon[slot="start"] {
-      font-size: 1.1rem;
-      color: $primary;
-      margin-right: 12px;
-    }
-
-    ion-label {
-      h3 {
-        font-size: 0.88rem;
-        font-weight: 600;
-        color: $text-main;
-        margin: 0 0 2px;
-      }
-
-      p {
-        font-size: 0.78rem;
-        color: $text-muted;
-        margin: 0;
-      }
-    }
-
-    ion-button[color="danger"] {
-      --background: #{$danger-light};
-      --color: #{$danger};
-      --border-radius: #{$radius-sm};
-      --padding-start: 10px;
-      --padding-end: 10px;
-      font-size: 0.78rem;
+    p {
+      font-size: 0.75rem;
       font-weight: 600;
-      height: 30px;
+      color: $text-muted;
+      text-transform: uppercase;
+      margin: 0;
     }
   }
 }
 
-// ── Responsive Table ───────────────────────
+// ─── TABLA Y CONTENEDOR PRINCIPAL ─────────────────────────
+.table-card {
+  background: $bg-card;
+  border-radius: $r-2xl;
+  border: 1px solid $border-color;
+  box-shadow: $shadow-subtle;
+  margin: 0 1rem 2rem;
+  overflow: hidden;
+
+  // Toolbar de la tabla
+  .table-toolbar {
+    padding: 1.25rem;
+    background: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid $border-color;
+
+    .search-wrapper {
+      flex: 1;
+      max-width: 400px;
+      ion-searchbar {
+        --background: #{$bg-page};
+        --border-radius: 12px;
+        --box-shadow: none;
+        padding: 0;
+      }
+    }
+
+    .filters-wrapper {
+      display: flex;
+      gap: 0.75rem;
+      
+      .filter-box {
+        --background: #{$bg-page};
+        --border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.85rem;
+      }
+    }
+  }
+}
+
+// ─── ESTILOS DE TABLA MEJORADOS ───────────────────────────
 .responsive-table {
   width: 100%;
-  border-collapse: collapse;
-  font-size: 0.87rem;
+  border-collapse: separate;
+  border-spacing: 0;
 
-  thead tr {
-    background: #fafafa;
-    border-bottom: 1px solid $border;
-  }
-
-  th {
-    padding: 10px 16px;
-    text-align: left;
-    font-size: 0.72rem;
+  thead th {
+    background: $bg-page;
+    padding: 1rem;
+    font-size: 0.75rem;
     font-weight: 700;
-    letter-spacing: 0.07em;
     text-transform: uppercase;
     color: $text-muted;
-    white-space: nowrap;
+    text-align: left;
+    border-bottom: 1px solid $border-color;
   }
 
   tbody tr {
-    border-bottom: 1px solid $border;
-    transition: background 0.15s;
+    transition: $transition-smooth;
 
-    &:last-child { border-bottom: none; }
-
-    &:hover { background: #faf9ff; }
-  }
-
-  td {
-    padding: 10px 16px;
-    color: $text-main;
-    vertical-align: middle;
-  }
-
-  // User cell
-  .user-cell {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    ion-icon {
-      font-size: 1rem;
-      color: $primary;
-      background: $primary-faint;
-      padding: 5px;
-      border-radius: 50%;
+    &:hover {
+      background: $primary-soft;
     }
 
-    span {
-      font-weight: 600;
+    &:last-child td {
+      border-bottom: none;
     }
-  }
 
-  // Actions cell
-  .actions {
-    display: flex;
-    gap: 4px;
-
-    ion-button {
-      --padding-start: 8px;
-      --padding-end: 8px;
-      --padding-top: 6px;
-      --padding-bottom: 6px;
-      --border-radius: #{$radius-sm};
-      --background-hover: #{$primary-faint};
-      height: 34px;
-      font-size: 1rem;
-
-      ion-icon { font-size: 1rem; color: $primary; }
-
-      &[color="danger"] {
-        --background-hover: #{$danger-light};
-        ion-icon { color: $danger; }
-      }
+    td {
+      padding: 1.25rem 1rem;
+      font-size: 0.9rem;
+      color: $text-main;
+      border-bottom: 1px solid $border-color;
+      vertical-align: middle;
     }
   }
 }
 
-// ── Delete Overlay ─────────────────────────
-.delete-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+// Células especiales
+.user-cell {
   display: flex;
   align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  animation: fadeIn 0.18s ease;
-}
-
-.delete-modal {
-  background: #fff;
-  border-radius: $radius-lg;
-  padding: 2rem 1.75rem 1.5rem;
-  width: 90%;
-  max-width: 360px;
-  text-align: center;
-  animation: slideUp 0.22s ease;
-
-  .delete-modal-icon {
-    width: 56px;
-    height: 56px;
-    background: $danger-light;
-    border-radius: 50%;
+  gap: 0.75rem;
+  
+  .avatar-mock {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: $primary;
+    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 1rem;
-
-    ion-icon {
-      font-size: 1.6rem;
-      color: $danger;
-    }
+    font-weight: bold;
+    font-size: 0.8rem;
   }
 
-  .delete-modal-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: $text-main;
-    margin: 0 0 0.5rem;
-  }
-
-  .delete-modal-msg {
-    font-size: 0.88rem;
-    color: $text-muted;
-    margin: 0 0 1.5rem;
-    line-height: 1.5;
-
-    strong { color: $text-main; font-weight: 600; }
-  }
-
-  .delete-modal-actions {
+  .user-info {
     display: flex;
-    gap: 10px;
-  }
-
-  .delete-modal-btn {
-    flex: 1;
-    height: 42px;
-    border: none;
-    border-radius: $radius-sm;
-    font-size: 0.88rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.15s, transform 0.12s;
-
-    &:active { transform: scale(0.97); }
-
-    &.cancel {
-      background: #f0f0f0;
-      color: $text-main;
-      &:hover { opacity: 0.85; }
-    }
-
-    &.confirm {
-      background: $danger;
-      color: #fff;
-      &:hover { opacity: 0.88; }
-    }
+    flex-direction: column;
+    span { font-weight: 700; }
+    small { color: $text-muted; font-size: 0.75rem; }
   }
 }
 
-// ── Animations ─────────────────────────────
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+.badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: $bg-page;
+  color: $text-muted;
+  border: 1px solid $border-color;
+
+  &.status-active {
+    background: rgba(22, 163, 74, 0.1);
+    color: #16a34a;
+    border-color: rgba(22, 163, 74, 0.2);
+  }
 }
 
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-// ── Responsive ─────────────────────────────
-@media (max-width: 600px) {
+// ─── RESPONSIVE DESIGN (BREAKPOINTS MEJORADOS) ───────────
+@media (max-width: 992px) {
   .page-hero {
-    .hero-title { font-size: 1.4rem; }
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+    
+    .hero-stat {
+      width: 100%;
+      align-items: flex-start;
+    }
   }
+}
 
+@media (max-width: 768px) {
   .table-toolbar {
     flex-direction: column;
-    align-items: stretch;
-
-    ion-searchbar { min-width: unset; }
-    ion-item { width: 100%; }
+    
+    .search-wrapper, .filters-wrapper {
+      width: 100%;
+      max-width: none;
+    }
   }
 
+  // Transformar tabla en tarjetas para móvil
   .responsive-table {
-    th:nth-child(2),
-    td:nth-child(2) { display: none; }
+    thead { display: none; }
+    
+    tbody tr {
+      display: block;
+      margin: 1rem;
+      border: 1px solid $border-color;
+      border-radius: $r-md;
+      background: $bg-card;
+
+      td {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid $bg-page;
+
+        &::before {
+          content: attr(data-label);
+          font-weight: 700;
+          color: $text-muted;
+          font-size: 0.75rem;
+        }
+
+        &.actions {
+          justify-content: center;
+          background: $bg-page;
+          &::before { display: none; }
+        }
+      }
+    }
   }
 }
