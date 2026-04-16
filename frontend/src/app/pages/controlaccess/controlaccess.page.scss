@@ -1,563 +1,518 @@
-@use "sass:color";
+// ─────────────────────────────────────────────
+// ACCESOS PAGE
+// ─────────────────────────────────────────────
 
-// ─── PALETA ────────────────────────────────────────────────
-$primary: #2563eb;
-$primary-soft: rgba(37, 99, 235, 0.08);
-$primary-dark: #1d4ed8;
-$text: #0f172a;
-$text-light: #475569;
-$muted: #64748b;
-$border: #e2e8f0;
-$white: #ffffff;
-$bg: #f8fafc;
-$bg-hover: #f1f5f9;
-$success: #16a34a;
-$error: #dc2626;
+// ── Variables ──────────────────────────────
+$primary:        #6C5CE7;
+$primary-light:  #a29bfe;
+$primary-faint:  #f0eeff;
+$danger:         #e17055;
+$danger-light:   #ffeae4;
+$success:        #00b894;
+$success-light:  #e0faf5;
+$text-main:      var(--ion-color-dark);
+$text-muted:     var(--ion-color-medium);
+$border:         rgba(0, 0, 0, 0.08);
+$radius-sm:      8px;
+$radius-md:      12px;
+$radius-lg:      16px;
 
-$r-sm: 8px;
-$r-md: 12px;
-$r-lg: 16px;
-$r-xl: 20px;
-$r-2xl: 24px;
-$r-full: 999px;
+// ── Header ─────────────────────────────────
+.app-header ion-toolbar {
+  --background: #{$primary};
+  --border-width: 0;
 
-$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+  .page-title {
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
 
-$transition: all 0.2s ease;
+  .back-btn,
+  .add-btn {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.3rem;
 
-// ─── PAGE ─────────────────────────────────────────────────
-:host {
-  display: block;
-}
-
-.page {
-  --background: #{$bg};
-  background: $bg;
-}
-
-ion-content.page {
-  --background: #{$bg};
-  --padding-bottom: 1rem;
-  --padding-top: 0;
-}
-
-// ─── HEADER ───────────────────────────────────────────────
-.app-header {
-  ion-toolbar {
-    --background: #{$white};
-    --border-color: #{$border};
-    --border-width: 0 0 1px 0;
-    --color: #{$text};
-
-    .page-title {
-      font-weight: 800;
-      font-size: 1rem;
-      letter-spacing: -0.3px;
-      color: $text;
-    }
-
-    .back-btn, .add-btn {
-      --color: #{$text};
-      --color-hover: #{$primary};
+    &:hover {
+      color: #fff;
     }
   }
 }
 
-// ─── HERO SECTION ─────────────────────────────────────────
+// ── Page ───────────────────────────────────
+.page {
+  --background: #f4f3fc;
+}
+
+.page-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 3rem;
+}
+
+// ── States ─────────────────────────────────
+.state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 4rem 1rem;
+  color: $text-muted;
+
+  ion-spinner {
+    width: 40px;
+    height: 40px;
+    --color: #{$primary};
+  }
+
+  ion-icon {
+    font-size: 2.5rem;
+  }
+
+  ion-label {
+    font-size: 0.95rem;
+  }
+
+  &.error {
+    color: $danger;
+    ion-icon { font-size: 3rem; }
+  }
+}
+
+// ── Hero ───────────────────────────────────
 .page-hero {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-end;
-  flex-wrap: wrap;
-  gap: 1rem;
   margin-bottom: 1.5rem;
-  padding: 0.5rem 0;
 
   .hero-left {
-    .hero-eyebrow {
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: $primary;
-      display: block;
-      margin-bottom: 0.25rem;
-    }
+    display: flex;
+    flex-direction: column;
+  }
 
-    .hero-title {
-      font-size: 1.75rem;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      color: $text;
-      margin: 0;
-    }
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: $primary;
+    margin-bottom: 2px;
+  }
+
+  .hero-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: $text-main;
+    margin: 0;
+    line-height: 1.1;
   }
 
   .hero-stat {
-    background: $primary-soft;
-    padding: 0.5rem 1.25rem;
-    border-radius: $r-lg;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: $primary;
+    border-radius: $radius-md;
+    padding: 0.6rem 1.2rem;
 
     .stat-number {
-      font-size: 1.75rem;
+      font-size: 1.8rem;
       font-weight: 800;
-      color: $primary;
+      color: #fff;
       line-height: 1;
     }
 
     .stat-label {
       font-size: 0.7rem;
       font-weight: 600;
-      color: $text-light;
-      display: block;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.75);
+      margin-top: 2px;
     }
   }
 }
 
-// ─── KPI CARDS ────────────────────────────────────────────
+// ── KPI Cards ──────────────────────────────
 .kpi-card {
-  background: $white;
-  border-radius: $r-xl;
+  --background: #fff;
+  border-radius: $radius-md !important;
+  box-shadow: none !important;
   border: 1px solid $border;
-  box-shadow: $shadow-sm;
-  transition: $transition;
-  margin: 0;
-  overflow: hidden;
+  margin: 0 0 12px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: $shadow-md;
-    border-color: color.adjust($border, $lightness: -5%);
+    box-shadow: 0 6px 20px rgba($primary, 0.1) !important;
   }
 
   ion-card-content {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 1.25rem;
-  }
+    gap: 16px;
+    padding: 1rem 1.1rem !important;
 
-  ion-icon {
-    font-size: 1.75rem;
-    color: $primary;
-    background: $primary-soft;
-    padding: 0.75rem;
-    border-radius: $r-md;
-  }
-
-  div {
-    text-align: right;
-
-    h2 {
-      font-size: 1.75rem;
-      font-weight: 800;
-      margin: 0;
-      color: $text;
+    ion-icon {
+      font-size: 2rem;
+      color: $primary;
+      background: $primary-faint;
+      padding: 10px;
+      border-radius: $radius-sm;
+      flex-shrink: 0;
     }
 
-    p {
-      font-size: 0.7rem;
-      font-weight: 600;
-      margin: 0.25rem 0 0;
-      color: $muted;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
+    div {
+      h2 {
+        margin: 0;
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: $text-main;
+        line-height: 1;
+      }
+
+      p {
+        margin: 4px 0 0;
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: $text-muted;
+      }
     }
   }
 }
 
-// ─── SEGMENT ──────────────────────────────────────────────
+// ── Segment ────────────────────────────────
 .custom-segment {
-  background: $white;
-  border-radius: $r-full;
-  padding: 0.25rem;
-  border: 1px solid $border;
-  margin: 1.5rem 0;
+  --background: rgba(108, 92, 231, 0.08);
+  border-radius: $radius-md;
+  padding: 4px;
+  margin-bottom: 1rem;
 
   ion-segment-button {
-    --indicator-height: 0;
-    --background-checked: transparent;
-    --color: #{$muted};
-    --color-checked: #{$white};
-    border-radius: $r-full;
-    font-size: 0.8rem;
-    font-weight: 700;
+    --color:             #{$text-muted};
+    --color-checked:     #fff;
+    --background-checked: #{$primary};
+    --indicator-color:   transparent;
+    --border-radius:     #{$radius-sm};
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
     text-transform: none;
-    min-height: 2.5rem;
-    margin: 0 0.125rem;
-    transition: $transition;
-
-    &::part(native) {
-      border-radius: $r-full;
-    }
-
-    &.segment-button-checked {
-      background: $primary;
-      color: $white;
-      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
-    }
+    min-height: 36px;
+    transition: background 0.2s;
   }
 }
 
-// ─── CARD PRINCIPAL ───────────────────────────────────────
+// ── Table Card ─────────────────────────────
 .table-card {
-  background: $white;
-  border-radius: $r-2xl;
+  --background: #fff;
+  border-radius: $radius-lg !important;
+  box-shadow: none !important;
   border: 1px solid $border;
-  box-shadow: $shadow-sm;
+  margin: 0;
   overflow: hidden;
-  margin-bottom: 2rem;
 }
 
-// ─── TOOLBAR ──────────────────────────────────────────────
+// ── Toolbar (search + filters) ─────────────
 .table-toolbar {
-  background: $white;
-  padding: 1rem;
-  border-bottom: 1px solid $border;
+  --background: #fafafa;
+  --border-width: 0 0 1px;
+  --border-color: #{$border};
+  padding: 8px 12px;
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
   flex-wrap: wrap;
-
-  .search-wrapper {
-    flex: 2;
-    min-width: 200px;
-
-    ion-searchbar {
-      --background: #{$bg};
-      --border-radius: #{$r-full};
-      --box-shadow: none;
-      --placeholder-color: #{$muted};
-      --icon-color: #{$primary};
-      --clear-button-color: #{$muted};
-      padding: 0;
-    }
-  }
-
-  .filters-wrapper {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-
-    .filter-box {
-      --background: #{$bg};
-      --border-radius: #{$r-full};
-      --border-width: 0;
-      --inner-padding-end: 0.75rem;
-      --padding-start: 1rem;
-      --min-height: 2.75rem;
-
-      ion-label {
-        font-size: 0.65rem;
-        font-weight: 700;
-        color: $muted;
-        margin-right: 0.5rem;
-      }
-
-      ion-select {
-        --color: #{$text};
-        font-weight: 700;
-        font-size: 0.8rem;
-      }
-    }
-  }
-}
-
-// ─── TABLA ────────────────────────────────────────────────
-.responsive-table {
-  width: 100%;
-  border-collapse: collapse;
-
-  thead {
-    background: $bg-hover;
-
-    th {
-      padding: 0.875rem 1rem;
-      text-align: left;
-      font-size: 0.7rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: $muted;
-      border-bottom: 1px solid $border;
-    }
-  }
-
-  tbody {
-    tr {
-      border-bottom: 1px solid $border;
-      transition: $transition;
-
-      &:hover {
-        background: $primary-soft;
-      }
-
-      td {
-        padding: 0.875rem 1rem;
-        font-size: 0.85rem;
-        font-weight: 500;
-        color: $text;
-      }
-    }
-  }
-}
-
-.user-cell {
-  display: flex;
+  gap: 8px;
   align-items: center;
-  gap: 0.75rem;
-  font-weight: 700;
 
-  ion-icon {
-    font-size: 1rem;
-    color: $primary;
-    background: $primary-soft;
-    padding: 0.5rem;
-    border-radius: $r-sm;
-  }
-}
-
-.actions {
-  white-space: nowrap;
-
-  ion-button {
-    --padding-start: 0.25rem;
-    --padding-end: 0.25rem;
-    margin: 0 0.125rem;
-    --color: #{$text-light};
-
-    &:hover {
-      --color: #{$primary};
-    }
-
-    &[color="danger"]:hover {
-      --color: #{$error};
-    }
-  }
-}
-
-// ─── LISTAS ───────────────────────────────────────────────
-.table-container.list-view {
-  background: $white;
-
-  ion-list {
-    background: $white;
-    padding: 0;
+  ion-searchbar {
+    --background: #fff;
+    --border-radius: #{$radius-sm};
+    --box-shadow: none;
+    --placeholder-color: #{$text-muted};
+    --color: #{$text-main};
+    --icon-color: #{$primary};
+    border: 1px solid $border;
+    border-radius: $radius-sm;
+    padding: 0 !important;
+    height: 40px;
+    min-width: 180px;
+    flex: 1;
   }
 
   ion-item {
-    --background: #{$white};
-    --ion-item-background: #{$white};
+    --background: #fff;
+    --border-radius: #{$radius-sm};
+    --border-width: 1px;
+    --border-style: solid;
     --border-color: #{$border};
-    --inner-border-width: 0 0 1px 0;
-    --padding-start: 1rem;
-    --padding-end: 1rem;
-    --min-height: 4rem;
-    transition: $transition;
+    --inner-padding-end: 8px;
+    --padding-start: 10px;
+    --min-height: 40px;
+    border-radius: $radius-sm;
+    font-size: 0.82rem;
 
-    &:hover {
-      --background: #{$primary-soft};
+    ion-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: $text-muted;
+      margin-right: 4px;
     }
 
-    .item-icon-box {
-      width: 2.5rem;
-      height: 2.5rem;
-      background: $primary-soft;
-      border-radius: $r-md;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-right: 0.75rem;
-
-      ion-icon {
-        font-size: 1.2rem;
-        color: $primary;
-      }
-    }
-
-    h3 {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: $text;
-      margin-bottom: 0.25rem;
-    }
-
-    p {
-      font-size: 0.7rem;
-      color: $muted;
-      margin: 0;
-    }
-
-    ion-button[slot="end"] {
-      --border-radius: #{$r-full};
-      font-size: 0.7rem;
-      font-weight: 700;
+    ion-select {
+      font-size: 0.82rem;
+      --placeholder-color: #{$text-main};
+      color: $text-main;
     }
   }
 }
 
-// ─── MODAL ────────────────────────────────────────────────
+// ── Table Container ────────────────────────
+.table-container {
+  padding: 0.5rem 0;
+
+  ion-list {
+    padding: 0;
+    background: transparent;
+  }
+
+  ion-item {
+    --background: transparent;
+    --border-color: #{$border};
+    --inner-padding-end: 16px;
+    --padding-start: 16px;
+    font-size: 0.9rem;
+
+    ion-icon[slot="start"] {
+      font-size: 1.1rem;
+      color: $primary;
+      margin-right: 12px;
+    }
+
+    ion-label {
+      h3 {
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: $text-main;
+        margin: 0 0 2px;
+      }
+
+      p {
+        font-size: 0.78rem;
+        color: $text-muted;
+        margin: 0;
+      }
+    }
+
+    ion-button[color="danger"] {
+      --background: #{$danger-light};
+      --color: #{$danger};
+      --border-radius: #{$radius-sm};
+      --padding-start: 10px;
+      --padding-end: 10px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      height: 30px;
+    }
+  }
+}
+
+// ── Responsive Table ───────────────────────
+.responsive-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.87rem;
+
+  thead tr {
+    background: #fafafa;
+    border-bottom: 1px solid $border;
+  }
+
+  th {
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: $text-muted;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid $border;
+    transition: background 0.15s;
+
+    &:last-child { border-bottom: none; }
+
+    &:hover { background: #faf9ff; }
+  }
+
+  td {
+    padding: 10px 16px;
+    color: $text-main;
+    vertical-align: middle;
+  }
+
+  // User cell
+  .user-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    ion-icon {
+      font-size: 1rem;
+      color: $primary;
+      background: $primary-faint;
+      padding: 5px;
+      border-radius: 50%;
+    }
+
+    span {
+      font-weight: 600;
+    }
+  }
+
+  // Actions cell
+  .actions {
+    display: flex;
+    gap: 4px;
+
+    ion-button {
+      --padding-start: 8px;
+      --padding-end: 8px;
+      --padding-top: 6px;
+      --padding-bottom: 6px;
+      --border-radius: #{$radius-sm};
+      --background-hover: #{$primary-faint};
+      height: 34px;
+      font-size: 1rem;
+
+      ion-icon { font-size: 1rem; color: $primary; }
+
+      &[color="danger"] {
+        --background-hover: #{$danger-light};
+        ion-icon { color: $danger; }
+      }
+    }
+  }
+}
+
+// ── Delete Overlay ─────────────────────────
 .delete-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  animation: fadeIn 0.18s ease;
 }
 
 .delete-modal {
-  background: $white;
-  border-radius: $r-2xl;
-  padding: 1.5rem;
+  background: #fff;
+  border-radius: $radius-lg;
+  padding: 2rem 1.75rem 1.5rem;
   width: 90%;
-  max-width: 300px;
+  max-width: 360px;
   text-align: center;
-  box-shadow: $shadow-lg;
+  animation: slideUp 0.22s ease;
 
-  h3 {
-    font-size: 1.25rem;
-    font-weight: 800;
-    margin: 0 0 0.5rem;
-    color: $text;
+  .delete-modal-icon {
+    width: 56px;
+    height: 56px;
+    background: $danger-light;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+
+    ion-icon {
+      font-size: 1.6rem;
+      color: $danger;
+    }
   }
 
-  p {
-    font-size: 0.85rem;
-    color: $muted;
-    margin-bottom: 1.5rem;
+  .delete-modal-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: $text-main;
+    margin: 0 0 0.5rem;
+  }
+
+  .delete-modal-msg {
+    font-size: 0.88rem;
+    color: $text-muted;
+    margin: 0 0 1.5rem;
+    line-height: 1.5;
+
+    strong { color: $text-main; font-weight: 600; }
   }
 
   .delete-modal-actions {
     display: flex;
-    gap: 0.75rem;
+    gap: 10px;
+  }
 
-    button {
-      flex: 1;
-      padding: 0.7rem;
-      border-radius: $r-full;
-      font-weight: 700;
-      border: none;
-      cursor: pointer;
-      transition: $transition;
+  .delete-modal-btn {
+    flex: 1;
+    height: 42px;
+    border: none;
+    border-radius: $radius-sm;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.12s;
 
-      &.cancel {
-        background: $bg;
-        color: $text;
+    &:active { transform: scale(0.97); }
 
-        &:hover {
-          background: $border;
-        }
-      }
+    &.cancel {
+      background: #f0f0f0;
+      color: $text-main;
+      &:hover { opacity: 0.85; }
+    }
 
-      &.confirm {
-        background: $error;
-        color: white;
-
-        &:hover {
-          background: color.adjust($error, $lightness: -10%);
-        }
-      }
+    &.confirm {
+      background: $danger;
+      color: #fff;
+      &:hover { opacity: 0.88; }
     }
   }
 }
 
-// ─── LOADING ──────────────────────────────────────────────
-.state-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 300px;
-  gap: 1rem;
-  background: $white;
-  border-radius: $r-2xl;
-  border: 1px solid $border;
-
-  ion-spinner {
-    --color: #{$primary};
-  }
-
-  ion-label {
-    color: $muted;
-    font-weight: 500;
-  }
+// ── Animations ─────────────────────────────
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
-// ─── RESPONSIVE ───────────────────────────────────────────
-@media (max-width: 768px) {
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ── Responsive ─────────────────────────────
+@media (max-width: 600px) {
   .page-hero {
-    flex-direction: column;
-    align-items: flex-start;
-
-    .hero-stat {
-      width: 100%;
-      text-align: left;
-    }
+    .hero-title { font-size: 1.4rem; }
   }
 
   .table-toolbar {
     flex-direction: column;
     align-items: stretch;
 
-    .search-wrapper {
-      width: 100%;
-    }
-
-    .filters-wrapper {
-      flex-direction: column;
-
-      .filter-box {
-        width: 100%;
-      }
-    }
+    ion-searchbar { min-width: unset; }
+    ion-item { width: 100%; }
   }
 
-  // Tabla responsive
   .responsive-table {
-    thead {
-      display: none;
-    }
-
-    tbody, tr, td {
-      display: block;
-    }
-
-    tr {
-      margin-bottom: 0.75rem;
-      border: 1px solid $border;
-      border-radius: $r-lg;
-      padding: 0.5rem;
-    }
-
-    td {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.5rem;
-      border-bottom: 1px dashed $border;
-
-      &:last-child {
-        border-bottom: none;
-      }
-
-      &::before {
-        content: attr(data-label);
-        font-weight: 800;
-        font-size: 0.65rem;
-        text-transform: uppercase;
-        color: $muted;
-        width: 40%;
-      }
-
-      &.actions::before {
-        display: none;
-      }
-    }
+    th:nth-child(2),
+    td:nth-child(2) { display: none; }
   }
 }
