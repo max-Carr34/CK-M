@@ -1,68 +1,100 @@
 // ✅ Cargar variables de entorno PRIMERO
 require('dotenv').config();
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const cors = require('cors');
+
 // seguridad
 const helmet = require('helmet'); // Protege headers HTTP
 const rateLimit = require('express-rate-limit'); // Evita ataques de fuerza bruta
 
 const routes = require('./routes/routes');
-const app = express();  
+
+const app = express();
 
 /* ===============================
    SEGURIDAD GLOBAL
 ================================= */
 app.use(helmet());
-app.use(express.json({ limit: '10kb' })); //Limita tamaño de ataques
+app.use(express.json({ limit: '10kb' }));
 
-// Limita intentos de login
+/* ===============================
+   RATE LIMIT LOGIN
+================================= */
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 5, // máximo 5 intentos
+  max: 5,
   message: {
     message: 'Demasiados intentos, intenta más tarde'
   }
 });
 
 /* ===============================
-   CONFIGURACIÓN CORS
-================================= 
-app.use(cors({
-  origin: 'http://localhost:8100', // Aqui va el link de la ruta pára el front
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));*/
+   CONFIGURACIÓN CORS (LOCAL + PRODUCCIÓN)
+================================= */
+
+const allowedOrigins = [
+  'http://localhost:8100',
+  process.env.FRONTEND_URL
+];
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL,
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(null, true); // abierto mientras pruebas
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// bodyParser
+/* ===============================
+   BODY PARSER
+================================= */
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(methodOverride('_method'));
+
+/* ===============================
+   LOG DE PETICIONES
+================================= */
 app.use((req, res, next) => {
   console.log(`📡 [${req.method}] ${req.url}`);
   next();
 });
 
 /* ===============================
-   🔐 APLICAR RATE LIMIT SOLO AL LOGIN
+   RUTA DE PRUEBA (IMPORTANTE)
 ================================= */
+app.get('/', (req, res) => {
+  res.json({
+    status: 'ok',
+    message: 'API funcionando en Render 🚀'
+  });
+});
 
-// IMPORTANTE: tu login está en /api/login
+/* ===============================
+   RATE LIMIT SOLO LOGIN
+================================= */
 app.use('/api/login', loginLimiter);
 
-
+/* ===============================
+   RUTAS PRINCIPALES
+================================= */
 app.use('/api', routes);
 
-const PORT = process.env.PORT || 3000; //servidor
+/* ===============================
+   SERVER
+================================= */
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`🚀 API corriendo en http://localhost:${PORT}`);
+  console.log(`🚀 API corriendo en puerto ${PORT}`);
 });
