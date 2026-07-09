@@ -1,7 +1,0 @@
-{
-  "name": "Snack-Center",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular-standalone"
-}

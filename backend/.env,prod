@@ -1,0 +1,16 @@
+Local
+PORT=3000
+
+JWT_SECRET=devsecret
+JWT_REFRESH_SECRET=devrefresh
+
+EMAIL_USER=carranzamax75@gmail.com
+EMAIL_PASS=aoovyfinjxvrkmqt
+
+FRONTEND_URL=http://localhost:8100
+
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=maxi1407
+DB_NAME=snackcenter
