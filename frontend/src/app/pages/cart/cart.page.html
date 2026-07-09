@@ -77,7 +77,9 @@
             <button class="qty-btn minus" (click)="decreaseQuantity(item)">
               <ion-icon [name]="item.quantity === 1 ? 'trash-outline' : 'remove-outline'"></ion-icon>
             </button>
+
             <span class="qty-value">{{ item.quantity }}</span>
+
             <button class="qty-btn plus" (click)="increaseQuantity(item)">
               <ion-icon name="add-outline"></ion-icon>
             </button>
@@ -114,9 +116,7 @@
         <span class="total-price">{{ totalPrice | currency:'MXN':'symbol':'1.2-2' }}</span>
       </div>
     </div>
-
   </div>
-
 </ion-content>
 
 <!-- Footer con botón de pago -->

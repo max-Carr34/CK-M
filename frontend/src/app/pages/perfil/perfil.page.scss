@@ -9,12 +9,14 @@ $gradient: linear-gradient(135deg, #1b69d5 0%, #2c7be5 100%);
 $radius: 12px;
 $transition: all 0.25s ease;
 
+
 // ============================================
 // GLOBAL
 // ============================================
 ion-content {
   --background: #f5f9ff;
 }
+
 
 // ============================================
 // MENU BUTTON (hamburguesa)
@@ -69,6 +71,7 @@ ion-content {
     }
   }
 }
+
 
 // ============================================
 // HEADER / WELCOME
@@ -125,6 +128,7 @@ ion-content {
   }
 }
 
+
 // ============================================
 // CARDS
 // ============================================
@@ -153,7 +157,208 @@ ion-card {
   ion-card-content {
     padding: 0;
   }
+
+  // ----- MIS PEDIDOS -----
+  &.mis-pedidos-card {
+    background: linear-gradient(120deg, #f7faff 60%, #eaf1fb 100%);
+    box-shadow: 0 4px 18px rgba($primary, 0.10);
+    border: 1.5px solid #e0eaff;
+
+    ion-card-header {
+      background: transparent;
+      border-bottom: none;
+
+      ion-card-title {
+        color: $secondary;
+        letter-spacing: 0.5px;
+      }
+    }
+
+    ion-list {
+      padding: 0.5rem 0.5rem 0.5rem 0.2rem;
+    }
+
+    ion-item {
+      margin-bottom: 12px;
+      border-radius: 12px;
+      border: 1px solid #e3e9f7;
+      box-shadow: 0 2px 8px rgba($primary, 0.04);
+      transition: box-shadow 0.2s, border-color 0.2s;
+      background: #fff;
+
+      &:hover {
+        box-shadow: 0 4px 16px rgba($primary, 0.10);
+        border-color: $primary;
+      }
+
+      ion-icon[slot="start"] {
+        color: $primary;
+        font-size: 26px;
+        margin-right: 14px;
+      }
+
+      ion-label {
+        margin-left: 10px;
+
+        h3 {
+          font-size: 1.08rem;
+          font-weight: 700;
+          color: $secondary;
+          margin-bottom: 2px;
+        }
+
+        p {
+          font-size: 0.93rem;
+          color: #3d4a5c;
+          margin-bottom: 0;
+        }
+
+        p:last-child {
+          color: #6b7686;
+          font-size: 0.85rem;
+        }
+      }
+    }
+
+    .ver-mas-btn {
+      margin-top: 0.5rem;
+      display: flex;
+      justify-content: center;
+
+      ion-button {
+        --border-radius: 8px;
+        --padding-start: 18px;
+        --padding-end: 18px;
+        font-size: 0.97rem;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+      }
+    }
+  }
+
+  // ----- COMPRAR DE NUEVO -----
+  &.comprar-de-nuevo-card {
+    background: linear-gradient(120deg, #eef3fc 60%, #e0eaff 100%);
+    box-shadow: 0 4px 18px rgba($primary, 0.10);
+    border: 1.5px solid #e0eaff;
+
+    ion-card-header {
+      background: transparent;
+      border-bottom: none;
+
+      ion-card-title {
+        color: $secondary;
+        letter-spacing: 0.5px;
+      }
+    }
+
+    ion-list {
+      padding: 0.5rem 0.5rem 0.5rem 0.2rem;
+    }
+
+    ion-item {
+      margin-bottom: 12px;
+      border-radius: 12px;
+      border: 1px solid #e3e9f7;
+      box-shadow: 0 2px 8px rgba($primary, 0.04);
+      transition: box-shadow 0.2s;
+      background: #fff;
+
+      &:hover {
+        box-shadow: 0 4px 16px rgba($primary, 0.10);
+        border-color: $primary;
+      }
+
+      ion-thumbnail {
+        min-width: 64px;
+        min-height: 64px;
+        max-width: 64px;
+        max-height: 64px;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba($primary, 0.07);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        img {
+          width: 56px;
+          height: 56px;
+          object-fit: cover;
+          border-radius: 10px;
+        }
+      }
+
+      ion-label {
+        margin-left: 10px;
+
+        h3 {
+          font-size: 1.08rem;
+          font-weight: 700;
+          color: $secondary;
+          margin-bottom: 2px;
+        }
+
+        p {
+          font-size: 0.93rem;
+          color: #3d4a5c;
+          margin-bottom: 0;
+        }
+
+        p:last-child {
+          color: #6b7686;
+          font-size: 0.85rem;
+        }
+      }
+
+      ion-button {
+        --border-radius: 8px;
+        --padding-start: 12px;
+        --padding-end: 12px;
+        font-size: 0.97rem;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+
+        ion-icon {
+          font-size: 18px;
+        }
+      }
+    }
+  }
+
+  // ----- ACCIONES (Configuración) -----
+  &.actions-card {
+    margin-bottom: 60px;
+
+    ion-card-header {
+      ion-card-title {
+        font-size: 1.1rem;
+        color: $secondary;
+      }
+    }
+
+    ion-item {
+      --min-height: 60px;
+
+      h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      p {
+        font-size: 0.85rem;
+        color: #6b7686;
+        margin: 0;
+      }
+
+      ion-icon[slot="start"] {
+        margin-right: 10px;
+      }
+    }
+  }
 }
+
 
 // ============================================
 // ITEMS
@@ -193,6 +398,7 @@ ion-item {
   }
 }
 
+
 // ============================================
 // EMPTY STATE
 // ============================================
@@ -213,12 +419,18 @@ ion-item {
   }
 }
 
+
 // ============================================
-// BUTTONS
+// BUTTONS (Diseño unificado)
 // ============================================
-ion-button {
-  text-transform: none;
+ion-content ion-button {
+  --border-radius: 8px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  font-size: 0.97rem;
   font-weight: 600;
+  letter-spacing: 0.2px;
+  text-transform: none;
 
   &[fill="outline"] {
     --border-color: #1b69d5;
@@ -228,7 +440,12 @@ ion-button {
       --background: rgba(27, 105, 213, 0.08);
     }
   }
+
+  ion-icon {
+    font-size: 18px;
+  }
 }
+
 
 // ============================================
 // ANIMATION
@@ -243,6 +460,7 @@ ion-button {
     transform: translateY(0);
   }
 }
+
 
 // ============================================
 // RESPONSIVE

@@ -1,3 +1,5 @@
+// perfil.page.ts
+
 import { Component, inject, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -48,6 +50,11 @@ export class PerfilPage implements OnInit, OnDestroy {
     this.loadRecentProducts();
   }
 
+  // IMPORTANTE
+  ionViewWillEnter() {
+    this.loadRecentProducts();
+  }
+
   ngOnDestroy() {
     if (this.userSub) this.userSub.unsubscribe();
     if (this.cartSub) this.cartSub.unsubscribe();
@@ -62,7 +69,7 @@ export class PerfilPage implements OnInit, OnDestroy {
         this.userName = user.nombre;
         this.userEmail = user.correo;
 
-        // 🔥 cargar pedidos reales
+        // cargar pedidos
         this.loadOrders(user.id);
       }
     });
@@ -89,15 +96,34 @@ export class PerfilPage implements OnInit, OnDestroy {
   }
 
   addToCart(product: any) {
-    this.cartService.addToCart(product); // 🔥 CORRECTO
-    this.mostrarToast(`"${product.name}" agregado`, 'success');
+    this.cartService.addToCart(product);
+
+    this.mostrarToast(
+      `"${product.name}" agregado`,
+      'success'
+    );
+  }
+
+  // ============================================
+  // PRODUCTOS RECIENTES
+  // ============================================
+  loadRecentProducts() {
+
+    this.recentProducts = JSON.parse(
+      localStorage.getItem('recentProducts') || '[]'
+    );
+
+    console.log(
+      '🛒 recentProducts:',
+      this.recentProducts
+    );
   }
 
   // ============================================
   // ACCIONES
   // ============================================
   viewOrder(order: any) {
-    this.router.navigate(['/order-details', order.id]);
+    this.router.navigate(['/success', order.id]);
   }
 
   goToAddressForm() {
@@ -117,6 +143,10 @@ export class PerfilPage implements OnInit, OnDestroy {
     this.navCtrl.navigateRoot('/login');
   }
 
+  goToOrders() {
+    this.router.navigate(['/list-comp']);
+  }
+
   // ============================================
   // UI
   // ============================================
@@ -126,15 +156,9 @@ export class PerfilPage implements OnInit, OnDestroy {
       duration: 2000,
       color
     });
+
     await t.present();
   }
-  loadRecentProducts() {
-  // 🔥 temporal (luego puedes traerlo del backend)
-  this.recentProducts = [
-    { id: 1, name: 'Hamburguesa Clásica', price: 89, image: 'https://via.placeholder.com/150' },
-    { id: 2, name: 'Hot Dog Especial', price: 79, image: 'https://via.placeholder.com/150' }
-  ];
-}
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;

@@ -22,7 +22,7 @@ export class RoleGuard implements CanActivate {
     return true;
   }
 
-  this.router.navigate(['/error/403']);
+  this.router.navigate(['/error404']);
   return false;
   }
 }

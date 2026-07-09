@@ -1,3 +1,5 @@
+// success.page.ts
+
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
@@ -26,13 +28,13 @@ export class SuccessPage implements OnInit {
   method: string = '';
   status: string = '';
   isLoading: boolean = true;
+  products: any[] = [];
 
   private route = inject(ActivatedRoute);
   private http = inject(HttpClient);
   private navCtrl = inject(NavController);
 
   ngOnInit() {
-    // 🔥 ID desde la URL /success/:id
     this.orderId = this.route.snapshot.paramMap.get('id') || '';
 
     console.log('📦 ORDER ID:', this.orderId);
@@ -56,8 +58,12 @@ export class SuccessPage implements OnInit {
           this.total = Number(res.total ?? 0);
           this.status = res.status ?? 'pending';
           this.method = res.payment_method ?? 'cash';
+          this.products = res.products || [];
 
           this.isLoading = false;
+
+          // 🔥 guardar productos recientes
+          this.saveRecentProducts(this.products);
         },
         error: (err) => {
           console.error('❌ ERROR:', err);
@@ -68,5 +74,50 @@ export class SuccessPage implements OnInit {
 
   goHome() {
     this.navCtrl.navigateRoot('/menu');
+  }
+
+  // 🔥 GUARDAR PRODUCTOS RECIENTES
+  saveRecentProducts(products: any[]) {
+
+    // normalizar productos
+    const normalized = products.map((p, index) => ({
+      id: p.id || p.product_id || index,
+      name: p.product_name || p.name,
+      price: p.price,
+      image: p.image,
+      quantity: p.quantity
+    }));
+
+    // traer existentes
+    const existing = JSON.parse(
+      localStorage.getItem('recentProducts') || '[]'
+    );
+
+    // evitar duplicados
+    const merged = [...normalized, ...existing].reduce(
+      (acc: any[], current: any) => {
+
+        const found = acc.find(
+          p => p.name === current.name
+        );
+
+        if (!found) {
+          acc.push(current);
+        }
+
+        return acc;
+
+      }, []
+    );
+
+    // últimos 3
+    const limited = merged.slice(0, 3);
+
+    console.log('🔥 GUARDANDO:', limited);
+
+    localStorage.setItem(
+      'recentProducts',
+      JSON.stringify(limited)
+    );
   }
 }

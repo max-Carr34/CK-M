@@ -1,0 +1,91 @@
+<app-sidebar-menu 
+  #sidebarMenuRef 
+  [isMenuOpen]="isMenuOpen" 
+  (menuOpenChange)="isMenuOpen = $event">
+</app-sidebar-menu>
+
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <button class="menu-button" (click)="toggleMenu()" [class.open]="isMenuOpen" slot="start">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <ion-title>Mis Comprobantes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <!-- EMPTY STATE -->
+  <div class="empty-state" *ngIf="orders.length === 0">
+    <ion-icon name="receipt-outline"></ion-icon>
+    <h2>No hay comprobantes</h2>
+    <p>Tus pedidos aparecerán aquí</p>
+  </div>
+
+  <!-- LISTA DE COMPROBANTES -->
+  <div class="orders-container" *ngIf="orders.length > 0">
+    <ion-card *ngFor="let order of orders" class="receipt-card">
+      
+      <!-- CABECERA DEL PEDIDO -->
+      <div class="receipt-header">
+        <div>
+          <h2>Pedido No.{{ order.id }}</h2>
+          <p>{{ order.created_at | date:'medium' }}</p>
+        </div>
+        <ion-badge
+          color="
+            order.status === 'paid'
+              ? 'success'
+              : 'warning'
+          "
+        >
+          {{ order.status === 'paid' ? 'Pagado' : 'Pendiente' }}
+        </ion-badge>
+      </div>
+
+      <!-- LISTA DE PRODUCTOS -->
+      <div class="products-list">
+        <div
+          class="product-item"
+          *ngFor="let product of order.products"
+        >
+          <img
+            [src]="product.image"
+            [alt]="product.product_name"
+          >
+          
+          <div class="product-info">
+            <h3>{{ product.product_name }}</h3>
+            <p>Cantidad: {{ product.quantity }}</p>
+          </div>
+
+          <span class="price">
+            {{ (product.price * product.quantity) | currency:'MXN' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- FOOTER / RESUMEN -->
+      <div class="receipt-footer">
+        <div class="summary">
+          <p>Productos: {{ getTotalProducts(order.products) }}</p>
+          <h2>{{ order.total | currency:'MXN' }}</h2>
+        </div>
+        <div class="payment">
+          <ion-icon name="card-outline"></ion-icon>
+          <span>
+            {{
+              order.payment_method === 'cash'
+                ? 'Efectivo'
+                : 'Transferencia'
+            }}
+          </span>
+        </div>
+      </div>
+
+    </ion-card>
+  </div>
+
+</ion-content>

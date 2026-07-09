@@ -15,26 +15,15 @@ export class FooterComponent {
 
   // Métodos de navegación
   goToHome(): void {
-    this.router.navigate(['/home']);
+    this.router.navigate(['/init']);
   }
 
   goToMenu(): void {
     if (this.authService.isAuthenticated()) {
       this.router.navigate(['/menu']);
     } else {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/home']);
     }
-  }
-
-  goToContact(): void {
-    // Si tienes ruta de contacto específica
-    this.router.navigate(['/contacto']);
-    
-    // O si prefieres scroll a la sección contacto
-    // const contactoSection = document.getElementById('contacto');
-    // if (contactoSection) {
-    //   contactoSection.scrollIntoView({ behavior: 'smooth' });
-    // }
   }
 
   goToTerms(): void {

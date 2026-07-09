@@ -1,0 +1,172 @@
+ion-content {
+  --background: #f4f5f8;
+}
+
+// CONTENEDOR GENERAL
+.orders-container {
+  padding: 16px;
+}
+
+// TARJETA DE RECIBO / PEDIDO
+.receipt-card {
+  background: #fff;
+  border-radius: 20px;
+  margin-bottom: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  // Reset padding/margin de ion-card
+  ion-card {
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+    border-radius: 0;
+  }
+}
+
+// CABECERA DEL PEDIDO
+.receipt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+
+  p {
+    margin: 4px 0 0 0;
+    color: #777;
+    font-size: 13px;
+  }
+
+  ion-badge {
+    --border-radius: 16px;
+    --padding-start: 10px;
+    --padding-end: 10px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+}
+
+// LISTA DE PRODUCTOS
+.products-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// ÍTEM DE PRODUCTO
+.product-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  img {
+    width: 58px;
+    height: 58px;
+    border-radius: 12px;
+    object-fit: cover;
+    background: #f9f9f9;
+  }
+}
+
+// INFORMACIÓN DEL PRODUCTO
+.product-info {
+  flex: 1;
+
+  h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+    line-height: 1.3;
+  }
+
+  p {
+    margin: 4px 0 0 0;
+    color: #666;
+    font-size: 13px;
+  }
+}
+
+// PRECIO POR ÍTEM
+.price {
+  font-weight: 700;
+  font-size: 15px;
+  color: #1a1a1a;
+  white-space: nowrap;
+}
+
+// FOOTER CON RESUMEN Y PAGO
+.receipt-footer {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #ececec;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+// RESUMEN DE PRECIO
+.summary {
+  p {
+    margin: 0;
+    color: #666;
+    font-size: 13px;
+  }
+
+  h2 {
+    margin-top: 6px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+}
+
+// ICONO Y TEXTO DE PAGO
+.payment {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #555;
+  border-radius: 14px;
+  padding: 6px 12px;
+  background: #f0f4ff;
+}
+
+// EMPTY STATE GENERAL
+.empty-state {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem;
+
+  ion-icon {
+    font-size: 70px;
+    color: #bbb;
+  }
+
+  h2 {
+    margin-top: 16px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  p {
+    margin-top: 4px;
+    color: #777;
+    font-size: 14px;
+    text-align: center;
+  }
+}

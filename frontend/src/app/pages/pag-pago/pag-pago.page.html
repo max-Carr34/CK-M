@@ -7,7 +7,7 @@
     <ion-title>
       <div class="header-content">
         <span class="header-title">Confirmar pedido</span>
-        <small class="header-subtitle">Revisa antes de pagar</small>
+        <small class="header-subtitle">Revisa todo antes de pagar</small>
       </div>
     </ion-title>
   </ion-toolbar>
@@ -21,6 +21,7 @@
       <!-- INFO -->
       <div class="info-section">
 
+        <!-- PUNTO DE ENTREGA -->
         <div class="info-card">
           <div class="card-header">
             <ion-icon name="location-outline" color="primary"></ion-icon>
@@ -36,7 +37,7 @@
           </ion-item>
         </div>
 
-        <!-- MÉTODO PAGO -->
+        <!-- MÉTODO DE PAGO -->
         <div class="info-card">
           <div class="card-header">
             <ion-icon name="card-outline" color="primary"></ion-icon>
@@ -47,27 +48,35 @@
 
             <div class="payment-options-grid">
 
-              <ion-item lines="none" class="payment-option" [class.selected]="paymentMethod === 'spei'">
+              <ion-item
+                lines="none"
+                class="payment-option"
+                [class.selected]="paymentMethod === 'spei'"
+              >
                 <ion-radio slot="start" value="spei"></ion-radio>
                 <ion-label>
                   <h2>Transferencia SPEI</h2>
-                  <p>Inmediato</p>
+                  <p>Transferencia bancaria inmediata</p>
                 </ion-label>
                 <ion-icon name="swap-horizontal-outline" slot="end" color="primary"></ion-icon>
               </ion-item>
 
-              <ion-item lines="none" class="payment-option" [class.selected]="paymentMethod === 'cash'">
+              <ion-item
+                lines="none"
+                class="payment-option"
+                [class.selected]="paymentMethod === 'cash'"
+              >
                 <ion-radio slot="start" value="cash"></ion-radio>
                 <ion-label>
                   <h2>Efectivo</h2>
-                  <p>En caja</p>
+                  <p>Pago en caja al momento de la entrega</p>
                 </ion-label>
                 <ion-icon name="cash-outline" slot="end" color="success"></ion-icon>
               </ion-item>
 
             </div>
 
-            <!-- SPEI DETAIL -->
+            <!-- DETALLE SPEI -->
             <div class="method-detail" *ngIf="paymentMethod === 'spei'">
 
               <div class="clabe-box">
@@ -80,18 +89,27 @@
                   </ion-button>
                 </div>
 
-                <p>BBVA · Cafetería App S.A.</p>
+                <p>Banco BBVA · Cafetería App S.A.</p>
               </div>
 
               <div class="upload-section">
-                <p>Adjunta tu comprobante:</p>
+                <p class="upload-label">Sube tu comprobante de pago</p>
 
                 <div class="drop-zone" (click)="fileInput.click()">
-                  <input type="file" #fileInput hidden (change)="onFileSelected($event)">
+                  <input
+                    type="file"
+                    #fileInput
+                    accept="image/*"
+                    hidden
+                    (change)="onFileSelected($event)"
+                  >
                   <ion-icon name="cloud-upload-outline"></ion-icon>
-                  <span>Subir captura</span>
+                  <span>Seleccionar imagen</span>
                 </div>
 
+                <p class="upload-hint" *ngIf="selectedFile">
+                  Comprobante adjunto: <strong>{{ selectedFile.name }}</strong>
+                </p>
               </div>
 
             </div>
@@ -101,22 +119,20 @@
 
       </div>
 
-      <!-- RESUMEN -->
+      <!-- RESUMEN DEL PEDIDO -->
       <div class="summary-section">
-
         <div class="info-card">
           <div class="card-header">
             <ion-icon name="receipt-outline" color="primary"></ion-icon>
             <ion-label>RESUMEN</ion-label>
           </div>
 
-          <ion-list lines="none">
+          <ion-list lines="none" class="summary-list">
             <ion-item *ngFor="let item of cartItems" class="summary-item">
               <ion-label>
                 <span class="item-name">{{ item.name }}</span>
                 <span class="item-qty">x{{ item.quantity }}</span>
               </ion-label>
-
               <ion-note slot="end">
                 {{ (item.price * item.quantity) | currency:'MXN' }}
               </ion-note>
@@ -127,11 +143,10 @@
 
           <div class="total-row">
             <span>Total</span>
-            <span>{{ totalPrice | currency:'MXN' }}</span>
+            <span class="total-amount">{{ totalPrice | currency:'MXN' }}</span>
           </div>
 
         </div>
-
       </div>
 
     </div>
@@ -152,10 +167,10 @@
       expand="block"
       class="confirm-btn"
       (click)="confirmOrder()"
-      [disabled]="!paymentMethod">
-
+      [disabled]="!paymentMethod || (paymentMethod === 'spei' && !selectedFile)"
+    >
       <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
-      Confirmar Pedido
+      Confirmar pedido
     </ion-button>
 
   </div>

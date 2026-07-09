@@ -104,7 +104,6 @@ ion-content.page {
   overflow: hidden;
   position: relative;
 
-  // Decorative circles
   &::before, &::after {
     content: '';
     position: absolute;
@@ -286,9 +285,10 @@ ion-content.page {
 }
 
 // ─── SEGMENT ──────────────────────────────────────────────
-// ─── SEGMENT ──────────────────────────────────────────────
 .segment-wrapper {
   margin-bottom: 1.25rem;
+  display: flex;
+  justify-content: flex-start;
 }
 
 .custom-segment {
@@ -296,36 +296,58 @@ ion-content.page {
   background: $white;
   border: 1.5px solid $gray-200;
   border-radius: $r-xl;
-  padding: 4px; // Espacio interno para que el indicador no toque los bordes
+  padding: 4px;
   box-shadow: $shadow-xs;
+  width: auto;
+  min-width: 300px;
 
   ion-segment-button {
     --color: #{$gray-400};
     --color-checked: #{$white};
-    --indicator-box-shadow: #{$shadow-blue};
-    --indicator-color: #{$blue-600}; // El fondo azul cuando está seleccionado
-    --indicator-height: 100%;
-    --border-radius: #{$r-lg};
+    --indicator-height: 0px;
     margin: 0;
     min-height: 2.6rem;
-    transition: $t;
-
-    // Esto elimina la línea plateada que pone Ionic por defecto debajo
-    border-bottom: none; 
+    position: relative;
+    z-index: 1;
 
     ion-label {
       font-size: 0.8rem;
       font-weight: 700;
-      text-transform: none;
-      margin: 0;
+      margin: 0 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     ion-icon {
       font-size: 1.1rem;
-      margin-bottom: 2px;
+    }
+
+    &.segment-button-checked {
+      &::part(native) {
+        background: $blue-600;
+        color: $white;
+        border-radius: $r-lg;
+        box-shadow: $shadow-blue;
+      }
+
+      ion-label, ion-icon {
+        color: $white !important;
+      }
+    }
+
+    &::part(native) {
+      border: none;
+      background: transparent;
+      transition: $t;
+    }
+
+    &::part(indicator) {
+      display: none;
     }
   }
 }
+
 // ─── TABLE CARD ───────────────────────────────────────────
 .table-card {
   background: $white;
@@ -390,6 +412,9 @@ ion-content.page {
     flex-wrap: wrap;
   }
 
+  // CAMBIO: filter-pill ahora fuerza al ion-select a ocupar todo el
+  // ancho disponible, para que no quede texto pegado a la izquierda
+  // con un hueco vacío a la derecha.
   .filter-pill {
     display: flex;
     align-items: center;
@@ -399,7 +424,12 @@ ion-content.page {
     border-radius: $r-lg;
     padding: 0 0.85rem;
     height: 2.75rem;
+    min-width: 150px;      // CAMBIO: ancho mínimo consistente entre pills
     transition: $t;
+
+    &:hover {                // CAMBIO: feedback visual al pasar el mouse
+      border-color: $blue-100;
+    }
 
     &:focus-within {
       border-color: $blue-400;
@@ -414,9 +444,19 @@ ion-content.page {
 
     ion-select {
       --color: #{$gray-900};
+      --placeholder-color: #{$gray-900};   // CAMBIO: evita texto "apagado"
+      --padding-start: 0;                   // CAMBIO: sin doble padding
+      --padding-end: 0;
       font-size: 0.8rem;
       font-weight: 600;
-      min-width: 110px;
+      flex: 1;              // CAMBIO: ocupa todo el ancho restante
+      width: 100%;
+      max-width: none;
+
+      &::part(icon) {
+        opacity: 1;
+        color: $gray-400;
+      }
     }
   }
 }
@@ -645,7 +685,7 @@ ion-content.page {
     align-items: center;
     justify-content: center;
     margin: 0 auto 1.25rem;
-    border: 2px solid lighten($error, 30%);
+    border: 2px solid color.adjust($error, $lightness: 30%); // CAMBIO: lighten() → color.adjust()
 
     ion-icon {
       font-size: 1.5rem;

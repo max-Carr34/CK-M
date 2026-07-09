@@ -13,13 +13,20 @@ $transition-fast: 0.2s ease;
 /* ============================================
    FOOTER STYLES
    ============================================ */
+
 .footer {
-  background: $neutral-dark;
+  background: linear-gradient(135deg, $neutral-dark 70%, $primary-color 100%);
   color: white;
   padding: 4rem 2rem 2rem;
   width: 100%;
   box-sizing: border-box;
   margin-top: auto;
+  box-shadow: 0 0 32px 0 rgba(27, 105, 213, 0.10);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  letter-spacing: 0.01em;
 }
 
 .footer-content {
@@ -29,6 +36,7 @@ $transition-fast: 0.2s ease;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 3rem;
   margin-bottom: 3rem;
+  align-items: stretch;
 }
 
 .footer-section {
@@ -38,6 +46,29 @@ $transition-fast: 0.2s ease;
     margin: 0;
   }
 
+  &.footer-contact-section {
+    background: rgba(255,255,255,0.03);
+    border-radius: $radius-md;
+    box-shadow: 0 2px 16px 0 rgba(27, 105, 213, 0.07);
+    padding: 1.5rem 1rem 1.5rem 1rem;
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    z-index: 1;
+  }
+
+
+.footer-divider {
+  width: 2px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(27,105,213,0.15) 100%);
+  border-radius: 2px;
+  margin: 0 1.5rem;
+  display: block;
+  min-height: 120px;
+  align-self: stretch;
+}
   li {
     margin-bottom: 0.75rem;
     opacity: 0.7;
@@ -69,6 +100,11 @@ $transition-fast: 0.2s ease;
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 1rem;
+  transition: transform 0.4s cubic-bezier(.68,-0.55,.27,1.55);
+}
+
+.animate-logo:hover {
+  transform: scale(1.07) rotate(-3deg);
 }
 
 .footer-logo-icon {
@@ -80,6 +116,16 @@ $transition-fast: 0.2s ease;
   align-items: center;
   justify-content: center;
   font-size: 1.25rem;
+  box-shadow: 0 2px 8px 0 rgba(27, 105, 213, 0.15);
+  transition: box-shadow 0.3s;
+}
+
+.footer-logo-icon span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 
 .footer-logo-title {
@@ -115,18 +161,59 @@ $transition-fast: 0.2s ease;
     display: flex;
     align-items: center;
     gap: 10px;
+    font-size: 1rem;
   }
 }
 
-.footer-bottom {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding-top: 2rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  text-align: center;
-  opacity: 0.5;
-  font-size: 0.85rem;
+.footer-schedule {
+  li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+  }
 }
+
+.whatsapp-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #25D366;
+  color: #fff;
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  letter-spacing: 0.02em;
+  border-radius: 24px;
+  padding: 0.5rem 1.2rem;
+  margin-top: 1.2rem;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  box-shadow: 0 2px 8px 0 rgba(37,211,102,0.15);
+  font-style: italic;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s;
+  border: none;
+  outline: none;
+}
+
+.whatsapp-btn:hover {
+  background: #1ebe5d;
+  margin: 0 auto;
+  box-shadow: 0 4px 16px 0 rgba(37,211,102,0.25);
+  transform: translateY(-2px) scale(1.04);
+}
+
+.whatsapp-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.whatsapp-text {
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+
 
 /* ============================================
    RESPONSIVE DESIGN
@@ -138,12 +225,15 @@ $transition-fast: 0.2s ease;
 
   .footer-content {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    font-size: 0.95rem;
+    font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
     text-align: center;
+    justify-items: center;
   }
 
   .footer-logo {
     justify-content: center;
+    text-align: center;
   }
 
   .footer-description {
@@ -151,8 +241,20 @@ $transition-fast: 0.2s ease;
     margin: 0 auto;
   }
 
+
   .footer-section a:hover {
     transform: none;
+  }
+  .footer-divider {
+    display: none;
+  }
+  .footer-section.footer-contact-section {
+    align-items: center;
+    padding: 1.5rem 0.5rem;
+  }
+  .whatsapp-btn {
+    justify-content: center;
+    width: 100%;
   }
 }
 
@@ -173,6 +275,10 @@ $transition-fast: 0.2s ease;
 
   .footer-section-title {
     font-size: 0.95rem;
+  }
+  .whatsapp-btn {
+    font-size: 0.95rem;
+    padding: 0.5rem 0.7rem;
   }
 }
 

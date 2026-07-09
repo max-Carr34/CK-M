@@ -37,7 +37,7 @@ export class SidebarMenuComponent implements OnInit, OnDestroy {
   menuItems: MenuItem[] = [
     { key: 'profile', label: 'Perfil', icon: '👤', route: '/perfil' },
     { key: 'menu', label: 'Menú', icon: '🍔', route: '/menu' },
-    { key: 'notifications', label: 'Comprobantes', icon: '🔔', route: '/notifications' },
+    { key: 'notifications', label: 'Comprobantes', icon: '🔔', route: '/list-comp' },
   ];
 
   constructor(
@@ -47,7 +47,6 @@ export class SidebarMenuComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    // 🔥 REACTIVO → se actualiza solo cuando cambia sesión
     this.userSub = this.authService.user$.subscribe(user => {
       if (user) {
         this.userName = user.nombre || 'Usuario';
@@ -68,13 +67,8 @@ export class SidebarMenuComponent implements OnInit, OnDestroy {
   // ============================================
   // AVATAR
   // ============================================
-  getInitials(): string {
-    if (!this.userName) return 'U';
-
-    const parts = this.userName.trim().split(' ');
-    return parts.length > 1
-      ? (parts[0][0] + parts[1][0]).toUpperCase()
-      : parts[0][0].toUpperCase();
+  gotoInit () {
+    this.navCtrl.navigateRoot('/init');
   }
 
   // ============================================

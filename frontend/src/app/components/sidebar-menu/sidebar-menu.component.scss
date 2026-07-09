@@ -95,21 +95,34 @@ $transition: all 0.25s ease;
   color: white;
 }
 
-.sidebar-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: white;
-  color: $primary-dark;
 
+.sidebar-avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $primary 60%, $primary-dark 100%);
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 16px rgba($primary, 0.18);
+  border: 2.5px solid #fff;
+  cursor: pointer;
+  transition: transform 0.18s, box-shadow 0.18s;
+  margin-right: 2px;
 
-  font-weight: 600;
-  font-size: 15px;
-
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  &:hover {
+    transform: scale(1.07) rotate(-2deg);
+    box-shadow: 0 8px 24px rgba($primary-dark, 0.22);
+    filter: brightness(1.08);
+  }
+  &:active {
+    transform: scale(0.97);
+    filter: brightness(0.97);
+  }
 }
 
 .sidebar-user {

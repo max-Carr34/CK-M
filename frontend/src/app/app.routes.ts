@@ -44,14 +44,6 @@ export const routes: Routes = [
     path: 'menu',
     loadComponent: () => import('./pages/menu/menu.page').then( m => m.MenuPage), canActivate: [AuthGuard]
   },
-  {
-    path: 'error404',
-    loadComponent: () => import('./pages/errors/error404/error404.page').then( m => m.Error404Page)
-  },
-  {
-    path: 'error500',
-    loadComponent: () => import('./pages/errors/error500/error500.page').then( m => m.Error500Page)
-  },
  {
   path: 'add-product',
   loadComponent: () =>
@@ -82,8 +74,17 @@ export const routes: Routes = [
     path: 'controlaccess',
     loadComponent: () => import('./pages/controlaccess/controlaccess.page').then( m => m.ControlaccessPage)
   },
+    {
+    path: 'list-comp',
+    loadComponent: () => import('./pages/list-comp/list-comp.page').then( m => m.ListCompPage)
+  },
+  {
+    path: 'error500',
+    loadComponent: () => import('./pages/errors/error500/error500.page').then( m => m.Error500Page)
+  },
+  
   {
     path: '**',
     redirectTo: 'error404'
-  }, 
+  },
 ];
