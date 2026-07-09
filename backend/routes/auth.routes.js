@@ -223,6 +223,53 @@ router.post('/refresh', (req, res) => {
 });
 
 /* ===============================
+   FINALIZAR RESET PASSWORD (La que te falta)
+================================= */
+router.post('/reset-password', async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  if (!token || !newPassword) {
+    return res.status(400).json({ message: 'Token y contraseña requeridos' });
+  }
+
+  // 1. Buscamos al usuario que tiene ese token y verificamos que no haya expirado
+  db.query(
+    'SELECT id FROM usuarios WHERE resetPasswordToken = ? AND resetPasswordExpires > ?',
+    [token, Date.now()],
+    async (err, results) => {
+      if (err) return res.status(500).json({ message: 'Error en la base de datos' });
+      
+      if (results.length === 0) {
+        return res.status(400).json({ message: 'Token inválido o expirado' });
+      }
+
+      const userId = results[0].id;
+
+      try {
+        // 2. Hasheamos la nueva contraseña
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // 3. Actualizamos la contraseña y limpiamos el token (lo ponemos en NULL)
+        db.query(
+          'UPDATE usuarios SET password = ?, resetPasswordToken = NULL, resetPasswordExpires = NULL WHERE id = ?',
+          [hashedPassword, userId],
+          (err) => {
+            if (err) {
+              console.error(err);
+              return res.status(500).json({ message: 'Error al actualizar contraseña' });
+            }
+            res.json({ message: 'Contraseña actualizada con éxito' });
+          }
+        );
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error procesando la contraseña' });
+      }
+    }
+  );
+});
+
+/* ===============================
    CHANGE PASSWORD
 ================================= */
 router.post('/change-password', verifyToken, async (req, res) => {
@@ -288,65 +335,63 @@ router.post('/change-password', verifyToken, async (req, res) => {
 });
 
 /* ===============================
-   RESSET PASSWORD
+   SOLICITAR RESET PASSWORD
 ================================= */
-router.post('/reset-password', async (req, res) => {
-  const { token, newPassword } = req.body;
+router.post('/request-reset-password', (req, res) => {
+  const { correo } = req.body;
 
-  db.query(
-    'SELECT id, resetPasswordExpires FROM usuarios WHERE resetPasswordToken = ?',
-    [token],
-    async (err, results) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ message: 'Error DB' });
-      }
+  if (!correo) {
+    return res.status(400).json({ message: 'Correo es requerido' });
+  }
 
-      if (
-        results.length === 0 ||
-        results[0].resetPasswordExpires < Date.now()
-      ) {
-        return res.status(400).json({ message: 'Token inválido o expirado' });
-      }
+  // 1. Verificar si el usuario existe
+  db.query('SELECT id FROM usuarios WHERE correo = ?', [correo], async (err, results) => {
+    if (err) return res.status(500).json({ message: 'Error DB' });
+    if (results.length === 0) return res.status(404).json({ message: 'Usuario no encontrado' });
 
-      try {
-        const userId = results[0].id;
+    const userId = results[0].id;
+    
+    // 2. Generar token único
+    const token = crypto.randomBytes(20).toString('hex');
+    const expires = Date.now() + 900000; // 15 minutos de validez
 
-        const hashed = await bcrypt.hash(newPassword, 10);
+    // 3. Guardar en BD
+    db.query(
+      'UPDATE usuarios SET resetPasswordToken = ?, resetPasswordExpires = ? WHERE id = ?',
+      [token, expires, userId],
+      (err) => {
+        if (err) return res.status(500).json({ message: 'Error actualizando token' });
 
-        db.query(
-          `UPDATE usuarios 
-           SET password=?, resetPasswordToken=NULL, resetPasswordExpires=NULL 
-           WHERE id=?`,
-          [hashed, userId],
-          (err) => {
+        // --- CORRECCIÓN AQUÍ: Definimos la URL completa ---
+        const resetUrl = `${process.env.FRONTEND_URL}/changepassw?token=${token}`;
 
-            if (err) {
-              console.error(err);
-              return res.status(500).json({ message: 'Error al actualizar password' });
-            }
+        // 4. Enviar correo
+        const mailOptions = {
+          from: 'carranzamax75@gmail.com',
+          to: correo,
+          subject: 'Recuperación de contraseña',
+          html: `<p>Hola,</p>
+                  <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta.</p>
+                  <p>Haz clic en el botón de abajo para crear una nueva contraseña:</p>
+                  <a href="${resetUrl}" style="display:inline-block; padding:12px 24px; background-color:#2563eb; color:#ffffff; text-decoration:none; border-radius:6px; font-weight:bold;">
+                    Restablecer mi contraseña
+                  </a>
+                  <p>⏱️ Este enlace expirará en <strong>15 minutos</strong> por motivos de seguridad.</p>
+                  <p>Si tú no solicitaste este cambio, puedes ignorar este mensaje: tu contraseña seguirá siendo la misma.</p>`
+        };
 
-            db.query(
-              'DELETE FROM refresh_tokens WHERE user_id = ?',
-              [userId],
-              (err) => {
-                if (err) console.error('Error limpiando tokens:', err);
-              }
-            );
-
-            logAction(userId, 'RESET_PASSWORD');
-
-            return res.json({ message: 'Contraseña actualizada' });
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.error(error);
+            return res.status(500).json({ message: 'Error enviando correo' });
           }
-        );
-
-      } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Error interno' });
+          res.json({ message: 'Correo de recuperación enviado' });
+        });
       }
-    }
-  );
+    );
+  });
 });
+
 /* ===============================
    ADMIN STATS
 ================================= */

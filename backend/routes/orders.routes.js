@@ -24,6 +24,7 @@ router.post('/', (req, res) => {
   `;
 
   db.query(orderSql, [user_id, total, payment_method], (err, result) => {
+
     if (err) {
       console.error('❌ ERROR INSERT ORDER:', err);
       return res.status(500).json({ error: err.message });
@@ -44,6 +45,7 @@ router.post('/', (req, res) => {
     ]);
 
     db.query(itemsSql, [values], (err2) => {
+
       if (err2) {
         console.error('❌ ERROR INSERT ITEMS:', err2);
         return res.status(500).json({ error: err2.message });
@@ -55,50 +57,115 @@ router.post('/', (req, res) => {
         message: 'Pedido creado correctamente',
         orderId
       });
+
     });
+
   });
+
 });
 
-// OBTENER PEDIDOS POR USUARIO
+/* ===============================
+   OBTENER PEDIDOS POR USUARIO
+================================= */
 router.get('/user/:user_id', (req, res) => {
+
   const userId = req.params.user_id;
 
   const sql = `
-    SELECT id, total, status, created_at
+    SELECT
+      id,
+      total,
+      status,
+      created_at
     FROM orders
     WHERE user_id = ?
     ORDER BY id DESC
   `;
 
   db.query(sql, [userId], (err, results) => {
+
     if (err) {
       console.error('❌ ERROR GET ORDERS:', err);
       return res.status(500).json({ error: err.message });
     }
 
     res.json(results);
+
   });
+
 });
 
-// OBTENER PEDIDO POR ID
+/* ===============================
+   OBTENER PEDIDO POR ID
+================================= */
 router.get('/:id', (req, res) => {
+
   const orderId = req.params.id;
 
-  const sql = `
-    SELECT id, total, status, payment_method
+  // 🔥 Obtener pedido
+  const orderSql = `
+    SELECT
+      id,
+      total,
+      status,
+      payment_method,
+      created_at
     FROM orders
     WHERE id = ?
   `;
 
-  db.query(sql, [orderId], (err, result) => {
-    if (err) return res.status(500).json(err);
+  db.query(orderSql, [orderId], (err, orderResult) => {
 
-    if (result.length === 0) {
-      return res.status(404).json({ message: 'Pedido no encontrado' });
+    if (err) {
+      console.error('❌ ERROR ORDER:', err);
+      return res.status(500).json({ error: err.message });
     }
 
-    res.json(result[0]);
+    if (orderResult.length === 0) {
+      return res.status(404).json({
+        message: 'Pedido no encontrado'
+      });
+    }
+
+    const order = orderResult[0];
+
+    // 🔥 Obtener productos del pedido
+    const itemsSql = `
+      SELECT
+        oi.product_id,
+        oi.quantity,
+        oi.price,
+
+        p.name AS product_name,
+        p.image
+
+      FROM order_items oi
+
+      INNER JOIN products p
+        ON oi.product_id = p.id
+
+      WHERE oi.order_id = ?
+    `;
+
+    db.query(itemsSql, [orderId], (err2, itemsResult) => {
+
+      if (err2) {
+        console.error('❌ ERROR ITEMS:', err2);
+        return res.status(500).json({
+          error: err2.message
+        });
+      }
+
+      // 🔥 Respuesta final completa
+      res.json({
+        ...order,
+        products: itemsResult
+      });
+
+    });
+
   });
+
 });
 
 /* ===============================

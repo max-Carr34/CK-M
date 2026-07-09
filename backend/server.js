@@ -1,5 +1,7 @@
 // ✅ Cargar variables de entorno PRIMERO
 require('dotenv').config();
+console.log('ENV TEST:', process.env.JWT_SECRET);
+console.log('ENV TEST:', process.env.FRONTEND_URL);
 
 const express = require('express');
 const bodyParser = require('body-parser');
