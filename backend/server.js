@@ -15,7 +15,7 @@ const rateLimit = require('express-rate-limit');
 const routes = require('./routes/routes');
 
 const app = express();
-
+app.set('trust proxy', 1);
 /* ===============================
    SEGURIDAD GLOBAL
 ================================= */
